@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clean Slate — Your Spending & Debt Audit</title>
+
+  <!-- Bootstrap 5 CSS via CDN (static stylesheet, no runtime engine, no console warnings) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+
+  <!-- Google Fonts: Playfair Display + Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* === CSS Custom Properties (design tokens) === */
+    :root {
+      --navy:         #0F172A;
+      --navy-light:   #1E293B;
+      --navy-muted:   #334155;
+      --emerald:      #10B981;
+      --emerald-dark: #059669;
+      --indigo:       #6366F1;
+      --indigo-light: #818CF8;
+      --gold:         #F59E0B;
+      --gold-light:   #FCD34D;
+    }
+
+    /* === Base === */
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--navy);
+      color: #F8FAFC;
+      min-height: 100vh;
+    }
+    .font-display { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* === Nav === */
+    .site-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      height: 4rem;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+    }
+    .nav-logo-icon {
+      width: 1.75rem; height: 1.75rem;
+      border-radius: 6px;
+      background: var(--emerald);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .nav-link-subtle {
+      font-size: 0.875rem; font-weight: 500;
+      color: #CBD5E1; text-decoration: none;
+      padding: 0.375rem 0.75rem; border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-link-subtle:hover { color: #fff; background: rgba(255,255,255,0.05); }
+
+    /* === Hero === */
+    .hero-bg {
+      background: linear-gradient(135deg, #0F172A 55%, #1B2E45 100%);
+      padding-top: 8rem; padding-bottom: 6rem;
+      position: relative; overflow: hidden;
+    }
+    @media (min-width: 576px) {
+      .hero-bg { padding-top: 10rem; padding-bottom: 8rem; }
+    }
+    .glow-blob {
+      position: absolute; border-radius: 50%;
+      pointer-events: none; filter: blur(80px);
+    }
+    .glow-indigo { top: 33%; left: -8rem; width: 24rem; height: 24rem; background: rgba(99,102,241,0.08); }
+    .glow-emerald { bottom: 0; right: 0; width: 20rem; height: 20rem; background: rgba(16,185,129,0.06); }
+
+    /* === Price anchor === */
+    .price-anchor {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-weight: 900;
+      font-size: clamp(6rem, 15vw, 10rem);
+      line-height: 1;
+      background: linear-gradient(135deg, #F59E0B 0%, #FCD34D 60%, #F59E0B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+    .price-ring {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .price-ring-circle {
+      width: 16rem; height: 16rem; border-radius: 50%;
+      border: 1px dashed rgba(245,158,11,0.2);
+    }
+
+    /* === Trust badge === */
+    .trust-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid rgba(99,102,241,0.3);
+      background: rgba(99,102,241,0.08);
+      border-radius: 9999px; padding: 0.375rem 1rem;
+    }
+    .pulse-dot {
+      width: 0.375rem; height: 0.375rem;
+      border-radius: 50%; background: var(--emerald);
+      animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* === Primary button === */
+    .btn-primary-cl {
+      background: linear-gradient(135deg, var(--emerald), var(--emerald-dark));
+      color: #fff; border: none; font-weight: 600;
+      border-radius: 0.75rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+      text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      cursor: pointer;
+    }
+    .btn-primary-cl:hover {
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px rgba(16,185,129,0.35);
+    }
+    .btn-primary-cl:active { transform: translateY(0); }
+
+    /* === Trust strip === */
+    .trust-strip {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: rgba(30,41,59,0.4);
+      padding: 2rem 0;
+    }
+
+    /* === Feature cards === */
+    .feature-card {
+      background: var(--navy-light);
+      border: 1px solid #1E293B;
+      border-radius: 1rem; padding: 1.75rem;
+      height: 100%;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .feature-card:hover { border-color: rgba(16,185,129,0.4); transform: translateY(-3px); }
+    .feature-icon {
+      width: 2.5rem; height: 2.5rem; border-radius: 0.625rem;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+    .icon-emerald { background: rgba(16,185,129,0.12); }
+    .icon-indigo  { background: rgba(99,102,241,0.12); }
+    .icon-gold    { background: rgba(245,158,11,0.12); }
+
+    /* === Auth card === */
+    .auth-card {
+      background: rgba(30,41,59,0.85);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 1rem; overflow: hidden;
+    }
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .auth-tab {
+      flex: 1; padding: 1rem;
+      font-size: 0.875rem; font-weight: 600;
+      background: transparent; border: none;
+      border-bottom: 2px solid transparent;
+      color: #94A3B8; cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .auth-tab.active { color: var(--emerald); border-bottom-color: var(--emerald); }
+    .auth-tab:hover:not(.active) { color: #fff; }
+    .auth-pane { padding: 1.75rem; }
+
+    /* === Form fields === */
+    .field-label {
+      display: block; font-size: 0.75rem; font-weight: 500;
+      color: #94A3B8; margin-bottom: 0.375rem;
+    }
+    .field {
+      width: 100%;
+      background: rgba(15,23,42,0.6);
+      border: 1px solid #334155; border-radius: 0.5rem;
+      color: #F8FAFC; padding: 0.75rem 1rem;
+      font-size: 0.875rem; font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .field:focus {
+      outline: none;
+      border-color: var(--indigo);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+    .field::placeholder { color: #64748B; }
+    .field-group { margin-bottom: 1.25rem; }
+    .field-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 0.375rem;
+    }
+
+    /* === Inline messages === */
+    .msg-error   { font-size: 0.75rem; color: #F87171; margin-bottom: 0.75rem; display: none; }
+    .msg-success { font-size: 0.75rem; color: var(--emerald); margin-bottom: 0.75rem; display: none; }
+
+    /* === Utility buttons === */
+    .btn-link-subtle {
+      background: none; border: none; padding: 0;
+      font-size: 0.75rem; color: var(--indigo-light); cursor: pointer;
+    }
+    .btn-link-subtle:hover { text-decoration: underline; }
+    .btn-back {
+      background: none; border: none; padding: 0;
+      color: #94A3B8; cursor: pointer;
+      display: flex; align-items: center;
+      transition: color 0.15s;
+    }
+    .btn-back:hover { color: #fff; }
+
+    /* === Auth success state === */
+    .auth-success-state {
+      background: rgba(30,41,59,0.85);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 1rem; padding: 2rem;
+      text-align: center; margin-top: 1.5rem;
+      display: none;
+    }
+    .success-icon-ring {
+      width: 3.5rem; height: 3.5rem; border-radius: 50%;
+      background: rgba(16,185,129,0.12);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+
+    /* === Pop-in animation === */
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92) translateY(8px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .pop-in { animation: popIn 0.35s ease forwards; }
+
+    /* === Text utilities === */
+    .text-emerald   { color: var(--emerald) !important; }
+    .text-indigo-lt { color: var(--indigo-light); }
+    .text-gold      { color: var(--gold); }
+    .text-muted-cl  { color: #94A3B8; }
+    .text-subtle-cl { color: #64748B; }
+    .link-indigo { color: var(--indigo-light); text-decoration: none; }
+    .link-indigo:hover { text-decoration: underline; color: var(--indigo-light); }
+
+    /* === Footer === */
+    .site-footer {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 2.5rem 1.25rem; text-align: center;
+    }
+    .footer-logo-icon {
+      width: 1.25rem; height: 1.25rem; border-radius: 4px;
+      background: var(--emerald);
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .footer-links a {
+      color: #64748B; text-decoration: none; font-size: 0.72rem;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: #CBD5E1; }
+
+    /* === Scrollbar === */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0F172A; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="container d-flex align-items-center justify-content-between">
+      <a href="#" class="d-flex align-items-center gap-2 text-decoration-none" aria-label="Clean Slate home">
+        <div class="nav-logo-icon">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <span class="font-display fw-bold text-white" style="font-size:1.1rem;letter-spacing:-0.01em;">Clean Slate</span>
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <a href="#auth-section" id="nav-login-btn" class="nav-link-subtle">Sign In</a>
+        <a href="#auth-section" id="nav-start-btn" class="btn-primary-cl px-3 py-2" style="font-size:0.875rem;border-radius:0.5rem;">
+          Get Started — $79
+        </a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- HERO -->
+  <section class="hero-bg" aria-labelledby="hero-heading">
+    <div class="glow-blob glow-indigo" aria-hidden="true"></div>
+    <div class="glow-blob glow-emerald" aria-hidden="true"></div>
+
+    <div class="container position-relative">
+      <div class="row align-items-center g-5">
+
+        <!-- Left: Copy -->
+        <div class="col-lg-6">
+          <h1 id="hero-heading" class="font-display fw-bold text-white mb-4" style="font-size:clamp(2.2rem,5vw,3.5rem);line-height:1.15;">
+            Stop wondering where
+            <span class="text-emerald"> your money goes.</span>
+          </h1>
+
+          <p style="color:#94A3B8;font-size:1.05rem;line-height:1.7;max-width:32rem;" class="mb-4">
+            In 7 business days, you'll receive a custom blueprint that maps every dollar, exposes hidden cash leaks, and gives you a step-by-step debt payoff roadmap — built around your actual numbers.
+          </p>
+
+          <ul class="list-unstyled mb-4" aria-label="What's included">
+            <li class="d-flex align-items-start gap-2 mb-3" style="color:#CBD5E1;font-size:0.9rem;">
+              <svg style="width:1.1rem;height:1.1rem;color:var(--emerald);flex-shrink:0;margin-top:2px;" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>A <strong class="text-white">personalized spending map</strong> across every category in your life</span>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3" style="color:#CBD5E1;font-size:0.9rem;">
+              <svg style="width:1.1rem;height:1.1rem;flex-shrink:0;margin-top:2px;" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>A <strong class="text-white">debt payoff sequence</strong> using avalanche or snowball — whichever wins for you</span>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3" style="color:#CBD5E1;font-size:0.9rem;">
+              <svg style="width:1.1rem;height:1.1rem;flex-shrink:0;margin-top:2px;" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>A <strong class="text-white">video walkthrough</strong> + downloadable PDF blueprint and interactive budget spreadsheet</span>
+            </li>
+            <li class="d-flex align-items-start gap-2" style="color:#CBD5E1;font-size:0.9rem;">
+              <svg style="width:1.1rem;height:1.1rem;flex-shrink:0;margin-top:2px;" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span><strong class="text-white">No upsells. No recurring fees.</strong> You pay once and own the results.</span>
+            </li>
+          </ul>
+
+          <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3 pt-1">
+            <a href="#auth-section" class="btn-primary-cl px-4 py-3" style="font-size:1rem;" aria-label="Get started for $79">
+              Get Started Now
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+            <p class="mb-0" style="color:#64748B;font-size:0.75rem;">Secure upload · No credit card until checkout</p>
+          </div>
+        </div>
+
+        <!-- Right: Price anchor (desktop only) -->
+        <div class="col-lg-6 d-none d-lg-flex justify-content-center align-items-center position-relative" aria-hidden="true" style="user-select:none;">
+          <div class="text-center position-relative">
+            <div style="font-size:0.8rem;font-weight:500;color:#64748B;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">One flat fee</div>
+            <div class="price-anchor">$79</div>
+            <div style="font-size:1rem;font-weight:300;color:#94A3B8;margin-top:0.75rem;">Everything. One time. Done.</div>
+            <div class="price-ring"><div class="price-ring-circle"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- TRUST STRIP -->
+  <div class="trust-strip">
+    <div class="container">
+      <div class="row row-cols-2 row-cols-sm-3 g-4 text-center">
+        <div class="col">
+          <div class="font-display fw-bold text-white" style="font-size:1.4rem;">7 days</div>
+          <div style="color:#94A3B8;font-size:0.75rem;margin-top:0.25rem;">Average turnaround</div>
+        </div>
+        <div class="col">
+          <div class="font-display fw-bold text-white" style="font-size:1.4rem;">100%</div>
+          <div style="color:#94A3B8;font-size:0.75rem;margin-top:0.25rem;">Personalized to your data</div>
+        </div>
+        <div class="col">
+          <div class="font-display fw-bold text-white" style="font-size:1.4rem;">Private</div>
+          <div style="color:#94A3B8;font-size:0.75rem;margin-top:0.25rem;">Your data, secured &amp; deleted</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- FEATURE CARDS -->
+  <section style="padding:5rem 0;" aria-labelledby="how-it-works-heading">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 id="how-it-works-heading" class="font-display fw-bold text-white mb-3" style="font-size:clamp(1.6rem,4vw,2.4rem);">
+          How the audit works
+        </h2>
+        <p style="color:#94A3B8;max-width:32rem;" class="mx-auto mb-0">
+          You upload your documents once. We analyze, structure, and deliver a complete financial picture — no jargon, no vague advice.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon icon-emerald">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <h3 class="text-white fw-semibold mb-2" style="font-size:0.95rem;">Upload your statements</h3>
+            <p style="color:#94A3B8;font-size:0.875rem;line-height:1.65;" class="mb-0">Securely share 3 months of bank and credit card statements plus recent paystubs. Black out any SSNs first.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon icon-indigo">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--indigo-light)" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <h3 class="text-white fw-semibold mb-2" style="font-size:0.95rem;">We build your blueprint</h3>
+            <p style="color:#94A3B8;font-size:0.875rem;line-height:1.65;" class="mb-0">Every transaction gets categorized. Debt balances get sequenced. Irregular expenses get surfaced. In 7 business days.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon icon-gold">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--gold)" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <h3 class="text-white fw-semibold mb-2" style="font-size:0.95rem;">Download &amp; act</h3>
+            <p style="color:#94A3B8;font-size:0.875rem;line-height:1.65;" class="mb-0">Log back in to watch your walkthrough video, download your PDF blueprint, and open your interactive budget spreadsheet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SCHEDULE A CALL -->
+  <section style="padding-bottom:5rem;" aria-labelledby="schedule-heading">
+    <div class="container">
+      <div class="mx-auto" style="max-width:38rem;">
+        <div class="feature-card text-center" style="padding:2.5rem;">
+          <div class="feature-icon icon-indigo mx-auto mb-3">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--indigo-light)" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 id="schedule-heading" class="text-white fw-semibold mb-2" style="font-size:1.05rem;">
+            Have questions before you start?
+          </h3>
+          <p style="color:#94A3B8;font-size:0.875rem;line-height:1.65;max-width:26rem;" class="mx-auto mb-4">
+            Book a free 15-minute intro call. We'll walk through how the audit works and make sure it's the right fit for you — no pressure.
+          </p>
+          <!-- PLACEHOLDER: Replace # with your Calendly / Cal.com / booking link -->
+          <a
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary-cl px-4 py-2"
+            style="font-size:0.875rem;border-radius:0.625rem;background:linear-gradient(135deg,var(--indigo),#4F46E5);"
+            aria-label="Schedule a free intro call"
+          >
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Schedule a Free 15-Min Call
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- AUTH SECTION -->
+  <section id="auth-section" style="padding-bottom:8rem;scroll-margin-top:5rem;" aria-labelledby="auth-heading">
+    <div class="container">
+      <div class="mx-auto" style="max-width:26rem;">
+
+        <div class="text-center mb-4">
+          <h2 id="auth-heading" class="font-display fw-bold text-white mb-2" style="font-size:1.5rem;">
+            Create your account
+          </h2>
+          <p style="color:#94A3B8;font-size:0.875rem;" class="mb-0">
+            Access is instant. Your audit portal opens right after sign-up.
+          </p>
+        </div>
+
+        <!-- Auth card -->
+        <div class="auth-card" id="auth-card" role="region" aria-label="Authentication">
+          <div class="auth-tabs" role="tablist" aria-label="Account options">
+            <button id="tab-signup" class="auth-tab active" role="tab" aria-selected="true" aria-controls="pane-signup">Create Account</button>
+            <button id="tab-login"  class="auth-tab"        role="tab" aria-selected="false" aria-controls="pane-login">Sign In</button>
+          </div>
+
+          <!-- Sign Up pane -->
+          <div id="pane-signup" class="auth-pane" role="tabpanel" aria-labelledby="tab-signup">
+            <div class="field-group">
+              <label for="signup-name" class="field-label">Full name</label>
+              <input type="text" id="signup-name" class="field" placeholder="Jane Smith" autocomplete="name" />
+            </div>
+            <div class="field-group">
+              <label for="signup-email" class="field-label">Email address</label>
+              <input type="email" id="signup-email" class="field" placeholder="jane@example.com" autocomplete="email" />
+            </div>
+            <div class="field-group">
+              <label for="signup-password" class="field-label">Password</label>
+              <input type="password" id="signup-password" class="field" placeholder="At least 8 characters" autocomplete="new-password" />
+            </div>
+            <div class="field-group">
+              <div class="field-row">
+                <label for="signup-promo" class="field-label mb-0">Promo code <span style="color:#64748B;font-weight:400;">(optional)</span></label>
+                <span id="promo-badge" style="display:none;font-size:0.7rem;font-weight:600;color:var(--emerald);background:rgba(16,185,129,0.12);border-radius:9999px;padding:0.15rem 0.6rem;">✓ Free audit applied</span>
+              </div>
+              <input type="text" id="signup-promo" class="field" placeholder="Enter code if you have one" autocomplete="off" style="text-transform:uppercase;letter-spacing:0.05em;" />
+            </div>
+            <p id="signup-error" class="msg-error" role="alert" aria-live="polite"></p>
+            <button id="signup-submit" type="button" class="btn-primary-cl w-100 py-3 mb-3">
+              Create Account &amp; Continue
+            </button>
+            <p class="text-center mb-0" style="color:#64748B;font-size:0.75rem;line-height:1.6;">
+              By creating an account you agree to our
+              <a href="#" class="link-indigo">Terms of Service</a> and
+              <a href="#" class="link-indigo">Privacy Policy</a>.
+            </p>
+          </div>
+
+          <!-- Sign In pane -->
+          <div id="pane-login" class="auth-pane" style="display:none;" role="tabpanel" aria-labelledby="tab-login">
+
+            <!-- Login form -->
+            <div id="login-form-container">
+              <div class="field-group">
+                <label for="login-email" class="field-label">Email address</label>
+                <input type="email" id="login-email" class="field" placeholder="jane@example.com" autocomplete="email" />
+              </div>
+              <div class="field-group">
+                <div class="field-row">
+                  <label for="login-password" class="field-label mb-0">Password</label>
+                  <button id="show-reset-btn" type="button" class="btn-link-subtle">Forgot password?</button>
+                </div>
+                <input type="password" id="login-password" class="field" placeholder="Your password" autocomplete="current-password" />
+              </div>
+              <p id="login-error" class="msg-error" role="alert" aria-live="polite"></p>
+              <button id="login-submit" type="button" class="btn-primary-cl w-100 py-3">
+                Sign In to My Portal
+              </button>
+            </div>
+
+            <!-- Password reset form -->
+            <div id="reset-form-container" style="display:none;">
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <button id="back-to-login-btn" type="button" class="btn-back" aria-label="Back to sign in">
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <span class="text-white fw-semibold" style="font-size:0.875rem;">Reset your password</span>
+              </div>
+              <p style="color:#94A3B8;font-size:0.75rem;" class="mb-3">Enter your email and we'll send a reset link.</p>
+              <div class="field-group">
+                <label for="reset-email" class="field-label">Email address</label>
+                <input type="email" id="reset-email" class="field" placeholder="jane@example.com" autocomplete="email" />
+              </div>
+              <p id="reset-success" class="msg-success" role="status" aria-live="polite">
+                ✓ If that address is on file, a reset link is on its way.
+              </p>
+              <button id="reset-submit" type="button" class="btn-primary-cl w-100 py-3">
+                Send Reset Link
+              </button>
+            </div>
+
+          </div>
+        </div>
+        <!-- /auth-card -->
+
+        <!-- Success state -->
+        <div id="auth-success" class="auth-success-state pop-in" role="status" aria-live="polite" aria-label="Authentication successful">
+          <div class="success-icon-ring">
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <h3 class="font-display fw-bold text-white mb-2" style="font-size:1.2rem;">You're in!</h3>
+          <p id="auth-success-msg" style="color:#94A3B8;font-size:0.875rem;" class="mb-4">
+            Your secure portal is ready. Upload your documents to kick off your audit.
+          </p>
+          <a href="portal.html" class="btn-primary-cl w-100 py-3">
+            Open My Audit Portal
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container" style="max-width:48rem;">
+      <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+        <div class="footer-logo-icon">
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <span class="font-display fw-bold" style="font-size:0.875rem;color:#94A3B8;">Clean Slate</span>
+      </div>
+      <p class="mx-auto mb-3" style="font-size:0.72rem;color:#475569;max-width:36rem;line-height:1.6;">
+        This service provides educational cash-flow analysis only. It is not licensed financial, legal, tax, or investment advice. Results are informational and do not constitute a fiduciary relationship.
+      </p>
+      <div class="footer-links d-flex align-items-center justify-content-center gap-4 mb-2">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="mailto:hello@clearledger.com">Contact</a>
+      </div>
+      <p style="font-size:0.72rem;color:#334155;" class="mb-0">© 2025 Clean Slate. All rights reserved.</p>
+    </div>
+  </footer>
+
+
+  <!-- Bootstrap JS bundle -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmB3g3hGQP6Gvs7FDPIYWzKTcxV8"
+    crossorigin="anonymous"
+  ></script>
+
+  <script>
+    // ─────────────────────────────────────────────────────────────
+    // FIREBASE CONFIGURATION PLACEHOLDER
+    // Replace these values with your real Firebase project config.
+    // Found in: Firebase Console → Project Settings → Your Apps → SDK setup.
+    // ─────────────────────────────────────────────────────────────
+    const firebaseConfig = {
+      apiKey:            "REPLACE_WITH_YOUR_API_KEY",
+      authDomain:        "REPLACE_WITH_YOUR_AUTH_DOMAIN",
+      projectId:         "REPLACE_WITH_YOUR_PROJECT_ID",
+      storageBucket:     "REPLACE_WITH_YOUR_STORAGE_BUCKET",
+      messagingSenderId: "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
+      appId:             "REPLACE_WITH_YOUR_APP_ID",
+    };
+    // TODO: Uncomment when Firebase SDK CDN scripts are added to <head>:
+    // import { initializeApp } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js";
+    // import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    //          sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-auth.js";
+    // const app  = initializeApp(firebaseConfig);
+    // const auth = getAuth(app);
+    // ─────────────────────────────────────────────────────────────
+
+    // Element refs
+    const tabSignup     = document.getElementById('tab-signup');
+    const tabLogin      = document.getElementById('tab-login');
+    const paneSignup    = document.getElementById('pane-signup');
+    const paneLogin     = document.getElementById('pane-login');
+    const signupSubmit  = document.getElementById('signup-submit');
+    const signupError   = document.getElementById('signup-error');
+    const loginSubmit   = document.getElementById('login-submit');
+    const loginError    = document.getElementById('login-error');
+    const showResetBtn  = document.getElementById('show-reset-btn');
+    const backToLogin   = document.getElementById('back-to-login-btn');
+    const loginFormCont = document.getElementById('login-form-container');
+    const resetFormCont = document.getElementById('reset-form-container');
+    const resetSubmit   = document.getElementById('reset-submit');
+    const resetSuccess  = document.getElementById('reset-success');
+    const authCard      = document.getElementById('auth-card');
+    const authSuccess   = document.getElementById('auth-success');
+    const navLoginBtn   = document.getElementById('nav-login-btn');
+    const promoInput    = document.getElementById('signup-promo');
+    const promoBadge    = document.getElementById('promo-badge');
+
+    // ─────────────────────────────────────────────────────────────
+    // PROMO CODES
+    // Add valid codes to this array. Codes are case-insensitive.
+    // TODO: For production, validate codes server-side via a Firebase
+    // Cloud Function to prevent client-side tampering.
+    // ─────────────────────────────────────────────────────────────
+    const VALID_PROMO_CODES = ['FRIEND2025', 'BETA100', 'LAUNCH'];
+
+    function isValidPromo(code) {
+      return VALID_PROMO_CODES.includes(code.toUpperCase().trim());
+    }
+
+    // Live promo code feedback as user types
+    promoInput.addEventListener('input', () => {
+      const val = promoInput.value.trim();
+      if (val === '') {
+        promoBadge.style.display = 'none';
+        promoInput.style.borderColor = '#334155';
+        return;
+      }
+      if (isValidPromo(val)) {
+        promoBadge.style.display = 'inline-block';
+        promoInput.style.borderColor = 'var(--emerald)';
+      } else {
+        promoBadge.style.display = 'none';
+        promoInput.style.borderColor = '#334155';
+      }
+    });
+
+    // Tab switching
+    function activateTab(activeTab, activePane, inactiveTab, inactivePane) {
+      activeTab.classList.add('active');
+      activeTab.setAttribute('aria-selected', 'true');
+      inactiveTab.classList.remove('active');
+      inactiveTab.setAttribute('aria-selected', 'false');
+      activePane.style.display = '';
+      inactivePane.style.display = 'none';
+    }
+
+    tabSignup.addEventListener('click', () => activateTab(tabSignup, paneSignup, tabLogin, paneLogin));
+    tabLogin.addEventListener('click', () => {
+      activateTab(tabLogin, paneLogin, tabSignup, paneSignup);
+      loginFormCont.style.display = '';
+      resetFormCont.style.display = 'none';
+    });
+    navLoginBtn.addEventListener('click', () => activateTab(tabLogin, paneLogin, tabSignup, paneSignup));
+
+    // Validation helpers
+    function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+    function clearError(el)     { el.textContent = '';  el.style.display = 'none'; }
+    function isValidEmail(v)    { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+
+    // Simulate auth success
+    function simulateAuthSuccess(isFreeAudit) {
+      authCard.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      authCard.style.opacity    = '0';
+      authCard.style.transform  = 'translateY(-8px)';
+      setTimeout(() => {
+        authCard.style.display = 'none';
+        // Update success message based on promo code
+        const successMsg = document.getElementById('auth-success-msg');
+        if (isFreeAudit) {
+          successMsg.textContent = 'Your complimentary audit is confirmed. Upload your documents in the portal to kick things off.';
+        } else {
+          successMsg.textContent = 'Your secure portal is ready. Upload your documents to kick off your audit.';
+        }
+        authSuccess.style.display = 'block';
+        authSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 240);
+    }
+
+    // Sign Up
+    signupSubmit.addEventListener('click', () => {
+      clearError(signupError);
+      const name     = document.getElementById('signup-name').value.trim();
+      const email    = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const promo    = promoInput.value.trim();
+
+      if (!name)                return showError(signupError, 'Please enter your full name.');
+      if (!isValidEmail(email)) return showError(signupError, 'Please enter a valid email address.');
+      if (password.length < 8)  return showError(signupError, 'Password must be at least 8 characters.');
+
+      // If a code was entered but is invalid, warn the user before proceeding
+      if (promo && !isValidPromo(promo)) {
+        return showError(signupError, 'That promo code isn\'t valid. Leave it blank to proceed at $79, or double-check your code.');
+      }
+
+      const isFreeAudit = promo !== '' && isValidPromo(promo);
+      // TODO: createUserWithEmailAndPassword(auth, email, password)
+      //   .then(cred => {
+      //     // Save isFreeAudit flag and promo code to Firestore user doc
+      //     // e.g. setDoc(doc(db, 'users', cred.user.uid), { promoCode: promo, freeAudit: isFreeAudit })
+      //     simulateAuthSuccess(isFreeAudit);
+      //   }).catch(err => showError(signupError, err.message));
+      simulateAuthSuccess(isFreeAudit);
+    });
+
+    // Login
+    loginSubmit.addEventListener('click', () => {
+      clearError(loginError);
+      const email    = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      if (!isValidEmail(email)) return showError(loginError, 'Please enter a valid email address.');
+      if (!password)            return showError(loginError, 'Please enter your password.');
+      // TODO: signInWithEmailAndPassword(auth, email, password).then(...).catch(...)
+      simulateAuthSuccess(false);
+    });
+
+    // Forgot password toggle
+    showResetBtn.addEventListener('click', () => {
+      loginFormCont.style.display = 'none';
+      resetFormCont.style.display = '';
+      resetSuccess.style.display  = 'none';
+      document.getElementById('reset-email').value = '';
+    });
+    backToLogin.addEventListener('click', () => {
+      resetFormCont.style.display = 'none';
+      loginFormCont.style.display = '';
+    });
+    resetSubmit.addEventListener('click', () => {
+      if (!isValidEmail(document.getElementById('reset-email').value.trim())) return;
+      // TODO: sendPasswordResetEmail(auth, email).then(...).catch(...)
+      resetSuccess.style.display = 'block';
+    });
+
+    // Smooth scroll for all #auth-section anchor links
+    document.querySelectorAll('a[href="#auth-section"]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById('auth-section').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+
+</body>
+</html>
