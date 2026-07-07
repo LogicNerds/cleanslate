@@ -550,7 +550,7 @@
   <!-- NAV -->
   <nav class="portal-nav" aria-label="Portal navigation">
     <div class="container d-flex align-items-center justify-content-between">
-      <a href="index.html" class="d-flex align-items-center gap-2 text-decoration-none" aria-label="Clean Slate home">
+      <a href="../" class="d-flex align-items-center gap-2 text-decoration-none" aria-label="Clean Slate home">
         <div class="nav-logo-icon">
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -943,7 +943,7 @@
   //
   // TODO: Replace with real auth check:
   // onAuthStateChanged(auth, async user => {
-  //   if (!user) { window.location.href = 'index.html'; return; }
+  //   if (!user) { window.location.href = '../'; return; }
   //   const snap = await getDoc(doc(db, 'users', user.uid));
   //   const data = snap.data();
   //   initPortal(data.auditStatus, data.displayName);
@@ -1175,10 +1175,10 @@
 
   // ─────────────────────────────────────────────────────────────
   // LOGOUT (placeholder)
-  // TODO: Replace with Firebase signOut(auth).then(() => window.location.href = 'index.html')
+  // TODO: Replace with Firebase signOut(auth).then(() => window.location.href = '../')
   // ─────────────────────────────────────────────────────────────
   document.getElementById('logout-btn').addEventListener('click', () => {
-    window.location.href = 'index.html';
+    window.location.href = '../';
   });
 </script>
 
