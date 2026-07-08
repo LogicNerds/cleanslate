@@ -5,136 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clean Slate — Your Spending & Debt Audit</title>
 
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-    crossorigin="anonymous"
-  />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap"
-    rel="stylesheet"
-  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 
   <style>
-    :root {
-      --navy:         #0F172A;
-      --navy-light:   #1E293B;
-      --navy-muted:   #334155;
-      --emerald:      #10B981;
-      --emerald-dark: #059669;
-      --indigo:       #6366F1;
-      --indigo-light: #818CF8;
-      --gold:         #F59E0B;
-      --gold-light:   #FCD34D;
-    }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      background-color: var(--navy);
-      color: #F8FAFC;
-      min-height: 100vh;
-    }
-    .font-display { font-family: 'Playfair Display', Georgia, serif; }
-    .site-nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      height: 4rem; background: rgba(15,23,42,0.82);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      display: flex; align-items: center;
-    }
-    .nav-logo-icon {
-      width: 1.75rem; height: 1.75rem; border-radius: 6px;
-      background: var(--emerald);
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .nav-link-subtle {
-      font-size: 0.875rem; font-weight: 500; color: #CBD5E1;
-      text-decoration: none; padding: 0.375rem 0.75rem; border-radius: 6px;
-      transition: color 0.15s, background 0.15s;
-    }
-    .nav-link-subtle:hover { color: #fff; background: rgba(255,255,255,0.05); }
-    .hero-bg {
-      background: linear-gradient(135deg, #0F172A 55%, #1B2E45 100%);
-      padding-top: 8rem; padding-bottom: 6rem;
-      position: relative; overflow: hidden;
-    }
-    @media (min-width: 576px) { .hero-bg { padding-top: 10rem; padding-bottom: 8rem; } }
-    .glow-blob { position: absolute; border-radius: 50%; pointer-events: none; filter: blur(80px); }
-    .glow-indigo  { top: 33%; left: -8rem; width: 24rem; height: 24rem; background: rgba(99,102,241,0.08); }
-    .glow-emerald { bottom: 0; right: 0; width: 20rem; height: 20rem; background: rgba(16,185,129,0.06); }
-    .price-anchor {
-      font-family: 'Playfair Display', Georgia, serif; font-weight: 900;
-      font-size: clamp(6rem,15vw,10rem); line-height: 1;
-      background: linear-gradient(135deg,#F59E0B 0%,#FCD34D 60%,#F59E0B 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; letter-spacing: -0.02em;
-    }
-    .price-ring { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-    .price-ring-circle { width: 16rem; height: 16rem; border-radius: 50%; border: 1px dashed rgba(245,158,11,0.2); }
-    .trust-badge {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      border: 1px solid rgba(99,102,241,0.3); background: rgba(99,102,241,0.08);
-      border-radius: 9999px; padding: 0.375rem 1rem;
-    }
-    .pulse-dot { width: 0.375rem; height: 0.375rem; border-radius: 50%; background: var(--emerald); animation: pulse 2s cubic-bezier(0.4,0,0.6,1) infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    .btn-primary-cl {
-      background: linear-gradient(135deg,var(--emerald),var(--emerald-dark));
-      color: #fff; border: none; font-weight: 600; border-radius: 0.75rem;
-      transition: transform 0.15s, box-shadow 0.15s; text-decoration: none;
-      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer;
-    }
-    .btn-primary-cl:hover { color: #fff; transform: translateY(-1px); box-shadow: 0 8px 25px rgba(16,185,129,0.35); }
-    .btn-primary-cl:active { transform: translateY(0); }
-    .trust-strip { border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(30,41,59,0.4); padding: 2rem 0; }
-    .feature-card { background: var(--navy-light); border: 1px solid #1E293B; border-radius: 1rem; padding: 1.75rem; height: 100%; transition: border-color 0.25s, transform 0.25s; }
-    .feature-card:hover { border-color: rgba(16,185,129,0.4); transform: translateY(-3px); }
-    .feature-icon { width: 2.5rem; height: 2.5rem; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
-    .icon-emerald { background: rgba(16,185,129,0.12); }
-    .icon-indigo  { background: rgba(99,102,241,0.12); }
-    .icon-gold    { background: rgba(245,158,11,0.12); }
-    .auth-card { background: rgba(30,41,59,0.85); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(99,102,241,0.2); border-radius: 1rem; overflow: hidden; }
-    .auth-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .auth-tab { flex: 1; padding: 1rem; font-size: 0.875rem; font-weight: 600; background: transparent; border: none; border-bottom: 2px solid transparent; color: #94A3B8; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
-    .auth-tab.active { color: var(--emerald); border-bottom-color: var(--emerald); }
-    .auth-tab:hover:not(.active) { color: #fff; }
-    .auth-pane { padding: 1.75rem; }
-    .field-label { display: block; font-size: 0.75rem; font-weight: 500; color: #94A3B8; margin-bottom: 0.375rem; }
-    .field { width: 100%; background: rgba(15,23,42,0.6); border: 1px solid #334155; border-radius: 0.5rem; color: #F8FAFC; padding: 0.75rem 1rem; font-size: 0.875rem; font-family: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
-    .field:focus { outline: none; border-color: var(--indigo); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
-    .field::placeholder { color: #64748B; }
-    .field-group { margin-bottom: 1.25rem; }
-    .field-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.375rem; }
-    .msg-error   { font-size: 0.75rem; color: #F87171; margin-bottom: 0.75rem; display: none; }
-    .msg-success { font-size: 0.75rem; color: var(--emerald); margin-bottom: 0.75rem; display: none; }
-    .btn-link-subtle { background: none; border: none; padding: 0; font-size: 0.75rem; color: var(--indigo-light); cursor: pointer; }
-    .btn-link-subtle:hover { text-decoration: underline; }
-    .btn-back { background: none; border: none; padding: 0; color: #94A3B8; cursor: pointer; display: flex; align-items: center; transition: color 0.15s; }
-    .btn-back:hover { color: #fff; }
-    .auth-success-state { background: rgba(30,41,59,0.85); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(99,102,241,0.2); border-radius: 1rem; padding: 2rem; text-align: center; margin-top: 1.5rem; display: none; }
-    .success-icon-ring { width: 3.5rem; height: 3.5rem; border-radius: 50%; background: rgba(16,185,129,0.12); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; }
-    @keyframes popIn { from{opacity:0;transform:scale(0.92) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)} }
-    .pop-in { animation: popIn 0.35s ease forwards; }
-    .text-emerald { color: var(--emerald) !important; }
-    .link-indigo { color: var(--indigo-light); text-decoration: none; }
-    .link-indigo:hover { text-decoration: underline; color: var(--indigo-light); }
-    .site-footer { border-top: 1px solid rgba(255,255,255,0.05); padding: 2.5rem 1.25rem; text-align: center; }
-    .footer-logo-icon { width: 1.25rem; height: 1.25rem; border-radius: 4px; background: var(--emerald); display: inline-flex; align-items: center; justify-content: center; }
-    .footer-links a { color: #64748B; text-decoration: none; font-size: 0.72rem; transition: color 0.15s; }
-    .footer-links a:hover { color: #CBD5E1; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0F172A; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-    @media (prefers-reduced-motion: reduce) { *,::before,::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important} }
-
-    /* Loading spinner overlay */
-    .btn-spinner { display: none; width: 1rem; height: 1rem; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .btn-loading .btn-spinner { display: inline-block; }
-    .btn-loading .btn-label   { display: none; }
+    :root{--navy:#0F172A;--navy-light:#1E293B;--navy-muted:#334155;--emerald:#10B981;--emerald-dark:#059669;--indigo:#6366F1;--indigo-light:#818CF8;--gold:#F59E0B;--gold-light:#FCD34D}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',system-ui,sans-serif;background-color:var(--navy);color:#F8FAFC;min-height:100vh}
+    .font-display{font-family:'Playfair Display',Georgia,serif}
+    .site-nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:4rem;background:rgba(15,23,42,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center}
+    .nav-logo-icon{width:1.75rem;height:1.75rem;border-radius:6px;background:var(--emerald);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .nav-link-subtle{font-size:0.875rem;font-weight:500;color:#CBD5E1;text-decoration:none;padding:0.375rem 0.75rem;border-radius:6px;transition:color 0.15s,background 0.15s}
+    .nav-link-subtle:hover{color:#fff;background:rgba(255,255,255,0.05)}
+    .hero-bg{background:linear-gradient(135deg,#0F172A 55%,#1B2E45 100%);padding-top:8rem;padding-bottom:6rem;position:relative;overflow:hidden}
+    @media(min-width:576px){.hero-bg{padding-top:10rem;padding-bottom:8rem}}
+    .glow-blob{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px)}
+    .glow-indigo{top:33%;left:-8rem;width:24rem;height:24rem;background:rgba(99,102,241,0.08)}
+    .glow-emerald{bottom:0;right:0;width:20rem;height:20rem;background:rgba(16,185,129,0.06)}
+    .price-anchor{font-family:'Playfair Display',Georgia,serif;font-weight:900;font-size:clamp(6rem,15vw,10rem);line-height:1;background:linear-gradient(135deg,#F59E0B 0%,#FCD34D 60%,#F59E0B 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.02em}
+    .price-ring{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+    .price-ring-circle{width:16rem;height:16rem;border-radius:50%;border:1px dashed rgba(245,158,11,0.2)}
+    .btn-primary-cl{background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));color:#fff;border:none;font-weight:600;border-radius:0.75rem;transition:transform 0.15s,box-shadow 0.15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;cursor:pointer}
+    .btn-primary-cl:hover{color:#fff;transform:translateY(-1px);box-shadow:0 8px 25px rgba(16,185,129,0.35)}
+    .btn-primary-cl:active{transform:translateY(0)}
+    .trust-strip{border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(30,41,59,0.4);padding:2rem 0}
+    .feature-card{background:var(--navy-light);border:1px solid #1E293B;border-radius:1rem;padding:1.75rem;height:100%;transition:border-color 0.25s,transform 0.25s}
+    .feature-card:hover{border-color:rgba(16,185,129,0.4);transform:translateY(-3px)}
+    .feature-icon{width:2.5rem;height:2.5rem;border-radius:0.625rem;display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem}
+    .icon-emerald{background:rgba(16,185,129,0.12)}.icon-indigo{background:rgba(99,102,241,0.12)}.icon-gold{background:rgba(245,158,11,0.12)}
+    .auth-card{background:rgba(30,41,59,0.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(99,102,241,0.2);border-radius:1rem;overflow:hidden}
+    .auth-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.08)}
+    .auth-tab{flex:1;padding:1rem;font-size:0.875rem;font-weight:600;background:transparent;border:none;border-bottom:2px solid transparent;color:#94A3B8;cursor:pointer;transition:color 0.2s,border-color 0.2s}
+    .auth-tab.active{color:var(--emerald);border-bottom-color:var(--emerald)}
+    .auth-tab:hover:not(.active){color:#fff}
+    .auth-pane{padding:1.75rem}
+    .field-label{display:block;font-size:0.75rem;font-weight:500;color:#94A3B8;margin-bottom:0.375rem}
+    .field{width:100%;background:rgba(15,23,42,0.6);border:1px solid #334155;border-radius:0.5rem;color:#F8FAFC;padding:0.75rem 1rem;font-size:0.875rem;font-family:inherit;transition:border-color 0.2s,box-shadow 0.2s}
+    .field:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(99,102,241,0.15)}
+    .field::placeholder{color:#64748B}
+    .field-group{margin-bottom:1.25rem}
+    .field-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.375rem}
+    .msg-error{font-size:0.75rem;color:#F87171;margin-bottom:0.75rem;display:none}
+    .msg-success{font-size:0.75rem;color:var(--emerald);margin-bottom:0.75rem;display:none}
+    .btn-link-subtle{background:none;border:none;padding:0;font-size:0.75rem;color:var(--indigo-light);cursor:pointer}
+    .btn-link-subtle:hover{text-decoration:underline}
+    .btn-back{background:none;border:none;padding:0;color:#94A3B8;cursor:pointer;display:flex;align-items:center;transition:color 0.15s}
+    .btn-back:hover{color:#fff}
+    .auth-success-state{background:rgba(30,41,59,0.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(99,102,241,0.2);border-radius:1rem;padding:2rem;text-align:center;margin-top:1.5rem;display:none}
+    .success-icon-ring{width:3.5rem;height:3.5rem;border-radius:50%;background:rgba(16,185,129,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem}
+    @keyframes popIn{from{opacity:0;transform:scale(0.92) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .pop-in{animation:popIn 0.35s ease forwards}
+    .text-emerald{color:var(--emerald)!important}
+    .link-indigo{color:var(--indigo-light);text-decoration:none}
+    .link-indigo:hover{text-decoration:underline;color:var(--indigo-light)}
+    .site-footer{border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem 1.25rem;text-align:center}
+    .footer-logo-icon{width:1.25rem;height:1.25rem;border-radius:4px;background:var(--emerald);display:inline-flex;align-items:center;justify-content:center}
+    .footer-links a{color:#64748B;text-decoration:none;font-size:0.72rem;transition:color 0.15s}
+    .footer-links a:hover{color:#CBD5E1}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0F172A}::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}
+    @media(prefers-reduced-motion:reduce){*,::before,::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+    .btn-spinner{display:none;width:1rem;height:1rem;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .btn-loading .btn-spinner{display:inline-block}
+    .btn-loading .btn-label{display:none}
+    /* Promo checking indicator */
+    .promo-checking{font-size:0.7rem;color:#64748B;margin-top:0.3rem;display:none}
   </style>
 </head>
 
@@ -271,8 +208,13 @@
           </div>
           <h3 id="schedule-heading" class="text-white fw-semibold mb-2" style="font-size:1.05rem;">Have questions before you start?</h3>
           <p style="color:#94A3B8;font-size:0.875rem;line-height:1.65;max-width:26rem;" class="mx-auto mb-4">Book a free 15-minute intro call. We'll walk through how the audit works and make sure it's the right fit for you — no pressure.</p>
-          <!-- PLACEHOLDER: Replace # with your Calendly / Cal.com / booking link -->
-          <a href="#" target="_blank" rel="noopener noreferrer" class="btn-primary-cl px-4 py-2" style="font-size:0.875rem;border-radius:0.625rem;background:linear-gradient(135deg,var(--indigo),#4F46E5);" aria-label="Schedule a free intro call">
+          <a
+            href="https://calendar.google.com/appointments/schedules/AcZssZ2dsrbs0c1Mbw8l3xmDS_RvwdrAQ4Gho689KWvmtGP_2sxmE2gmIMBDAyWfAmFYdH2QVH3kTvky"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary-cl px-4 py-2"
+            style="font-size:0.875rem;border-radius:0.625rem;background:linear-gradient(135deg,var(--indigo),#4F46E5);"
+            aria-label="Schedule a free intro call">
             <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             Schedule a Free 15-Min Call
           </a>
@@ -299,22 +241,23 @@
           <div id="pane-signup" class="auth-pane" role="tabpanel" aria-labelledby="tab-signup">
             <div class="field-group">
               <label for="signup-name" class="field-label">Full name</label>
-              <input type="text" id="signup-name" class="field" placeholder="Jane Smith" autocomplete="name" />
+              <input type="text" id="signup-name" class="field" placeholder="Jane Smith" autocomplete="name"/>
             </div>
             <div class="field-group">
               <label for="signup-email" class="field-label">Email address</label>
-              <input type="email" id="signup-email" class="field" placeholder="jane@example.com" autocomplete="email" />
+              <input type="email" id="signup-email" class="field" placeholder="jane@example.com" autocomplete="email"/>
             </div>
             <div class="field-group">
               <label for="signup-password" class="field-label">Password</label>
-              <input type="password" id="signup-password" class="field" placeholder="At least 8 characters" autocomplete="new-password" />
+              <input type="password" id="signup-password" class="field" placeholder="At least 8 characters" autocomplete="new-password"/>
             </div>
             <div class="field-group">
               <div class="field-row">
                 <label for="signup-promo" class="field-label mb-0">Promo code <span style="color:#64748B;font-weight:400;">(optional)</span></label>
-                <span id="promo-badge" style="display:none;font-size:0.7rem;font-weight:600;color:var(--emerald);background:rgba(16,185,129,0.12);border-radius:9999px;padding:0.15rem 0.6rem;">✓ Free audit applied</span>
+                <span id="promo-badge" style="display:none;font-size:0.7rem;font-weight:600;color:var(--emerald);background:rgba(16,185,129,0.12);border-radius:9999px;padding:0.15rem 0.6rem;">&#10003; Free audit applied</span>
               </div>
-              <input type="text" id="signup-promo" class="field" placeholder="Enter code if you have one" autocomplete="off" style="text-transform:uppercase;letter-spacing:0.05em;" />
+              <input type="text" id="signup-promo" class="field" placeholder="Enter code if you have one" autocomplete="off" style="text-transform:uppercase;letter-spacing:0.05em;"/>
+              <div class="promo-checking" id="promo-checking" aria-live="polite">Checking code&#8230;</div>
             </div>
             <p id="signup-error" class="msg-error" role="alert" aria-live="polite"></p>
             <button id="signup-submit" type="button" class="btn-primary-cl w-100 py-3 mb-3">
@@ -331,14 +274,14 @@
             <div id="login-form-container">
               <div class="field-group">
                 <label for="login-email" class="field-label">Email address</label>
-                <input type="email" id="login-email" class="field" placeholder="jane@example.com" autocomplete="email" />
+                <input type="email" id="login-email" class="field" placeholder="jane@example.com" autocomplete="email"/>
               </div>
               <div class="field-group">
                 <div class="field-row">
                   <label for="login-password" class="field-label mb-0">Password</label>
                   <button id="show-reset-btn" type="button" class="btn-link-subtle">Forgot password?</button>
                 </div>
-                <input type="password" id="login-password" class="field" placeholder="Your password" autocomplete="current-password" />
+                <input type="password" id="login-password" class="field" placeholder="Your password" autocomplete="current-password"/>
               </div>
               <p id="login-error" class="msg-error" role="alert" aria-live="polite"></p>
               <button id="login-submit" type="button" class="btn-primary-cl w-100 py-3">
@@ -356,9 +299,9 @@
               <p style="color:#94A3B8;font-size:0.75rem;" class="mb-3">Enter your email and we'll send a reset link.</p>
               <div class="field-group">
                 <label for="reset-email" class="field-label">Email address</label>
-                <input type="email" id="reset-email" class="field" placeholder="jane@example.com" autocomplete="email" />
+                <input type="email" id="reset-email" class="field" placeholder="jane@example.com" autocomplete="email"/>
               </div>
-              <p id="reset-success" class="msg-success" role="status" aria-live="polite">✓ If that address is on file, a reset link is on its way.</p>
+              <p id="reset-success" class="msg-success" role="status" aria-live="polite">&#10003; If that address is on file, a reset link is on its way.</p>
               <p id="reset-error" class="msg-error" role="alert" aria-live="polite"></p>
               <button id="reset-submit" type="button" class="btn-primary-cl w-100 py-3">
                 <span class="btn-label">Send Reset Link</span>
@@ -392,18 +335,17 @@
         <span class="font-display fw-bold" style="font-size:0.875rem;color:#94A3B8;">Clean Slate</span>
       </div>
       <p class="mx-auto mb-3" style="font-size:0.72rem;color:#475569;max-width:36rem;line-height:1.6;">This service provides educational cash-flow analysis only. It is not licensed financial, legal, tax, or investment advice. Results are informational and do not constitute a fiduciary relationship.</p>
-      <div class="footer-links d-flex align-items-center justify-content-center gap-4 mb-2">
+      <div class="footer-links d-flex align-items-center justify-content:center gap-4 mb-2">
         <a href="#">Privacy Policy</a>
         <a href="#">Terms of Service</a>
-        <a href="mailto:hello@cleanslate.com">Contact</a>
+        <a href="mailto:hello@cleanslateaudit.com">Contact</a>
       </div>
-      <p style="font-size:0.72rem;color:#334155;" class="mb-0">© 2025 Clean Slate. All rights reserved.</p>
+      <p style="font-size:0.72rem;color:#334155;" class="mb-0">&#169; 2025 Clean Slate. All rights reserved.</p>
     </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmB3g3hGQP6Gvs7FDPIYWzKTcxV8" crossorigin="anonymous"></script>
 
-  <!-- Firebase v10 modular SDK via CDN -->
   <script type="module">
     import { initializeApp }                         from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword,
@@ -426,9 +368,42 @@
     const auth = getAuth(app);
     const db   = getFirestore(app);
 
-    // ── Promo codes ──────────────────────────────────────────────
-    const VALID_PROMO_CODES = ['FRIEND2025', 'BETA100', 'LAUNCH'];
-    function isValidPromo(code) { return VALID_PROMO_CODES.includes(code.toUpperCase().trim()); }
+    // ── Cloudflare Worker URL ────────────────────────────────────
+    const WORKER_URL = 'https://summer-mode-328d.elijah-029.workers.dev';
+
+    // ── Email helper — fire-and-forget, never blocks UI ─────────
+    async function sendEmail(to, subject, html) {
+      try {
+        await fetch(WORKER_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ to, subject, html }),
+        });
+      } catch (e) {
+        // Email failure is non-fatal — log but don't surface to user
+        console.warn('Email send failed:', e);
+      }
+    }
+
+    // ── Promo verification via Worker ────────────────────────────
+    // State: null = nothing entered, true = verified valid, false = verified invalid
+    let promoVerified = null;
+    let promoDebounceTimer = null;
+
+    async function verifyPromoWithWorker(code) {
+      try {
+        const res  = await fetch(WORKER_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ action: 'verifyPromo', code }),
+        });
+        const data = await res.json();
+        return data.valid === true;
+      } catch (e) {
+        console.warn('Promo check failed:', e);
+        return false;
+      }
+    }
 
     // ── DOM refs ─────────────────────────────────────────────────
     const tabSignup      = document.getElementById('tab-signup');
@@ -451,6 +426,7 @@
     const navLoginBtn    = document.getElementById('nav-login-btn');
     const promoInput     = document.getElementById('signup-promo');
     const promoBadge     = document.getElementById('promo-badge');
+    const promoChecking  = document.getElementById('promo-checking');
 
     // ── Helpers ──────────────────────────────────────────────────
     function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
@@ -489,12 +465,34 @@
     });
     navLoginBtn.addEventListener('click', () => activateTab(tabLogin, paneLogin, tabSignup, paneSignup));
 
-    // ── Promo live feedback ──────────────────────────────────────
+    // ── Promo live validation via Worker (debounced 500ms) ───────
     promoInput.addEventListener('input', () => {
-      const val = promoInput.value.trim();
-      if (!val) { promoBadge.style.display = 'none'; promoInput.style.borderColor = '#334155'; return; }
-      if (isValidPromo(val)) { promoBadge.style.display = 'inline-block'; promoInput.style.borderColor = 'var(--emerald)'; }
-      else                   { promoBadge.style.display = 'none';         promoInput.style.borderColor = '#334155'; }
+      const val = promoInput.value.trim().toUpperCase();
+
+      // Reset state immediately on any change
+      promoVerified = null;
+      promoBadge.style.display    = 'none';
+      promoInput.style.borderColor = '#334155';
+      promoChecking.style.display  = 'none';
+      clearTimeout(promoDebounceTimer);
+
+      if (!val) return; // field cleared — nothing to check
+
+      // Show "Checking..." after a short pause, then hit the worker
+      promoDebounceTimer = setTimeout(async () => {
+        promoChecking.style.display = 'block';
+        const valid = await verifyPromoWithWorker(val);
+        promoChecking.style.display = 'none';
+        promoVerified = valid;
+
+        if (valid) {
+          promoBadge.style.display     = 'inline-block';
+          promoInput.style.borderColor  = 'var(--emerald)';
+        } else {
+          promoBadge.style.display     = 'none';
+          promoInput.style.borderColor  = '#334155';
+        }
+      }, 500);
     });
 
     // ── Sign Up ──────────────────────────────────────────────────
@@ -503,14 +501,21 @@
       const name     = document.getElementById('signup-name').value.trim();
       const email    = document.getElementById('signup-email').value.trim();
       const password = document.getElementById('signup-password').value;
-      const promo    = promoInput.value.trim();
+      const promo    = promoInput.value.trim().toUpperCase();
 
       if (!name)                return showError(signupError, 'Please enter your full name.');
       if (!isValidEmail(email)) return showError(signupError, 'Please enter a valid email address.');
       if (password.length < 8)  return showError(signupError, 'Password must be at least 8 characters.');
-      if (promo && !isValidPromo(promo)) return showError(signupError, 'That promo code isn\u2019t valid. Leave it blank to proceed at $79, or double-check your code.');
 
-      const isFreeAudit = promo !== '' && isValidPromo(promo);
+      // If a code was entered, it must have been verified by the worker
+      if (promo && promoVerified === null) {
+        return showError(signupError, 'Please wait — your promo code is still being verified.');
+      }
+      if (promo && promoVerified === false) {
+        return showError(signupError, 'That promo code isn\u2019t valid. Leave it blank to proceed at $79, or double-check your code.');
+      }
+
+      const isFreeAudit = promo !== '' && promoVerified === true;
       setLoading(signupSubmit, true);
 
       try {
@@ -522,9 +527,41 @@
           email:        email,
           auditStatus:  'pending',
           freeAudit:    isFreeAudit,
-          promoCode:    promo.toUpperCase() || null,
+          promoCode:    promo || null,
           createdAt:    new Date(),
         });
+
+        // ── Email A: Welcome email to client ─────────────────────
+        sendEmail(
+          email,
+          'Welcome to Clean Slate Audit!',
+          `<div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;color:#1E293B;">
+            <h2 style="color:#10B981;">Welcome, ${name}!</h2>
+            <p>Your Clean Slate account is set up and ready to go.</p>
+            <p>The next step is to log into your portal and complete your document uploads so we can get started building your custom spending and debt blueprint.</p>
+            <p style="margin-top:1.5rem;">
+              <a href="https://cleanslateaudit.com/portal/" style="background:#10B981;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;">Open My Portal</a>
+            </p>
+            <p style="color:#64748B;font-size:0.85rem;margin-top:2rem;">Your blueprint will be ready within 7 business days of your document upload. If you have any questions, just reply to this email.</p>
+            <p style="color:#64748B;font-size:0.85rem;">— The Clean Slate Team</p>
+          </div>`
+        );
+
+        // ── Email B: Admin new signup alert ──────────────────────
+        sendEmail(
+          'hello@cleanslateaudit.com',
+          '\uD83D\uDD25 New User Signup!',
+          `<div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;color:#1E293B;">
+            <h2>New client just signed up.</h2>
+            <table style="border-collapse:collapse;width:100%;margin-top:1rem;">
+              <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Name</td><td style="padding:0.5rem 0;font-weight:600;">${name}</td></tr>
+              <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Email</td><td style="padding:0.5rem 0;">${email}</td></tr>
+              <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Promo code</td><td style="padding:0.5rem 0;">${promo || 'None'}</td></tr>
+              <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Free audit</td><td style="padding:0.5rem 0;">${isFreeAudit ? 'Yes' : 'No — $79'}</td></tr>
+            </table>
+            <p style="margin-top:1.5rem;color:#64748B;font-size:0.85rem;">They haven't uploaded documents yet. You'll get another notification when they complete the wizard.</p>
+          </div>`
+        );
 
         showAuthSuccess(isFreeAudit);
       } catch (err) {
@@ -548,16 +585,15 @@
       if (!password)            return showError(loginError, 'Please enter your password.');
 
       setLoading(loginSubmit, true);
-
       try {
         await signInWithEmailAndPassword(auth, email, password);
         showAuthSuccess(false);
       } catch (err) {
         const messages = {
-          'auth/invalid-credential':   'Incorrect email or password. Please try again.',
-          'auth/user-not-found':       'No account found with that email.',
-          'auth/wrong-password':       'Incorrect password. Please try again.',
-          'auth/too-many-requests':    'Too many attempts. Please wait a moment and try again.',
+          'auth/invalid-credential':  'Incorrect email or password. Please try again.',
+          'auth/user-not-found':      'No account found with that email.',
+          'auth/wrong-password':      'Incorrect password. Please try again.',
+          'auth/too-many-requests':   'Too many attempts. Please wait a moment and try again.',
         };
         showError(loginError, messages[err.code] || 'Sign in failed. Please try again.');
         setLoading(loginSubmit, false);
@@ -577,7 +613,6 @@
       clearError(resetError);
       const email = document.getElementById('reset-email').value.trim();
       if (!isValidEmail(email)) return showError(resetError, 'Please enter a valid email address.');
-
       setLoading(resetSubmit, true);
       try {
         await sendPasswordResetEmail(auth, email);
