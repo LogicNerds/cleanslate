@@ -148,7 +148,60 @@
     .settings-row-arrow{color:#334155}
     .settings-row.danger .settings-row-label{color:#F87171}
     .text-emerald{color:var(--emerald)!important}
-    /* Password update modal */
+    /* Questionnaire fields */
+    .q-block { margin-bottom:1.25rem; }
+    .q-label {
+      display:block;
+      font-size:0.82rem;
+      font-weight:500;
+      color:#CBD5E1;
+      line-height:1.5;
+      margin-bottom:0.5rem;
+    }
+    .q-input {
+      width:100%;
+      background:rgba(15,23,42,0.6);
+      border:1px solid #334155;
+      border-radius:0.5rem;
+      color:#F8FAFC;
+      padding:0.75rem 1rem;
+      font-size:0.875rem;
+      font-family:inherit;
+      transition:border-color 0.2s, box-shadow 0.2s;
+    }
+    .q-input:focus {
+      outline:none;
+      border-color:var(--indigo);
+      box-shadow:0 0 0 3px rgba(99,102,241,0.12);
+    }
+    .q-input::placeholder { color:#475569; }
+    .q-select {
+      width:100%;
+      background:rgba(15,23,42,0.6);
+      border:1px solid #334155;
+      border-radius:0.5rem;
+      color:#F8FAFC;
+      padding:0.75rem 1rem;
+      font-size:0.875rem;
+      font-family:inherit;
+      appearance:none;
+      -webkit-appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;
+      background-position:right 1rem center;
+      cursor:pointer;
+      transition:border-color 0.2s, box-shadow 0.2s;
+    }
+    .q-select:focus {
+      outline:none;
+      border-color:var(--indigo);
+      box-shadow:0 0 0 3px rgba(99,102,241,0.12);
+    }
+    .q-divider {
+      border:none;
+      border-top:1px solid rgba(255,255,255,0.06);
+      margin:1.5rem 0;
+    }
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:1.5rem}
     .modal-card{background:#1E293B;border:1px solid rgba(99,102,241,0.25);border-radius:1rem;padding:1.75rem;width:100%;max-width:24rem;position:relative}
     .modal-title{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.15rem;color:#F8FAFC;margin-bottom:0.25rem}
@@ -318,8 +371,41 @@
         <!-- Step 5: Notes -->
         <div id="step-5" class="step-card pop-in" style="display:none;">
           <div class="step-eyebrow">Step 5 of 5</div>
-          <h2 class="step-title">Anything else we should know?</h2>
-          <p style="font-size:0.875rem;color:#64748B;margin-bottom:1.25rem;">Flag anything that might not show up in your statements — irregular expenses, goals, context.</p>
+          <h2 class="step-title">Almost done — a few quick questions</h2>
+          <p style="font-size:0.875rem;color:#64748B;margin-bottom:1.5rem;">These take 30 seconds and help us calculate your specific financial blindspots.</p>
+
+          <!-- Q1: Subscription spend -->
+          <div class="q-block">
+            <label for="q-subscriptions" class="q-label">
+              Roughly how much do you think you spend each month on recurring digital subscriptions <span style="color:#64748B;">(streaming, apps, software, storage)?</span>
+            </label>
+            <input type="number" id="q-subscriptions" class="q-input" placeholder="e.g. 85" min="0" step="1" aria-label="Monthly subscription spend estimate"/>
+          </div>
+
+          <!-- Q2: Lifestyle spend -->
+          <div class="q-block">
+            <label for="q-lifestyle" class="q-label">
+              How much do you estimate you spend per month on convenience and dining out <span style="color:#64748B;">(DoorDash, fast food, bars, coffee shops)?</span>
+            </label>
+            <input type="number" id="q-lifestyle" class="q-input" placeholder="e.g. 320" min="0" step="1" aria-label="Monthly lifestyle spend estimate"/>
+          </div>
+
+          <!-- Q3: Core objective -->
+          <div class="q-block">
+            <label for="q-objective" class="q-label">
+              If we find extra money from hidden leaks, where do you want that money redirected?
+            </label>
+            <select id="q-objective" class="q-select" aria-label="Primary financial objective">
+              <option value="" disabled selected>Select your priority&hellip;</option>
+              <option value="pay-debt">Aggressively pay down debt</option>
+              <option value="emergency-fund">Build an emergency savings fund</option>
+            </select>
+          </div>
+
+          <hr class="q-divider"/>
+
+          <p style="font-size:0.875rem;color:#94A3B8;margin-bottom:0.5rem;">Anything else we should know?</p>
+          <p style="font-size:0.8rem;color:#64748B;margin-bottom:1rem;">Flag irregular expenses, seasonal income, goals, or anything that might not show up in your statements.</p>
           <textarea id="audit-notes" class="notes-textarea" placeholder="Examples: 'I pay car insurance quarterly in March — about $480.' / 'My goal is to pay off my credit card debt in 18 months.'" aria-label="Additional notes and context"></textarea>
           <p id="submit-error" style="font-size:0.78rem;color:#F87171;display:none;margin-bottom:0.75rem;" role="alert" aria-live="polite"></p>
           <div class="d-flex justify-content-between align-items-center">
@@ -814,6 +900,13 @@
     const uid   = user.uid;
     const notes = document.getElementById('audit-notes').value.trim();
 
+    // Collect questionnaire responses
+    const questionnaire = {
+      estimatedSubscriptions: parseFloat(document.getElementById('q-subscriptions').value) || null,
+      estimatedDiningOut:     parseFloat(document.getElementById('q-lifestyle').value)     || null,
+      primaryObjective:       document.getElementById('q-objective').value                 || null,
+    };
+
     // Backstop validation
     if (incomeFiles.length === 0) {
       submitErr.textContent = 'Please go back to Step 2 and upload at least one income document.';
@@ -863,6 +956,7 @@
         auditStatus:        'submitted',
         submittedAt:        new Date(),
         notes:              notes,
+        questionnaire:      questionnaire,
         debts:              debts,
         incomeFilePaths:    incomeFilePaths,
         statementFilePaths: statementFilePaths,
