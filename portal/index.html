@@ -49,7 +49,7 @@
     .upload-file-list{list-style:none;padding:0;margin:0}
     .upload-file-list li{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--emerald);padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.04)}
     .upload-file-list li:last-child{border-bottom:none}
-    .security-notice{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:0.5rem;padding:0.75rem 1rem;font-size:0.8rem;color:#FCD34D;display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:1.5rem}
+    .security-notice{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:0.75rem;padding:1.1rem 1.25rem;font-size:0.82rem;color:#94A3B8;line-height:1.7;margin-bottom:1.5rem}
     .debt-table-wrap{overflow-x:auto;margin-bottom:1rem}
     .debt-table{width:100%;border-collapse:collapse;font-size:0.82rem}
     .debt-table th{text-align:left;font-size:0.68rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#64748B;padding:0 0.5rem 0.75rem;border-bottom:1px solid #1E293B;white-space:nowrap}
@@ -192,10 +192,10 @@
           <div class="step-eyebrow">Step 2 of 5</div>
           <h2 class="step-title">Upload your income documents</h2>
           <div class="security-notice" role="note">
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <span>For your security, please <strong>black out SSNs and full account numbers</strong> on any documents before uploading.</span>
+            <p style="margin:0 0 0.6rem;"><strong style="color:#F8FAFC;font-size:0.85rem;">You are in complete control of your data.</strong></p>
+            <p style="margin:0 0 0.6rem;">Because we perform human-led document audits rather than relying on automated bank-linking tools, you never have to share your bank passwords or link your active accounts.</p>
+            <p style="margin:0;">Before uploading your documents, please <strong style="color:#F8FAFC;">cross out, black out, or crop out</strong> your bank account numbers, home address, Social Security number, or other personal data. Our experts only need to see your line-item transactions, balances, and interest rates to manually map out your blueprint.</p>
           </div>
-          <div class="upload-zone" id="upload-zone-2">
             <input type="file" id="file-income" multiple accept=".pdf,.jpg,.jpeg,.png" aria-label="Upload income documents"/>
             <div class="upload-icon"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
             <div class="upload-title">Drag &amp; drop files here</div>
@@ -215,10 +215,10 @@
           <div class="step-eyebrow">Step 3 of 5</div>
           <h2 class="step-title">Upload your bank &amp; credit card statements</h2>
           <div class="security-notice" role="note">
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <span>For your security, please <strong>black out SSNs and full account numbers</strong> on any documents before uploading.</span>
+            <p style="margin:0 0 0.6rem;"><strong style="color:#F8FAFC;font-size:0.85rem;">You are in complete control of your data.</strong></p>
+            <p style="margin:0 0 0.6rem;">Because we perform human-led document audits rather than relying on automated bank-linking tools, you never have to share your bank passwords or link your active accounts.</p>
+            <p style="margin:0;">Before uploading your statements, please <strong style="color:#F8FAFC;">cross out, black out, or crop out</strong> your bank account numbers, home address, Social Security number, or other personal data. Our experts only need to see your line-item transactions, balances, and interest rates to manually map out your blueprint.</p>
           </div>
-          <div class="upload-zone" id="upload-zone-3">
             <input type="file" id="file-statements" multiple accept=".pdf,.jpg,.jpeg,.png" aria-label="Upload bank and credit card statements"/>
             <div class="upload-icon"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></div>
             <div class="upload-title">Drag &amp; drop files here</div>
