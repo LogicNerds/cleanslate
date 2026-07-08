@@ -343,17 +343,27 @@
         ? 'Build an emergency savings fund'
         : null;
 
-      const questionnaireHtml = (q.estimatedSubscriptions !== undefined && q.estimatedSubscriptions !== null)
-        || (q.estimatedDiningOut !== undefined && q.estimatedDiningOut !== null)
-        || objectiveLabel
+      const questionnaireHtml = (q.estimatedSubscriptions != null || q.estimatedDiningOut != null || objectiveLabel || q.monthlyRent != null || q.estimatedGroceries != null || q.monthlyDebtPayment != null)
         ? `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:${client.notes ? '1.25rem' : '0'};">
             <div style="background:rgba(15,23,42,0.4);border:1px solid #1E293B;border-radius:0.5rem;padding:0.75rem 1rem;">
+              <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#475569;margin-bottom:0.3rem;">Rent / Mortgage</div>
+              <div style="font-size:0.95rem;font-weight:600;color:#F8FAFC;">${q.monthlyRent != null ? '$' + q.monthlyRent.toLocaleString() + '/mo' : '<span style="color:#334155;font-style:italic;">Not provided</span>'}</div>
+            </div>
+            <div style="background:rgba(15,23,42,0.4);border:1px solid #1E293B;border-radius:0.5rem;padding:0.75rem 1rem;">
+              <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#475569;margin-bottom:0.3rem;">Grocery estimate</div>
+              <div style="font-size:0.95rem;font-weight:600;color:#F8FAFC;">${q.estimatedGroceries != null ? '$' + q.estimatedGroceries.toLocaleString() + '/mo' : '<span style="color:#334155;font-style:italic;">Not provided</span>'}</div>
+            </div>
+            <div style="background:rgba(15,23,42,0.4);border:1px solid #1E293B;border-radius:0.5rem;padding:0.75rem 1rem;">
+              <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#475569;margin-bottom:0.3rem;">Monthly debt payment</div>
+              <div style="font-size:0.95rem;font-weight:600;color:#F8FAFC;">${q.monthlyDebtPayment != null ? '$' + q.monthlyDebtPayment.toLocaleString() + '/mo' + (q.usedMinimumPayments ? ' (minimums)' : '') : '<span style="color:#334155;font-style:italic;">Not provided</span>'}</div>
+            </div>
+            <div style="background:rgba(15,23,42,0.4);border:1px solid #1E293B;border-radius:0.5rem;padding:0.75rem 1rem;">
               <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#475569;margin-bottom:0.3rem;">Subscription estimate</div>
-              <div style="font-size:0.95rem;font-weight:600;color:#F8FAFC;">${q.estimatedSubscriptions !== null && q.estimatedSubscriptions !== undefined ? '$' + q.estimatedSubscriptions + '/mo' : '<span style="color:#334155;font-style:italic;">Not provided</span>'}</div>
+              <div style="font-size:0.95rem;font-weight:600;color:#F8FAFC;">${q.estimatedSubscriptions != null ? '$' + q.estimatedSubscriptions + '/mo' : '<span style="color:#334155;font-style:italic;">Not provided</span>'}</div>
             </div>
             <div style="background:rgba(15,23,42,0.4);border:1px solid #1E293B;border-radius:0.5rem;padding:0.75rem 1rem;">
               <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#475569;margin-bottom:0.3rem;">Dining &amp; convenience estimate</div>
-              <div style="font-size:0.95rem;font-weight:600;color:#F8FAFC;">${q.estimatedDiningOut !== null && q.estimatedDiningOut !== undefined ? '$' + q.estimatedDiningOut + '/mo' : '<span style="color:#334155;font-style:italic;">Not provided</span>'}</div>
+              <div style="font-size:0.95rem;font-weight:600;color:#F8FAFC;">${q.estimatedDiningOut != null ? '$' + q.estimatedDiningOut + '/mo' : '<span style="color:#334155;font-style:italic;">Not provided</span>'}</div>
             </div>
             <div style="background:rgba(15,23,42,0.4);border:1px solid #1E293B;border-radius:0.5rem;padding:0.75rem 1rem;grid-column:1/-1;">
               <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#475569;margin-bottom:0.3rem;">Primary objective</div>
