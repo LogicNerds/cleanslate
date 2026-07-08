@@ -70,8 +70,6 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     .btn-loading .btn-spinner{display:inline-block}
     .btn-loading .btn-label{display:none}
-    /* Promo checking indicator */
-    .promo-checking{font-size:0.7rem;color:#64748B;margin-top:0.3rem;display:none}
   </style>
 </head>
 
@@ -258,10 +256,8 @@
             <div class="field-group">
               <div class="field-row">
                 <label for="signup-promo" class="field-label mb-0">Promo code <span style="color:#64748B;font-weight:400;">(optional)</span></label>
-                <span id="promo-badge" style="display:none;font-size:0.7rem;font-weight:600;color:var(--emerald);background:rgba(16,185,129,0.12);border-radius:9999px;padding:0.15rem 0.6rem;">&#10003; Free audit applied</span>
               </div>
               <input type="text" id="signup-promo" class="field" placeholder="Enter code if you have one" autocomplete="off" style="text-transform:uppercase;letter-spacing:0.05em;"/>
-              <div class="promo-checking" id="promo-checking" aria-live="polite">Checking code&#8230;</div>
             </div>
             <p id="signup-error" class="msg-error" role="alert" aria-live="polite"></p>
             <button id="signup-submit" type="button" class="btn-primary-cl w-100 py-3 mb-3">
@@ -324,7 +320,7 @@
           <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:0.5rem;padding:0.75rem 1rem;margin-bottom:1.25rem;font-size:0.78rem;color:#FCD34D;text-align:left;">
             <strong>Check your email</strong> — we just sent you a welcome message. If you don't see it in your inbox within a few minutes, check your spam folder and mark it as not spam.
           </div>
-          <a href="portal/" class="btn-primary-cl w-100 py-3">
+          <a id="portal-link" href="portal/" class="btn-primary-cl w-100 py-3">
             Open My Audit Portal
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           </a>
@@ -392,26 +388,6 @@
       }
     }
 
-    // ── Promo verification via Worker ────────────────────────────
-    // State: null = nothing entered, true = verified valid, false = verified invalid
-    let promoVerified = null;
-    let promoDebounceTimer = null;
-
-    async function verifyPromoWithWorker(code) {
-      try {
-        const res  = await fetch(WORKER_URL, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ action: 'verifyPromo', code }),
-        });
-        const data = await res.json();
-        return data.valid === true;
-      } catch (e) {
-        console.warn('Promo check failed:', e);
-        return false;
-      }
-    }
-
     // ── DOM refs ─────────────────────────────────────────────────
     const tabSignup      = document.getElementById('tab-signup');
     const tabLogin       = document.getElementById('tab-login');
@@ -432,8 +408,6 @@
     const authSuccess    = document.getElementById('auth-success');
     const navLoginBtn    = document.getElementById('nav-login-btn');
     const promoInput     = document.getElementById('signup-promo');
-    const promoBadge     = document.getElementById('promo-badge');
-    const promoChecking  = document.getElementById('promo-checking');
 
     // ── Helpers ──────────────────────────────────────────────────
     function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
@@ -445,15 +419,19 @@
       btn.classList.toggle('btn-loading', loading);
     }
 
-    function showAuthSuccess(isFreeAudit) {
+    function showAuthSuccess(promo) {
       authCard.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
       authCard.style.opacity    = '0';
       authCard.style.transform  = 'translateY(-8px)';
       setTimeout(() => {
         authCard.style.display = 'none';
-        document.getElementById('auth-success-msg').textContent = isFreeAudit
-          ? 'Your complimentary audit is confirmed. Upload your documents in the portal to kick things off.'
-          : 'Your secure portal is ready. Upload your documents to kick off your audit.';
+        document.getElementById('auth-success-msg').textContent =
+          'Your secure portal is ready. Upload your documents to kick off your audit.';
+        // Build portal URL — append promo if one was entered so it pre-fills on the portal
+        const portalUrl = promo
+          ? `portal/?promo=${encodeURIComponent(promo)}`
+          : 'portal/';
+        document.getElementById('portal-link').href = portalUrl;
         authSuccess.style.display = 'block';
         authSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 240);
@@ -472,36 +450,6 @@
     });
     navLoginBtn.addEventListener('click', () => activateTab(tabLogin, paneLogin, tabSignup, paneSignup));
 
-    // ── Promo live validation via Worker (debounced 500ms) ───────
-    promoInput.addEventListener('input', () => {
-      const val = promoInput.value.trim().toUpperCase();
-
-      // Reset state immediately on any change
-      promoVerified = null;
-      promoBadge.style.display    = 'none';
-      promoInput.style.borderColor = '#334155';
-      promoChecking.style.display  = 'none';
-      clearTimeout(promoDebounceTimer);
-
-      if (!val) return; // field cleared — nothing to check
-
-      // Show "Checking..." after a short pause, then hit the worker
-      promoDebounceTimer = setTimeout(async () => {
-        promoChecking.style.display = 'block';
-        const valid = await verifyPromoWithWorker(val);
-        promoChecking.style.display = 'none';
-        promoVerified = valid;
-
-        if (valid) {
-          promoBadge.style.display     = 'inline-block';
-          promoInput.style.borderColor  = 'var(--emerald)';
-        } else {
-          promoBadge.style.display     = 'none';
-          promoInput.style.borderColor  = '#334155';
-        }
-      }, 500);
-    });
-
     // ── Sign Up ──────────────────────────────────────────────────
     signupSubmit.addEventListener('click', async () => {
       clearError(signupError);
@@ -514,15 +462,6 @@
       if (!isValidEmail(email)) return showError(signupError, 'Please enter a valid email address.');
       if (password.length < 8)  return showError(signupError, 'Password must be at least 8 characters.');
 
-      // If a code was entered, it must have been verified by the worker
-      if (promo && promoVerified === null) {
-        return showError(signupError, 'Please wait — your promo code is still being verified.');
-      }
-      if (promo && promoVerified === false) {
-        return showError(signupError, 'That promo code isn\u2019t valid. Leave it blank to proceed at $79, or double-check your code.');
-      }
-
-      const isFreeAudit = promo !== '' && promoVerified === true;
       setLoading(signupSubmit, true);
 
       try {
@@ -533,7 +472,6 @@
           displayName:  name,
           email:        email,
           auditStatus:  'pending',
-          freeAudit:    isFreeAudit,
           promoCode:    promo || null,
           createdAt:    new Date(),
         });
@@ -571,13 +509,12 @@
               <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Name</td><td style="padding:0.5rem 0;font-weight:600;">${name}</td></tr>
               <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Email</td><td style="padding:0.5rem 0;">${email}</td></tr>
               <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Promo code</td><td style="padding:0.5rem 0;">${promo || 'None'}</td></tr>
-              <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Free audit</td><td style="padding:0.5rem 0;">${isFreeAudit ? 'Yes' : 'No — $79'}</td></tr>
             </table>
             <p style="margin-top:1.5rem;color:#64748B;font-size:0.85rem;">They haven't uploaded documents yet. You'll get another notification when they complete the wizard.</p>
           </div>`
         );
 
-        showAuthSuccess(isFreeAudit);
+        showAuthSuccess(promo);
       } catch (err) {
         const messages = {
           'auth/email-already-in-use': 'An account with that email already exists. Try signing in instead.',
@@ -601,7 +538,7 @@
       setLoading(loginSubmit, true);
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        showAuthSuccess(false);
+        showAuthSuccess('');
       } catch (err) {
         const messages = {
           'auth/invalid-credential':  'Incorrect email or password. Please try again.',
