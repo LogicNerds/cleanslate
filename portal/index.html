@@ -127,6 +127,8 @@
     ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#1E293B;border-radius:3px}
     @media(prefers-reduced-motion:reduce){*,::before,::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
   </style>
+  <!-- Gumroad overlay script -->
+  <script src="https://gumroad.com/js/gumroad.js"></script>
 </head>
 <body>
 <div class="portal-wrap">
@@ -269,10 +271,36 @@
           <h2 class="step-title">Anything else we should know?</h2>
           <p style="font-size:0.875rem;color:#64748B;margin-bottom:1.25rem;">Flag anything that might not show up in your statements — irregular expenses, goals, context.</p>
           <textarea id="audit-notes" class="notes-textarea" placeholder="Examples: 'I pay car insurance quarterly in March — about $480.' / 'My goal is to pay off my credit card debt in 18 months.'" aria-label="Additional notes and context"></textarea>
+
+          <!-- Promo code field -->
+          <div class="field-group" style="margin-bottom:1.25rem;">
+            <label for="portal-promo" style="display:block;font-size:0.75rem;font-weight:500;color:#94A3B8;margin-bottom:0.375rem;">
+              Promo code <span style="color:#64748B;font-weight:400;">(optional — applies discount at checkout)</span>
+            </label>
+            <input
+              type="text"
+              id="portal-promo"
+              style="width:100%;background:rgba(15,23,42,0.6);border:1px solid #334155;border-radius:0.5rem;color:#F8FAFC;padding:0.75rem 1rem;font-size:0.875rem;font-family:inherit;text-transform:uppercase;letter-spacing:0.05em;transition:border-color 0.2s;"
+              placeholder="Enter promo code if you have one"
+              autocomplete="off"
+            />
+          </div>
+
           <p id="submit-error" style="font-size:0.78rem;color:#F87171;display:none;margin-bottom:0.75rem;" role="alert" aria-live="polite"></p>
+
           <div class="d-flex justify-content-between align-items-center">
             <button class="btn-back-step" id="step-5-back"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg> Back</button>
-            <button class="btn-submit" id="submit-audit" type="button">Submit My Audit Request <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+            <a
+              id="gumroad-btn"
+              class="btn-submit"
+              href="https://elijahlogic.gumroad.com/l/pshph"
+              data-gumroad-overlay-checkout="true"
+              style="text-decoration:none;"
+              aria-label="Submit documents and pay"
+            >
+              Submit Documents &amp; Pay $79
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
           </div>
         </div>
 
@@ -570,6 +598,11 @@
     document.getElementById('wizard-state').style.display    = '';
     document.getElementById('dashboard-state').style.display = 'none';
     goToStep(1);
+    // Pre-fill promo from URL param, then build the initial Gumroad checkout URL
+    const urlPromo   = new URLSearchParams(window.location.search).get('promo');
+    const promoField = document.getElementById('portal-promo');
+    if (urlPromo && promoField) promoField.value = urlPromo.toUpperCase();
+    buildGumroadUrl();
   }
 
   // ── Wizard state machine ─────────────────────────────────────
@@ -698,36 +731,74 @@
     goToStep(5);
   });
 
-  // Step 5 — Notes & Submit
+  // Step 5 — Notes, promo & Gumroad
   document.getElementById('step-5-back').addEventListener('click', () => goToStep(4));
-  document.getElementById('submit-audit').addEventListener('click', async () => {
-    const submitBtn  = document.getElementById('submit-audit');
-    const submitErr  = document.getElementById('submit-error');
-    submitErr.style.display = 'none';
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Uploading…';
+
+  // ── Gumroad URL builder ──────────────────────────────────────
+  // Called on load and whenever the promo field changes.
+  // Builds the checkout URL with the user's email and promo code.
+  const GUMROAD_BASE = 'https://elijahlogic.gumroad.com/l/pshph';
+
+  function buildGumroadUrl() {
+    const email = auth.currentUser ? auth.currentUser.email : '';
+    const promo = document.getElementById('portal-promo')?.value.trim().toUpperCase() || '';
+    let url     = GUMROAD_BASE;
+    const params = [];
+    if (email) params.push(`email=${encodeURIComponent(email)}`);
+    if (promo) params.push(`wanted=true&off_code=${encodeURIComponent(promo)}`);
+    if (params.length) url += '?' + params.join('&');
+    document.getElementById('gumroad-btn').href = url;
+  }
+
+  // Update URL live as user edits the promo field
+  document.getElementById('portal-promo')?.addEventListener('input', buildGumroadUrl);
+
+  // ── Gumroad sale listener ────────────────────────────────────
+  // Fires when Gumroad confirms a successful purchase via postMessage.
+  // Only then do we upload files and write to Firestore.
+  window.addEventListener('message', async function(ev) {
+    if (!ev.data) return;
+    try {
+      const data = JSON.parse(ev.data);
+      if (data.post_message_name === 'sale') {
+        await executeSecureFileUpload();
+      }
+    } catch (e) {
+      // Safely ignore non-JSON messages from other iframes
+    }
+  }, false);
+
+  // ── executeSecureFileUpload ──────────────────────────────────
+  // Runs only after Gumroad confirms payment. Uploads files,
+  // writes to Firestore, sends emails, shows success screen.
+  async function executeSecureFileUpload() {
+    const submitErr = document.getElementById('submit-error');
+    if (submitErr) submitErr.style.display = 'none';
+
+    const gumroadBtn = document.getElementById('gumroad-btn');
+    if (gumroadBtn) {
+      gumroadBtn.style.pointerEvents = 'none';
+      gumroadBtn.style.opacity       = '0.6';
+      gumroadBtn.textContent         = 'Uploading…';
+    }
 
     const user  = auth.currentUser;
     const uid   = user.uid;
-    const notes = document.getElementById('audit-notes').value.trim();
+    const notes = document.getElementById('audit-notes')?.value.trim() || '';
 
-    // Backstop validation — should not normally be reachable due to step gates
+    // Backstop validation
     if (incomeFiles.length === 0) {
-      submitErr.textContent = 'Please go back to Step 2 and upload at least one income document.';
-      submitErr.style.display = 'block';
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit My Audit Request';
+      if (submitErr) { submitErr.textContent = 'Please go back to Step 2 and upload at least one income document.'; submitErr.style.display = 'block'; }
+      if (gumroadBtn) { gumroadBtn.style.pointerEvents = ''; gumroadBtn.style.opacity = '1'; gumroadBtn.textContent = 'Submit Documents & Pay $79'; }
       return;
     }
     if (statementFiles.length === 0) {
-      submitErr.textContent = 'Please go back to Step 3 and upload at least one bank or credit card statement.';
-      submitErr.style.display = 'block';
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit My Audit Request';
+      if (submitErr) { submitErr.textContent = 'Please go back to Step 3 and upload at least one bank or credit card statement.'; submitErr.style.display = 'block'; }
+      if (gumroadBtn) { gumroadBtn.style.pointerEvents = ''; gumroadBtn.style.opacity = '1'; gumroadBtn.textContent = 'Submit Documents & Pay $79'; }
       return;
     }
 
-    // Collect debt rows — sanitize inputs before parsing (handles $, commas, spaces)
+    // Collect debt rows
     const sanitize = v => parseFloat(String(v).replace(/[^\d.-]/g, '')) || 0;
     const debts = [];
     document.querySelectorAll('#debt-rows tr').forEach(row => {
@@ -814,12 +885,10 @@
       showSuccessScreen();
     } catch (err) {
       console.error('Submission error:', err);
-      submitErr.textContent = 'Upload failed. Please check your connection and try again.';
-      submitErr.style.display = 'block';
-      submitBtn.disabled   = false;
-      submitBtn.textContent = 'Submit My Audit Request';
+      if (submitErr) { submitErr.textContent = 'Upload failed. Please check your connection and try again.'; submitErr.style.display = 'block'; }
+      if (gumroadBtn) { gumroadBtn.style.pointerEvents = ''; gumroadBtn.style.opacity = '1'; gumroadBtn.textContent = 'Submit Documents & Pay $79'; }
     }
-  });
+  }
 
   function showSuccessScreen() {
     for (let i = 1; i <= TOTAL_STEPS; i++) {
