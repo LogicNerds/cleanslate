@@ -157,6 +157,22 @@
     const db      = getFirestore(app);
     const storage = getStorage(app);
 
+    // ── Cloudflare Worker URL ────────────────────────────────────
+    const WORKER_URL = 'https://summer-mode-328d.elijah-029.workers.dev';
+
+    // ── Email helper — fire-and-forget, never blocks UI ─────────
+    async function sendEmail(to, subject, html) {
+      try {
+        await fetch(WORKER_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ to, subject, html }),
+        });
+      } catch (e) {
+        console.warn('Email send failed:', e);
+      }
+    }
+
     // ── Auth gate: admin only ────────────────────────────────────
     onAuthStateChanged(auth, async user => {
       if (!user || user.uid !== ADMIN_UID) {
@@ -433,6 +449,33 @@
         if (pdfPath) update.pdfPath = pdfPath;
 
         await updateDoc(doc(db, 'users', id), update);
+
+        // ── Email A: Blueprint ready notification to client ──────
+        const clientSnap  = await getDoc(doc(db, 'users', id));
+        const clientData  = clientSnap.exists() ? clientSnap.data() : {};
+        const clientEmail = clientData.email || null;
+        const clientName  = clientData.displayName || 'there';
+
+        if (clientEmail) {
+          sendEmail(
+            clientEmail,
+            'Your Clean Slate Audit Blueprint is Ready!',
+            `<div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;color:#1E293B;">
+              <h2 style="color:#10B981;">Your blueprint is ready, ${clientName}!</h2>
+              <p>Your custom spending and debt audit is complete. Log into your portal to:</p>
+              <ul style="padding-left:1.25rem;color:#334155;line-height:1.9;">
+                <li>Watch your personal video walkthrough</li>
+                <li>Download your custom PDF blueprint</li>
+                <li>Open your interactive budget spreadsheet</li>
+              </ul>
+              <p style="margin-top:1.5rem;">
+                <a href="https://cleanslateaudit.com/portal/" style="background:#10B981;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;">View My Blueprint</a>
+              </p>
+              <p style="color:#64748B;font-size:0.85rem;margin-top:2rem;">If you have any questions about your results, just reply to this email.</p>
+              <p style="color:#64748B;font-size:0.85rem;">\u2014 The Clean Slate Team</p>
+            </div>`
+          );
+        }
 
         // Update local clients cache
         const client = clients.find(c => c.id === id);
