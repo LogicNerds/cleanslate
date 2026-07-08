@@ -628,6 +628,12 @@
       }
     });
 
+    // ── Auto-open Sign In tab if redirected from portal ─────────
+    if (new URLSearchParams(window.location.search).get('signin') === 'true') {
+      activateTab(tabLogin, paneLogin, tabSignup, paneSignup);
+      document.getElementById('auth-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
     // ── Smooth scroll ────────────────────────────────────────────
     document.querySelectorAll('a[href="#auth-section"]').forEach(link => {
       link.addEventListener('click', e => {
