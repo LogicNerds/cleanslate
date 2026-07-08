@@ -245,6 +245,18 @@
             </table>
           </div>
           <button class="btn-add-row" id="add-debt-row" type="button"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Add debt row</button>
+
+          <!-- Zero-debt confirmation — shown only when no rows have a name filled in -->
+          <div id="zero-debt-confirm" style="display:none;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:0.5rem;padding:0.875rem 1rem;margin-bottom:1.25rem;">
+            <div class="agree-row" style="margin-bottom:0;">
+              <input type="checkbox" id="zero-debt-checkbox" class="agree-checkbox" aria-required="true"/>
+              <label for="zero-debt-checkbox" class="agree-label" style="font-size:0.82rem;color:#FCD34D;">
+                I have zero debt — confirm and continue
+              </label>
+            </div>
+          </div>
+          <p id="step-4-error" style="font-size:0.75rem;color:#F87171;display:none;margin-bottom:0.75rem;" role="alert" aria-live="polite"></p>
+
           <div class="d-flex justify-content-between align-items-center">
             <button class="btn-back-step" id="step-4-back"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg> Back</button>
             <button class="btn-next" id="step-4-next">Continue <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></button>
@@ -514,11 +526,13 @@
       document.getElementById('dashboard-name').textContent = data.displayName + '\u2019s Blueprint is Ready';
     }
 
-    // Loom video embed
+    // Loom video embed — regex extracts ID robustly, ignoring trailing slashes and query params
     if (data.loomUrl) {
-      const videoId = data.loomUrl.split('/').pop().split('?')[0];
-      document.getElementById('video-container').innerHTML =
-        `<iframe src="https://www.loom.com/embed/${videoId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;"></iframe>`;
+      const loomMatch = data.loomUrl.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/);
+      if (loomMatch) {
+        document.getElementById('video-container').innerHTML =
+          `<iframe src="https://www.loom.com/embed/${loomMatch[1]}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;"></iframe>`;
+      }
     }
 
     // PDF download URL from Storage
@@ -606,6 +620,26 @@
 
   // Step 4 — Debt
   let debtRowCount = 0;
+
+  function hasNamedDebtRow() {
+    return Array.from(document.querySelectorAll('#debt-rows tr')).some(row => {
+      const input = row.querySelector('input');
+      return input && input.value.trim() !== '';
+    });
+  }
+
+  function updateDebtGate() {
+    const hasDebts   = hasNamedDebtRow();
+    const zeroBox    = document.getElementById('zero-debt-checkbox');
+    const zeroPanel  = document.getElementById('zero-debt-confirm');
+    const step4Err   = document.getElementById('step-4-error');
+
+    // Show zero-debt confirm only when table is empty
+    zeroPanel.style.display = hasDebts ? 'none' : '';
+    if (hasDebts) zeroBox.checked = false;
+    step4Err.style.display = 'none';
+  }
+
   function addDebtRow() {
     debtRowCount++;
     const id  = debtRowCount;
@@ -613,18 +647,40 @@
     row.id    = 'debt-row-' + id;
     row.innerHTML = `
       <td><input type="text"   class="debt-input" placeholder="e.g. Visa card" aria-label="Debt name ${id}"/></td>
-      <td><input type="number" class="debt-input" placeholder="0.00" min="0" step="0.01" aria-label="Balance ${id}"/></td>
-      <td><input type="number" class="debt-input" placeholder="0.00" min="0" step="0.01" aria-label="Rate ${id}"/></td>
-      <td><input type="number" class="debt-input" placeholder="0.00" min="0" step="0.01" aria-label="Min payment ${id}"/></td>
+      <td><input type="text"   class="debt-input" placeholder="0.00" aria-label="Balance ${id}"/></td>
+      <td><input type="text"   class="debt-input" placeholder="0.00" aria-label="Rate ${id}"/></td>
+      <td><input type="text"   class="debt-input" placeholder="0.00" aria-label="Min payment ${id}"/></td>
       <td><button class="btn-remove-row" type="button" aria-label="Remove row ${id}" onclick="removeDebtRow(${id})"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></td>`;
     document.getElementById('debt-rows').appendChild(row);
-    row.querySelector('input').focus();
+    const firstInput = row.querySelector('input');
+    firstInput.focus();
+    // Update gate whenever any input changes
+    row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', updateDebtGate));
   }
-  window.removeDebtRow = function(id) { const r = document.getElementById('debt-row-' + id); if (r) r.remove(); };
+
+  window.removeDebtRow = function(id) {
+    const r = document.getElementById('debt-row-' + id);
+    if (r) { r.remove(); updateDebtGate(); }
+  };
+
   addDebtRow();
+  updateDebtGate();
+
   document.getElementById('add-debt-row').addEventListener('click', addDebtRow);
   document.getElementById('step-4-back').addEventListener('click', () => goToStep(3));
-  document.getElementById('step-4-next').addEventListener('click', () => goToStep(5));
+  document.getElementById('step-4-next').addEventListener('click', () => {
+    const hasDebts  = hasNamedDebtRow();
+    const zeroBox   = document.getElementById('zero-debt-checkbox');
+    const step4Err  = document.getElementById('step-4-error');
+
+    if (!hasDebts && !zeroBox.checked) {
+      step4Err.textContent = 'Please list at least one debt, or check the box to confirm you have zero debt.';
+      step4Err.style.display = 'block';
+      return;
+    }
+    step4Err.style.display = 'none';
+    goToStep(5);
+  });
 
   // Step 5 — Notes & Submit
   document.getElementById('step-5-back').addEventListener('click', () => goToStep(4));
@@ -655,16 +711,17 @@
       return;
     }
 
-    // Collect debt rows
+    // Collect debt rows — sanitize inputs before parsing (handles $, commas, spaces)
+    const sanitize = v => parseFloat(String(v).replace(/[^\d.-]/g, '')) || 0;
     const debts = [];
     document.querySelectorAll('#debt-rows tr').forEach(row => {
       const inputs = row.querySelectorAll('input');
       if (inputs[0] && inputs[0].value.trim()) {
         debts.push({
           name:       inputs[0].value.trim(),
-          balance:    parseFloat(inputs[1].value) || 0,
-          rate:       parseFloat(inputs[2].value) || 0,
-          minPayment: parseFloat(inputs[3].value) || 0,
+          balance:    sanitize(inputs[1].value),
+          rate:       sanitize(inputs[2].value),
+          minPayment: sanitize(inputs[3].value),
         });
       }
     });
@@ -722,27 +779,54 @@
   }
 
   // ── File upload helper ───────────────────────────────────────
+  // Files accumulate across selections/drops rather than overwriting.
+  // Each listed file has an × button to remove it individually.
   function setupFileUpload(inputId, listId, zoneId, onFilesSelected) {
-    const input = document.getElementById(inputId);
-    const list  = document.getElementById(listId);
-    const zone  = document.getElementById(zoneId);
+    const input     = document.getElementById(inputId);
+    const list      = document.getElementById(listId);
+    const zone      = document.getElementById(zoneId);
+    let accumulated = []; // master list for this upload zone
 
-    function renderFiles(files) {
+    function renderAccumulated() {
       list.innerHTML = '';
-      Array.from(files).forEach(f => {
+      accumulated.forEach((f, idx) => {
         const li = document.createElement('li');
-        li.innerHTML = `<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> ${f.name} <span style="color:#475569;margin-left:auto;">${(f.size/1024).toFixed(0)} KB</span>`;
+        li.style.cssText = 'display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--emerald);padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.04);';
+        li.innerHTML = `
+          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</span>
+          <span style="color:#475569;flex-shrink:0;">${(f.size/1024).toFixed(0)} KB</span>
+          <button type="button" aria-label="Remove ${f.name}" style="background:none;border:none;color:#475569;cursor:pointer;padding:0 0.2rem;line-height:1;flex-shrink:0;transition:color 0.15s;" onmouseover="this.style.color='#F87171'" onmouseout="this.style.color='#475569'" data-idx="${idx}">
+            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>`;
+        li.querySelector('button').addEventListener('click', () => {
+          accumulated.splice(idx, 1);
+          renderAccumulated();
+          onFilesSelected([...accumulated]);
+        });
         list.appendChild(li);
       });
-      onFilesSelected(Array.from(files));
+      onFilesSelected([...accumulated]);
     }
 
-    input.addEventListener('change', () => renderFiles(input.files));
+    function addFiles(newFiles) {
+      Array.from(newFiles).forEach(f => {
+        // Deduplicate by name+size so dropping the same file twice doesn't double it
+        if (!accumulated.some(e => e.name === f.name && e.size === f.size)) {
+          accumulated.push(f);
+        }
+      });
+      renderAccumulated();
+      // Reset input so the same file can be re-selected after removal
+      input.value = '';
+    }
+
+    input.addEventListener('change', () => addFiles(input.files));
     zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag-over'); });
     zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
     zone.addEventListener('drop', e => {
       e.preventDefault(); zone.classList.remove('drag-over');
-      if (e.dataTransfer?.files.length) renderFiles(e.dataTransfer.files);
+      if (e.dataTransfer?.files.length) addFiles(e.dataTransfer.files);
     });
   }
 </script>
