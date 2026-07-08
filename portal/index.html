@@ -62,6 +62,54 @@
     .btn-remove-row:hover{color:#F87171}
     .btn-add-row{background:none;border:1px dashed #334155;color:#64748B;border-radius:0.5rem;padding:0.6rem 1rem;font-size:0.82rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;transition:border-color 0.15s,color 0.15s;margin-bottom:1.5rem}
     .btn-add-row:hover{border-color:var(--emerald);color:var(--emerald)}
+
+    /* Mobile debt cards — hidden on desktop */
+    .debt-cards{ display:none; margin-bottom:1rem; }
+    .debt-card{
+      background:rgba(15,23,42,0.5);
+      border:1px solid #1E293B;
+      border-radius:0.625rem;
+      padding:0.875rem;
+      margin-bottom:0.625rem;
+      position:relative;
+    }
+    .debt-card-name{ margin-bottom:0.625rem; }
+    .debt-card-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:0.5rem;
+    }
+    .debt-card-field label{
+      display:block;
+      font-size:0.65rem;
+      font-weight:600;
+      letter-spacing:0.05em;
+      text-transform:uppercase;
+      color:#475569;
+      margin-bottom:0.25rem;
+    }
+    .debt-card-remove{
+      position:absolute;
+      top:0.625rem;
+      right:0.625rem;
+    }
+
+    @media (max-width:600px) {
+      /* Tighten card padding on small screens */
+      .step-card { padding:1.25rem; }
+      /* Hide table, show cards */
+      .debt-table-wrap { display:none; }
+      .debt-cards { display:block; }
+      /* Tighten portal main padding */
+      .portal-main { padding:1.5rem 0.75rem 4rem; }
+      /* Dashboard header stacks gracefully */
+      .dashboard-header { flex-direction:column; align-items:flex-start; gap:0.625rem; padding:1.1rem 1.25rem; }
+      /* Deliverable buttons — tighten */
+      .deliverable-btn { padding:0.875rem 1rem; }
+      .deliverable-title { font-size:0.82rem; }
+      /* Step nav buttons full-width on very small screens */
+      .btn-submit { font-size:0.85rem; padding:0.85rem 1rem; }
+    }
     .notes-textarea{width:100%;background:rgba(15,23,42,0.6);border:1px solid #334155;border-radius:0.5rem;color:#F8FAFC;padding:0.85rem 1rem;font-size:0.875rem;font-family:inherit;line-height:1.6;resize:vertical;min-height:10rem;margin-bottom:1.5rem;transition:border-color 0.2s,box-shadow 0.2s}
     .notes-textarea:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(99,102,241,0.12)}
     .notes-textarea::placeholder{color:#475569}
@@ -246,6 +294,8 @@
               <tbody id="debt-rows"></tbody>
             </table>
           </div>
+          <!-- Mobile card view — shown instead of table on small screens -->
+          <div class="debt-cards" id="debt-cards" aria-label="Debt inventory"></div>
           <button class="btn-add-row" id="add-debt-row" type="button"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Add debt row</button>
 
           <!-- Zero-debt confirmation — shown only when no rows have a name filled in -->
@@ -660,25 +710,76 @@
 
   function addDebtRow() {
     debtRowCount++;
-    const id  = debtRowCount;
+    const id = debtRowCount;
+
+    // ── Desktop: table row ───────────────────────────────────────
     const row = document.createElement('tr');
     row.id    = 'debt-row-' + id;
     row.innerHTML = `
-      <td><input type="text"   class="debt-input" placeholder="e.g. Visa card" aria-label="Debt name ${id}"/></td>
-      <td><input type="text"   class="debt-input" placeholder="0.00" aria-label="Balance ${id}"/></td>
-      <td><input type="text"   class="debt-input" placeholder="0.00" aria-label="Rate ${id}"/></td>
-      <td><input type="text"   class="debt-input" placeholder="0.00" aria-label="Min payment ${id}"/></td>
+      <td><input type="text" class="debt-input" placeholder="e.g. Visa card" aria-label="Debt name ${id}"/></td>
+      <td><input type="text" class="debt-input" placeholder="0.00" aria-label="Balance ${id}"/></td>
+      <td><input type="text" class="debt-input" placeholder="0.00" aria-label="Rate ${id}"/></td>
+      <td><input type="text" class="debt-input" placeholder="0.00" aria-label="Min payment ${id}"/></td>
       <td><button class="btn-remove-row" type="button" aria-label="Remove row ${id}" onclick="removeDebtRow(${id})"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></td>`;
     document.getElementById('debt-rows').appendChild(row);
-    const firstInput = row.querySelector('input');
-    firstInput.focus();
-    // Update gate whenever any input changes
     row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', updateDebtGate));
+
+    // ── Mobile: card ─────────────────────────────────────────────
+    const card = document.createElement('div');
+    card.className = 'debt-card';
+    card.id        = 'debt-card-' + id;
+    card.innerHTML = `
+      <button class="btn-remove-row debt-card-remove" type="button" aria-label="Remove debt ${id}" onclick="removeDebtRow(${id})">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <div class="debt-card-name">
+        <label style="display:block;font-size:0.65rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#475569;margin-bottom:0.25rem;">Debt name</label>
+        <input type="text" class="debt-input debt-card-input" data-row="${id}" data-col="0" placeholder="e.g. Visa card" aria-label="Debt name ${id}"/>
+      </div>
+      <div class="debt-card-grid">
+        <div class="debt-card-field">
+          <label>Balance ($)</label>
+          <input type="text" class="debt-input debt-card-input" data-row="${id}" data-col="1" placeholder="0.00" aria-label="Balance ${id}"/>
+        </div>
+        <div class="debt-card-field">
+          <label>Rate (%)</label>
+          <input type="text" class="debt-input debt-card-input" data-row="${id}" data-col="2" placeholder="0.00" aria-label="Rate ${id}"/>
+        </div>
+        <div class="debt-card-field">
+          <label>Min. payment ($)</label>
+          <input type="text" class="debt-input debt-card-input" data-row="${id}" data-col="3" placeholder="0.00" aria-label="Min payment ${id}"/>
+        </div>
+      </div>`;
+    document.getElementById('debt-cards').appendChild(card);
+
+    // Sync card inputs → table row inputs so submission reads from one place
+    card.querySelectorAll('.debt-card-input').forEach(cardInput => {
+      cardInput.addEventListener('input', () => {
+        const col       = parseInt(cardInput.dataset.col);
+        const tableRow  = document.getElementById('debt-row-' + id);
+        if (tableRow) {
+          const tableInput = tableRow.querySelectorAll('input')[col];
+          if (tableInput) tableInput.value = cardInput.value;
+        }
+        updateDebtGate();
+      });
+    });
+
+    // Focus first input in whichever view is visible
+    const isMobile = window.innerWidth <= 600;
+    if (isMobile) {
+      card.querySelector('input')?.focus();
+    } else {
+      row.querySelector('input')?.focus();
+    }
   }
 
   window.removeDebtRow = function(id) {
-    const r = document.getElementById('debt-row-' + id);
-    if (r) { r.remove(); updateDebtGate(); }
+    const row  = document.getElementById('debt-row-' + id);
+    const card = document.getElementById('debt-card-' + id);
+    if (row)  row.remove();
+    if (card) card.remove();
+    updateDebtGate();
   };
 
   addDebtRow();
