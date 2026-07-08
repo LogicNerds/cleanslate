@@ -402,6 +402,35 @@
             </select>
           </div>
 
+          <!-- Q4: Rent/mortgage -->
+          <div class="q-block">
+            <label for="q-rent" class="q-label">
+              What is your monthly rent or mortgage payment?
+            </label>
+            <input type="number" id="q-rent" class="q-input" placeholder="e.g. 1450" min="0" step="1" aria-label="Monthly rent or mortgage"/>
+          </div>
+
+          <!-- Q5: Groceries -->
+          <div class="q-block">
+            <label for="q-groceries" class="q-label">
+              Roughly how much do you spend on groceries each month? <span style="color:#64748B;">(supermarkets and grocery stores only — not restaurants or delivery)</span>
+            </label>
+            <input type="number" id="q-groceries" class="q-input" placeholder="e.g. 600" min="0" step="1" aria-label="Monthly grocery spend estimate"/>
+          </div>
+
+          <!-- Q6: Debt payments -->
+          <div class="q-block">
+            <label for="q-debtpayment" class="q-label">
+              How much do you pay toward debt each month in total?
+            </label>
+            <input type="number" id="q-debtpayment" class="q-input" placeholder="e.g. 850" min="0" step="1" aria-label="Monthly total debt payment"/>
+            <div class="agree-row" style="margin-top:0.75rem;margin-bottom:0;">
+              <input type="checkbox" id="q-use-minimums" class="agree-checkbox" aria-label="Use minimum payments from debt table"/>
+              <label for="q-use-minimums" class="agree-label" style="font-size:0.8rem;">Use my minimum monthly payments total from my debt list above</label>
+            </div>
+            <p id="q-minimums-hint" style="font-size:0.72rem;color:#64748B;display:none;margin-top:0.375rem;">Total minimum payments from your debt list: <strong id="q-minimums-total" style="color:#94A3B8;">$0</strong></p>
+          </div>
+
           <hr class="q-divider"/>
 
           <p style="font-size:0.875rem;color:#94A3B8;margin-bottom:0.5rem;">Anything else we should know?</p>
@@ -900,11 +929,41 @@
     const uid   = user.uid;
     const notes = document.getElementById('audit-notes').value.trim();
 
+    // ── Minimums checkbox — sums debt table min payments ────────
+    document.getElementById('q-use-minimums').addEventListener('change', function() {
+      const debtInput  = document.getElementById('q-debtpayment');
+      const hint       = document.getElementById('q-minimums-hint');
+      const totalEl    = document.getElementById('q-minimums-total');
+
+      if (this.checked) {
+        // Sum all min payment inputs from the debt table
+        let total = 0;
+        document.querySelectorAll('#debt-rows tr').forEach(row => {
+          const inputs = row.querySelectorAll('input');
+          if (inputs[3]) {
+            const sanitize = v => parseFloat(String(v).replace(/[^\d.-]/g, '')) || 0;
+            total += sanitize(inputs[3].value);
+          }
+        });
+        debtInput.value    = total;
+        debtInput.disabled = true;
+        totalEl.textContent = '$' + total.toLocaleString();
+        hint.style.display  = 'block';
+      } else {
+        debtInput.disabled  = false;
+        hint.style.display  = 'none';
+      }
+    });
+
     // Collect questionnaire responses
     const questionnaire = {
       estimatedSubscriptions: parseFloat(document.getElementById('q-subscriptions').value) || null,
       estimatedDiningOut:     parseFloat(document.getElementById('q-lifestyle').value)     || null,
       primaryObjective:       document.getElementById('q-objective').value                 || null,
+      monthlyRent:            parseFloat(document.getElementById('q-rent').value)          || null,
+      estimatedGroceries:     parseFloat(document.getElementById('q-groceries').value)     || null,
+      monthlyDebtPayment:     parseFloat(document.getElementById('q-debtpayment').value)   || null,
+      usedMinimumPayments:    document.getElementById('q-use-minimums').checked,
     };
 
     // Backstop validation
