@@ -320,7 +320,10 @@
             <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
           </div>
           <h3 class="font-display fw-bold text-white mb-2" style="font-size:1.2rem;">You're in!</h3>
-          <p id="auth-success-msg" style="color:#94A3B8;font-size:0.875rem;" class="mb-4">Your secure portal is ready. Upload your documents to kick off your audit.</p>
+          <p id="auth-success-msg" style="color:#94A3B8;font-size:0.875rem;" class="mb-3">Your secure portal is ready. Upload your documents to kick off your audit.</p>
+          <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:0.5rem;padding:0.75rem 1rem;margin-bottom:1.25rem;font-size:0.78rem;color:#FCD34D;text-align:left;">
+            <strong>Check your email</strong> — we just sent you a welcome message. If you don't see it in your inbox within a few minutes, check your spam folder and mark it as not spam.
+          </div>
           <a href="portal/" class="btn-primary-cl w-100 py-3">
             Open My Audit Portal
             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
@@ -541,13 +544,20 @@
           'Welcome to Clean Slate Audit!',
           `<div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;color:#1E293B;">
             <h2 style="color:#10B981;">Welcome, ${name}!</h2>
-            <p>Your Clean Slate account is set up and ready to go.</p>
-            <p>The next step is to log into your portal and complete your document uploads so we can get started building your custom spending and debt blueprint.</p>
+            <p>Thanks for signing up for Clean Slate Audit. Your account is active and your portal is ready.</p>
+            <p>Here's what happens next:</p>
+            <ol style="padding-left:1.25rem;line-height:1.9;color:#334155;">
+              <li>Log into your portal and complete the short onboarding wizard</li>
+              <li>Upload your bank statements, paystubs, and any other relevant documents</li>
+              <li>A real person will manually review your numbers and build your custom blueprint</li>
+              <li>You'll receive an email when your blueprint is ready — typically within 7 business days</li>
+            </ol>
+            <p>Your blueprint includes a personalized spending map, a debt payoff sequence, a video walkthrough, a downloadable PDF, and an interactive budget spreadsheet.</p>
             <p style="margin-top:1.5rem;">
               <a href="https://logicnerds.github.io/cleanslate/portal/" style="background:#10B981;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;">Open My Portal</a>
             </p>
-            <p style="color:#64748B;font-size:0.85rem;margin-top:2rem;">Your blueprint will be ready within 7 business days of your document upload. If you have any questions, just reply to this email.</p>
-            <p style="color:#64748B;font-size:0.85rem;">— The Clean Slate Team</p>
+            <p style="color:#64748B;font-size:0.85rem;margin-top:2rem;">If you have any questions at any point, just reply to this email and we'll get back to you.</p>
+            <p style="color:#64748B;font-size:0.85rem;">— Elijah<br>Clean Slate Audit</p>
           </div>`
         );
 
