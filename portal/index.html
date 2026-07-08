@@ -203,6 +203,7 @@
           </div>
           <p style="font-size:0.78rem;color:#64748B;margin-bottom:0.75rem;">Suggested: recent paystubs (last 2–3), most recent W-2 or 1099, or latest tax return.</p>
           <ul class="upload-file-list" id="file-list-2" aria-label="Selected income files" aria-live="polite"></ul>
+          <p style="font-size:0.75rem;color:#475569;margin-top:0.5rem;margin-bottom:0;" aria-live="polite" id="step-2-hint">Upload at least one file to continue.</p>
           <div class="d-flex justify-content-between align-items-center mt-4">
             <button class="btn-back-step" id="step-2-back"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg> Back</button>
             <button class="btn-next" id="step-2-next">Continue <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></button>
@@ -225,6 +226,7 @@
           </div>
           <p style="font-size:0.78rem;color:#64748B;margin-bottom:0.75rem;">Please include <strong style="color:#94A3B8;">3 months</strong> of statements for every checking, savings, and credit card account.</p>
           <ul class="upload-file-list" id="file-list-3" aria-label="Selected statement files" aria-live="polite"></ul>
+          <p style="font-size:0.75rem;color:#475569;margin-top:0.5rem;margin-bottom:0;" aria-live="polite" id="step-3-hint">Upload at least one file to continue.</p>
           <div class="d-flex justify-content-between align-items-center mt-4">
             <button class="btn-back-step" id="step-3-back"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg> Back</button>
             <button class="btn-next" id="step-3-next">Continue <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></button>
@@ -583,14 +585,24 @@
   step1Next.addEventListener('click', () => { if (agreeCheckbox.checked) goToStep(2); });
 
   // Step 2 — Income
-  setupFileUpload('file-income', 'file-list-2', 'upload-zone-2', files => { incomeFiles = files; });
+  setupFileUpload('file-income', 'file-list-2', 'upload-zone-2', files => {
+    incomeFiles = files;
+    document.getElementById('step-2-next').disabled = files.length === 0;
+    document.getElementById('step-2-hint').style.display = files.length > 0 ? 'none' : '';
+  });
+  document.getElementById('step-2-next').disabled = true;
   document.getElementById('step-2-back').addEventListener('click', () => goToStep(1));
-  document.getElementById('step-2-next').addEventListener('click', () => goToStep(3));
+  document.getElementById('step-2-next').addEventListener('click', () => { if (incomeFiles.length > 0) goToStep(3); });
 
   // Step 3 — Statements
-  setupFileUpload('file-statements', 'file-list-3', 'upload-zone-3', files => { statementFiles = files; });
+  setupFileUpload('file-statements', 'file-list-3', 'upload-zone-3', files => {
+    statementFiles = files;
+    document.getElementById('step-3-next').disabled = files.length === 0;
+    document.getElementById('step-3-hint').style.display = files.length > 0 ? 'none' : '';
+  });
+  document.getElementById('step-3-next').disabled = true;
   document.getElementById('step-3-back').addEventListener('click', () => goToStep(2));
-  document.getElementById('step-3-next').addEventListener('click', () => goToStep(4));
+  document.getElementById('step-3-next').addEventListener('click', () => { if (statementFiles.length > 0) goToStep(4); });
 
   // Step 4 — Debt
   let debtRowCount = 0;
@@ -626,6 +638,22 @@
     const user  = auth.currentUser;
     const uid   = user.uid;
     const notes = document.getElementById('audit-notes').value.trim();
+
+    // Backstop validation — should not normally be reachable due to step gates
+    if (incomeFiles.length === 0) {
+      submitErr.textContent = 'Please go back to Step 2 and upload at least one income document.';
+      submitErr.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit My Audit Request';
+      return;
+    }
+    if (statementFiles.length === 0) {
+      submitErr.textContent = 'Please go back to Step 3 and upload at least one bank or credit card statement.';
+      submitErr.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit My Audit Request';
+      return;
+    }
 
     // Collect debt rows
     const debts = [];
