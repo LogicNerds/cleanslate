@@ -3,961 +3,641 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Portal — Clean Slate</title>
+  <title>Clean Slate — Your Spending & Debt Audit</title>
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
   <style>
-    :root{--navy:#0F172A;--navy-light:#1E293B;--navy-muted:#334155;--emerald:#10B981;--emerald-dark:#059669;--indigo:#6366F1;--indigo-light:#818CF8;--gold:#F59E0B}
+    :root{--navy:#0F172A;--navy-light:#1E293B;--navy-muted:#334155;--emerald:#10B981;--emerald-dark:#059669;--indigo:#6366F1;--indigo-light:#818CF8;--gold:#F59E0B;--gold-light:#FCD34D}
     html{scroll-behavior:smooth}
     body{font-family:'Inter',system-ui,sans-serif;background-color:var(--navy);color:#F8FAFC;min-height:100vh}
     .font-display{font-family:'Playfair Display',Georgia,serif}
-    .portal-wrap{min-height:100vh;display:flex;flex-direction:column}
-    .portal-nav{height:4rem;background:rgba(15,23,42,0.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;position:sticky;top:0;z-index:100}
+    .site-nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:4rem;background:rgba(15,23,42,0.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center}
     .nav-logo-icon{width:1.75rem;height:1.75rem;border-radius:6px;background:var(--emerald);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .portal-nav .logout-btn{font-size:0.8rem;font-weight:500;color:#64748B;background:none;border:none;cursor:pointer;padding:0.25rem 0.5rem;border-radius:4px;transition:color 0.15s}
-    .portal-nav .logout-btn:hover{color:#CBD5E1}
-    .portal-main{flex:1;padding:2.5rem 1rem 5rem}
-    .portal-inner{max-width:42rem;margin:0 auto}
-    .wizard-progress{margin-bottom:2.5rem}
-    .progress-track{height:3px;background:rgba(255,255,255,0.08);border-radius:9999px;overflow:hidden;margin-bottom:1rem}
-    .progress-fill{height:100%;background:linear-gradient(90deg,var(--emerald),#34D399);border-radius:9999px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1)}
-    .step-labels{display:flex;justify-content:space-between}
-    .step-label{font-size:0.65rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#334155;transition:color 0.3s;text-align:center;flex:1}
-    .step-label.active{color:var(--emerald)}.step-label.done{color:#475569}
-    .step-card{background:rgba(30,41,59,0.7);border:1px solid rgba(255,255,255,0.07);border-radius:1rem;padding:2rem}
-    .step-eyebrow{font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--emerald);margin-bottom:0.5rem}
-    .step-title{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.4rem;color:#F8FAFC;margin-bottom:1.25rem;line-height:1.3}
-    .btn-next{background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));color:#fff;border:none;font-weight:600;border-radius:0.625rem;padding:0.75rem 1.75rem;cursor:pointer;font-size:0.9rem;display:inline-flex;align-items:center;gap:0.5rem;transition:transform 0.15s,box-shadow 0.15s}
-    .btn-next:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,0.3)}.btn-next:active{transform:translateY(0)}
-    .btn-next:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
-    .btn-back-step{background:none;border:1px solid #334155;color:#94A3B8;font-weight:500;border-radius:0.625rem;padding:0.75rem 1.25rem;cursor:pointer;font-size:0.9rem;display:inline-flex;align-items:center;gap:0.5rem;transition:border-color 0.15s,color 0.15s}
-    .btn-back-step:hover{border-color:#64748B;color:#F8FAFC}
-    .disclaimer-box{background:rgba(15,23,42,0.5);border:1px solid #1E293B;border-radius:0.5rem;padding:1.25rem;max-height:14rem;overflow-y:auto;font-size:0.82rem;line-height:1.75;color:#94A3B8;margin-bottom:1.25rem}
-    .disclaimer-box::-webkit-scrollbar{width:4px}.disclaimer-box::-webkit-scrollbar-track{background:transparent}.disclaimer-box::-webkit-scrollbar-thumb{background:#334155;border-radius:2px}
-    .disclaimer-box p{margin-bottom:0.75rem}.disclaimer-box p:last-child{margin-bottom:0}
-    .agree-row{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem}
-    .agree-checkbox{width:1.1rem;height:1.1rem;accent-color:var(--emerald);cursor:pointer;flex-shrink:0}
-    .agree-label{font-size:0.85rem;color:#CBD5E1;cursor:pointer}
-    .upload-zone{border:2px dashed #334155;border-radius:0.75rem;padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;position:relative;margin-bottom:1rem}
-    .upload-zone:hover,.upload-zone.drag-over{border-color:var(--emerald);background:rgba(16,185,129,0.04)}
-    .upload-zone input[type="file"]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
-    .upload-icon{width:2.5rem;height:2.5rem;border-radius:0.625rem;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
-    .upload-title{font-size:0.9rem;font-weight:600;color:#F8FAFC;margin-bottom:0.25rem}
-    .upload-sub{font-size:0.78rem;color:#64748B}
-    .upload-file-list{list-style:none;padding:0;margin:0}
-    .upload-file-list li{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--emerald);padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.04)}
-    .upload-file-list li:last-child{border-bottom:none}
-    .security-notice{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:0.75rem;padding:1.1rem 1.25rem;font-size:0.82rem;color:#94A3B8;line-height:1.7;margin-bottom:1.5rem}
-    .debt-table-wrap{overflow-x:auto;margin-bottom:1rem}
-    .debt-table{width:100%;border-collapse:collapse;font-size:0.82rem}
-    .debt-table th{text-align:left;font-size:0.68rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#64748B;padding:0 0.5rem 0.75rem;border-bottom:1px solid #1E293B;white-space:nowrap}
-    .debt-table td{padding:0.5rem;vertical-align:middle}
-    .debt-table tr+tr td{border-top:1px solid rgba(255,255,255,0.04)}
-    .debt-input{width:100%;background:rgba(15,23,42,0.6);border:1px solid #334155;border-radius:0.375rem;color:#F8FAFC;padding:0.45rem 0.6rem;font-size:0.82rem;font-family:inherit;min-width:0}
-    .debt-input:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 2px rgba(99,102,241,0.15)}
-    .debt-input::placeholder{color:#475569}
-    .btn-remove-row{background:none;border:none;color:#475569;cursor:pointer;padding:0.25rem;border-radius:4px;transition:color 0.15s;line-height:1}
-    .btn-remove-row:hover{color:#F87171}
-    .btn-add-row{background:none;border:1px dashed #334155;color:#64748B;border-radius:0.5rem;padding:0.6rem 1rem;font-size:0.82rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;transition:border-color 0.15s,color 0.15s;margin-bottom:1.5rem}
-    .btn-add-row:hover{border-color:var(--emerald);color:var(--emerald)}
-    .notes-textarea{width:100%;background:rgba(15,23,42,0.6);border:1px solid #334155;border-radius:0.5rem;color:#F8FAFC;padding:0.85rem 1rem;font-size:0.875rem;font-family:inherit;line-height:1.6;resize:vertical;min-height:10rem;margin-bottom:1.5rem;transition:border-color 0.2s,box-shadow 0.2s}
-    .notes-textarea:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(99,102,241,0.12)}
-    .notes-textarea::placeholder{color:#475569}
-    .btn-submit{background:linear-gradient(135deg,var(--indigo),#4F46E5);color:#fff;border:none;font-weight:600;border-radius:0.75rem;padding:0.9rem 2rem;cursor:pointer;font-size:0.95rem;display:inline-flex;align-items:center;gap:0.6rem;transition:transform 0.15s,box-shadow 0.15s;width:100%;justify-content:center}
-    .btn-submit:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(99,102,241,0.35)}.btn-submit:active{transform:translateY(0)}
-    .btn-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-    .wizard-success{text-align:center;padding:3rem 1.5rem}
-    .wizard-success-ring{width:5rem;height:5rem;border-radius:50%;background:rgba(16,185,129,0.1);border:2px solid rgba(16,185,129,0.25);display:flex;align-items:center;justify-content:center;margin:0 auto 1.75rem}
-    .wizard-success-timeline{background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.06);border-radius:0.75rem;padding:1.25rem 1.5rem;margin-top:1.75rem;text-align:left}
-    .timeline-row{display:flex;align-items:flex-start;gap:0.875rem;padding:0.6rem 0;border-bottom:1px solid rgba(255,255,255,0.05)}
-    .timeline-row:last-child{border-bottom:none}
-    .timeline-dot{width:0.5rem;height:0.5rem;border-radius:50%;background:var(--emerald);flex-shrink:0;margin-top:0.35rem}
-    .timeline-dot.pending{background:#334155}
-    .dashboard-header{background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.06);border-radius:1rem;padding:1.5rem 1.75rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem}
-    .status-badge{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.72rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:var(--emerald);border-radius:9999px;padding:0.3rem 0.75rem}
-    .status-dot{width:0.4rem;height:0.4rem;border-radius:50%;background:var(--emerald)}
-    .video-section{background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.06);border-radius:1rem;overflow:hidden;margin-bottom:1.5rem}
-    .video-label{padding:1rem 1.5rem 0.75rem;font-size:0.72rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#64748B;border-bottom:1px solid rgba(255,255,255,0.05)}
-    .video-placeholder{background:#0A1020;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem}
-    .video-play-ring{width:3.5rem;height:3.5rem;border-radius:50%;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center}
-    .deliverables-section{margin-bottom:1.5rem}
-    .section-label{font-size:0.72rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#64748B;margin-bottom:0.875rem}
-    .deliverable-btn{display:flex;align-items:center;gap:1rem;width:100%;background:rgba(30,41,59,0.6);border:1px solid rgba(255,255,255,0.08);border-radius:0.875rem;padding:1.1rem 1.25rem;cursor:pointer;transition:border-color 0.2s,background 0.2s,transform 0.15s;text-decoration:none;margin-bottom:0.75rem}
-    .deliverable-btn:hover{border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.04);transform:translateY(-1px)}
-    .deliverable-icon{width:2.5rem;height:2.5rem;border-radius:0.625rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .deliverable-icon.pdf{background:rgba(245,158,11,0.12)}.deliverable-icon.sheet{background:rgba(16,185,129,0.12)}
-    .deliverable-text-wrap{flex:1;text-align:left}
-    .deliverable-title{font-size:0.9rem;font-weight:600;color:#F8FAFC;margin-bottom:0.15rem}
-    .deliverable-sub{font-size:0.75rem;color:#64748B}
-    .deliverable-arrow{color:#334155;flex-shrink:0}
-    .settings-section{background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.06);border-radius:1rem;overflow:hidden}
-    .settings-row{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background 0.15s;text-decoration:none}
-    .settings-row:last-child{border-bottom:none}.settings-row:hover{background:rgba(255,255,255,0.03)}
-    .settings-row-label{font-size:0.875rem;color:#CBD5E1;font-weight:500}
-    .settings-row-sub{font-size:0.75rem;color:#475569;margin-top:0.1rem}
-    .settings-row-arrow{color:#334155}
-    .settings-row.danger .settings-row-label{color:#F87171}
+    .nav-link-subtle{font-size:0.875rem;font-weight:500;color:#CBD5E1;text-decoration:none;padding:0.375rem 0.75rem;border-radius:6px;transition:color 0.15s,background 0.15s}
+    .nav-link-subtle:hover{color:#fff;background:rgba(255,255,255,0.05)}
+    .hero-bg{background:linear-gradient(135deg,#0F172A 55%,#1B2E45 100%);padding-top:8rem;padding-bottom:6rem;position:relative;overflow:hidden}
+    @media(min-width:576px){.hero-bg{padding-top:10rem;padding-bottom:8rem}}
+    .glow-blob{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px)}
+    .glow-indigo{top:33%;left:-8rem;width:24rem;height:24rem;background:rgba(99,102,241,0.08)}
+    .glow-emerald{bottom:0;right:0;width:20rem;height:20rem;background:rgba(16,185,129,0.06)}
+    .price-anchor{font-family:'Playfair Display',Georgia,serif;font-weight:900;font-size:clamp(6rem,15vw,10rem);line-height:1;background:linear-gradient(135deg,#F59E0B 0%,#FCD34D 60%,#F59E0B 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.02em}
+    .price-ring{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+    .price-ring-circle{width:16rem;height:16rem;border-radius:50%;border:1px dashed rgba(245,158,11,0.2)}
+    .btn-primary-cl{background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));color:#fff;border:none;font-weight:600;border-radius:0.75rem;transition:transform 0.15s,box-shadow 0.15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;cursor:pointer}
+    .btn-primary-cl:hover{color:#fff;transform:translateY(-1px);box-shadow:0 8px 25px rgba(16,185,129,0.35)}
+    .btn-primary-cl:active{transform:translateY(0)}
+    .trust-strip{border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(30,41,59,0.4);padding:2rem 0}
+    .feature-card{background:var(--navy-light);border:1px solid #1E293B;border-radius:1rem;padding:1.75rem;height:100%;transition:border-color 0.25s,transform 0.25s}
+    .feature-card:hover{border-color:rgba(16,185,129,0.4);transform:translateY(-3px)}
+    .feature-icon{width:2.5rem;height:2.5rem;border-radius:0.625rem;display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem}
+    .icon-emerald{background:rgba(16,185,129,0.12)}.icon-indigo{background:rgba(99,102,241,0.12)}.icon-gold{background:rgba(245,158,11,0.12)}
+    .auth-card{background:rgba(30,41,59,0.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(99,102,241,0.2);border-radius:1rem;overflow:hidden}
+    .auth-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.08)}
+    .auth-tab{flex:1;padding:1rem;font-size:0.875rem;font-weight:600;background:transparent;border:none;border-bottom:2px solid transparent;color:#94A3B8;cursor:pointer;transition:color 0.2s,border-color 0.2s}
+    .auth-tab.active{color:var(--emerald);border-bottom-color:var(--emerald)}
+    .auth-tab:hover:not(.active){color:#fff}
+    .auth-pane{padding:1.75rem}
+    .field-label{display:block;font-size:0.75rem;font-weight:500;color:#94A3B8;margin-bottom:0.375rem}
+    .field{width:100%;background:rgba(15,23,42,0.6);border:1px solid #334155;border-radius:0.5rem;color:#F8FAFC;padding:0.75rem 1rem;font-size:0.875rem;font-family:inherit;transition:border-color 0.2s,box-shadow 0.2s}
+    .field:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(99,102,241,0.15)}
+    .field::placeholder{color:#64748B}
+    .field-group{margin-bottom:1.25rem}
+    .field-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.375rem}
+    .msg-error{font-size:0.75rem;color:#F87171;margin-bottom:0.75rem;display:none}
+    .msg-success{font-size:0.75rem;color:var(--emerald);margin-bottom:0.75rem;display:none}
+    .btn-link-subtle{background:none;border:none;padding:0;font-size:0.75rem;color:var(--indigo-light);cursor:pointer}
+    .btn-link-subtle:hover{text-decoration:underline}
+    .btn-back{background:none;border:none;padding:0;color:#94A3B8;cursor:pointer;display:flex;align-items:center;transition:color 0.15s}
+    .btn-back:hover{color:#fff}
+    .auth-success-state{background:rgba(30,41,59,0.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(99,102,241,0.2);border-radius:1rem;padding:2rem;text-align:center;margin-top:1.5rem;display:none}
+    .success-icon-ring{width:3.5rem;height:3.5rem;border-radius:50%;background:rgba(16,185,129,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem}
+    @keyframes popIn{from{opacity:0;transform:scale(0.92) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .pop-in{animation:popIn 0.35s ease forwards}
     .text-emerald{color:var(--emerald)!important}
-    /* Password update modal */
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center;padding:1.5rem}
-    .modal-card{background:#1E293B;border:1px solid rgba(99,102,241,0.25);border-radius:1rem;padding:1.75rem;width:100%;max-width:24rem;position:relative}
-    .modal-title{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.15rem;color:#F8FAFC;margin-bottom:0.25rem}
-    .modal-sub{font-size:0.8rem;color:#64748B;margin-bottom:1.5rem}
-    .modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:#475569;cursor:pointer;padding:0.25rem;line-height:1;transition:color 0.15s}
-    .modal-close:hover{color:#F8FAFC}
-    .modal-field-label{display:block;font-size:0.72rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#64748B;margin-bottom:0.375rem}
-    .modal-field{width:100%;background:rgba(15,23,42,0.6);border:1px solid #334155;border-radius:0.5rem;color:#F8FAFC;padding:0.7rem 0.9rem;font-size:0.875rem;font-family:inherit;transition:border-color 0.2s,box-shadow 0.2s;margin-bottom:1rem}
-    .modal-field:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(99,102,241,0.15)}
-    .modal-field::placeholder{color:#475569}
-    .btn-modal-submit{width:100%;background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));color:#fff;border:none;font-weight:600;border-radius:0.625rem;padding:0.75rem 1rem;cursor:pointer;font-size:0.875rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;transition:transform 0.15s,box-shadow 0.15s}
-    .btn-modal-submit:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,0.3)}
-    .btn-modal-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-    .modal-msg-error{font-size:0.75rem;color:#F87171;margin-bottom:0.75rem;display:none}
-    .modal-msg-success{font-size:0.75rem;color:var(--emerald);margin-bottom:0.75rem;display:none}
-    .btn-spinner{display:none;width:0.9rem;height:0.9rem;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite}
-    .btn-loading .btn-spinner{display:inline-block}.btn-loading .btn-label{display:none}
-    /* Loading overlay */
-    .portal-loading{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:1rem}
-    .spinner-ring{width:2.5rem;height:2.5rem;border:3px solid rgba(255,255,255,0.08);border-top-color:var(--emerald);border-radius:50%;animation:spin 0.7s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes popIn{from{opacity:0;transform:scale(0.96) translateY(6px)}to{opacity:1;transform:scale(1) translateY(0)}}
-    .pop-in{animation:popIn 0.3s ease forwards}
-    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#1E293B;border-radius:3px}
+    .link-indigo{color:var(--indigo-light);text-decoration:none}
+    .link-indigo:hover{text-decoration:underline;color:var(--indigo-light)}
+    .site-footer{border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem 1.25rem;text-align:center}
+    .footer-logo-icon{width:1.25rem;height:1.25rem;border-radius:4px;background:var(--emerald);display:inline-flex;align-items:center;justify-content:center}
+    .footer-links a{color:#64748B;text-decoration:none;font-size:0.72rem;transition:color 0.15s}
+    .footer-links a:hover{color:#CBD5E1}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0F172A}::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}
     @media(prefers-reduced-motion:reduce){*,::before,::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+    .btn-spinner{display:none;width:1rem;height:1rem;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .btn-loading .btn-spinner{display:inline-block}
+    .btn-loading .btn-label{display:none}
+    /* Promo checking indicator */
+    .promo-checking{font-size:0.7rem;color:#64748B;margin-top:0.3rem;display:none}
   </style>
-  <!-- Gumroad overlay script -->
-  <script src="https://gumroad.com/js/gumroad.js"></script>
 </head>
+
 <body>
-<div class="portal-wrap">
 
-  <!-- Loading screen shown while Firebase checks auth -->
-  <div class="portal-loading" id="portal-loading" aria-live="polite" aria-label="Loading your portal">
-    <div class="spinner-ring"></div>
-    <div style="font-size:0.85rem;color:#475569;">Loading your portal…</div>
-  </div>
-
-  <nav class="portal-nav" aria-label="Portal navigation" style="display:none;" id="portal-nav">
+  <nav class="site-nav" aria-label="Main navigation">
     <div class="container d-flex align-items-center justify-content-between">
-      <a href="../" class="d-flex align-items-center gap-2 text-decoration-none" aria-label="Clean Slate home">
+      <a href="#" class="d-flex align-items-center gap-2 text-decoration-none" aria-label="Clean Slate home">
         <div class="nav-logo-icon">
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-        <span class="font-display fw-bold text-white" style="font-size:1rem;">Clean Slate</span>
+        <span class="font-display fw-bold text-white" style="font-size:1.1rem;letter-spacing:-0.01em;">Clean Slate</span>
       </a>
-      <button class="logout-btn" id="logout-btn" aria-label="Sign out">Sign out</button>
+      <div class="d-flex align-items-center gap-2">
+        <a href="#auth-section" id="nav-login-btn" class="nav-link-subtle">Sign In</a>
+        <a href="#auth-section" id="nav-start-btn" class="btn-primary-cl px-3 py-2" style="font-size:0.875rem;border-radius:0.5rem;">Get Started</a>
+      </div>
     </div>
   </nav>
 
-  <main class="portal-main" id="portal-main" style="display:none;">
-    <div class="portal-inner">
-
-      <!-- STATE 1: WIZARD -->
-      <div id="wizard-state">
-        <div class="wizard-progress" aria-label="Onboarding progress" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1">
-          <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:20%;"></div></div>
-          <div class="step-labels" aria-hidden="true">
-            <span class="step-label active" id="label-1">Terms</span>
-            <span class="step-label"        id="label-2">Income</span>
-            <span class="step-label"        id="label-3">Statements</span>
-            <span class="step-label"        id="label-4">Debts</span>
-            <span class="step-label"        id="label-5">Notes</span>
-          </div>
-        </div>
-
-        <!-- Step 1: Legal -->
-        <div id="step-1" class="step-card pop-in">
-          <div class="step-eyebrow">Step 1 of 5</div>
-          <h2 class="step-title">A quick word before we begin</h2>
-          <div class="disclaimer-box" tabindex="0" role="region" aria-label="Terms and disclaimer — scroll to read">
-            <p><strong style="color:#F8FAFC;">Educational Purpose Only</strong><br>Clean Slate provides a personal spending and debt analysis for educational and informational purposes only. Nothing in this service or its deliverables constitutes licensed financial, legal, investment, tax, or accounting advice of any kind.</p>
-            <p><strong style="color:#F8FAFC;">Not a Licensed Financial Advisor</strong><br>Clean Slate is not a registered investment advisor, broker-dealer, financial planner, or credit counselor. The analysis and recommendations you receive are based on the documents and information you provide, and are intended to help you better understand your cash flow — not to replace the guidance of a licensed professional.</p>
-            <p><strong style="color:#F8FAFC;">No Fiduciary Relationship</strong><br>Use of this service does not create a fiduciary, advisory, or attorney-client relationship between you and Clean Slate. You are solely responsible for any financial decisions you make as a result of this audit.</p>
-            <p><strong style="color:#F8FAFC;">Accuracy of Information</strong><br>The quality of your audit depends entirely on the accuracy and completeness of the documents you upload. Clean Slate makes no representations or warranties regarding the accuracy of outputs derived from incomplete or inaccurate source documents.</p>
-            <p><strong style="color:#F8FAFC;">Data Privacy</strong><br>Your uploaded documents are stored securely and used solely to produce your audit deliverables. We strongly encourage you to black out or redact any Social Security Numbers, full account numbers, or other sensitive identifiers before uploading. You may request deletion of your data at any time via the Settings tab after your audit is delivered.</p>
-            <p><strong style="color:#F8FAFC;">No Guarantees</strong><br>Clean Slate makes no guarantee of any specific financial outcome, savings amount, or debt reduction timeline as a result of following the blueprint you receive. Results will vary based on individual circumstances, spending behavior, income stability, and other factors outside our control.</p>
-            <p>By checking the box below, you confirm that you have read, understood, and agree to these terms, and that you are at least 18 years of age.</p>
-          </div>
-          <div class="agree-row">
-            <input type="checkbox" id="agree-checkbox" class="agree-checkbox" aria-required="true"/>
-            <label for="agree-checkbox" class="agree-label">I have read and agree to these terms</label>
-          </div>
-          <div class="d-flex justify-content-end">
-            <button class="btn-next" id="step-1-next" disabled>Continue <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></button>
-          </div>
-        </div>
-
-        <!-- Step 2: Income upload -->
-        <div id="step-2" class="step-card pop-in" style="display:none;">
-          <div class="step-eyebrow">Step 2 of 5</div>
-          <h2 class="step-title">Upload your income documents</h2>
-          <div class="security-notice" role="note">
-            <p style="margin:0 0 0.6rem;"><strong style="color:#F8FAFC;font-size:0.85rem;">You are in complete control of your data.</strong></p>
-            <p style="margin:0 0 0.6rem;">Because we perform human-led document audits rather than relying on automated bank-linking tools, you never have to share your bank passwords or link your active accounts.</p>
-            <p style="margin:0;">Before uploading your documents, please <strong style="color:#F8FAFC;">cross out, black out, or crop out</strong> your bank account numbers, home address, Social Security number, or other personal data. Our experts only need to see your line-item transactions, balances, and interest rates to manually map out your blueprint.</p>
-          </div>
-          <div class="upload-zone" id="upload-zone-2">
-            <input type="file" id="file-income" multiple accept=".pdf,.jpg,.jpeg,.png" aria-label="Upload income documents"/>
-            <div class="upload-icon"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
-            <div class="upload-title">Drag &amp; drop files here</div>
-            <div class="upload-sub">or click to browse — PDF, JPG, PNG accepted</div>
-          </div>
-          <p style="font-size:0.78rem;color:#64748B;margin-bottom:0.75rem;">Suggested: recent paystubs (last 2–3), most recent W-2 or 1099, or latest tax return.</p>
-          <ul class="upload-file-list" id="file-list-2" aria-label="Selected income files" aria-live="polite"></ul>
-          <p style="font-size:0.75rem;color:#475569;margin-top:0.5rem;margin-bottom:0;" aria-live="polite" id="step-2-hint">Upload at least one file to continue.</p>
-          <div class="d-flex justify-content-between align-items-center mt-4">
-            <button class="btn-back-step" id="step-2-back"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg> Back</button>
-            <button class="btn-next" id="step-2-next">Continue <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></button>
-          </div>
-        </div>
-
-        <!-- Step 3: Statements upload -->
-        <div id="step-3" class="step-card pop-in" style="display:none;">
-          <div class="step-eyebrow">Step 3 of 5</div>
-          <h2 class="step-title">Upload your bank &amp; credit card statements</h2>
-          <div class="security-notice" role="note">
-            <p style="margin:0 0 0.6rem;"><strong style="color:#F8FAFC;font-size:0.85rem;">You are in complete control of your data.</strong></p>
-            <p style="margin:0 0 0.6rem;">Because we perform human-led document audits rather than relying on automated bank-linking tools, you never have to share your bank passwords or link your active accounts.</p>
-            <p style="margin:0;">Before uploading your statements, please <strong style="color:#F8FAFC;">cross out, black out, or crop out</strong> your bank account numbers, home address, Social Security number, or other personal data. Our experts only need to see your line-item transactions, balances, and interest rates to manually map out your blueprint.</p>
-          </div>
-          <div class="upload-zone" id="upload-zone-3">
-            <input type="file" id="file-statements" multiple accept=".pdf,.jpg,.jpeg,.png" aria-label="Upload bank and credit card statements"/>
-            <div class="upload-icon"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></div>
-            <div class="upload-title">Drag &amp; drop files here</div>
-            <div class="upload-sub">or click to browse — PDF, JPG, PNG accepted</div>
-          </div>
-          <p style="font-size:0.78rem;color:#64748B;margin-bottom:0.75rem;">Please include <strong style="color:#94A3B8;">3 months</strong> of statements for every checking, savings, and credit card account.</p>
-          <ul class="upload-file-list" id="file-list-3" aria-label="Selected statement files" aria-live="polite"></ul>
-          <p style="font-size:0.75rem;color:#475569;margin-top:0.5rem;margin-bottom:0;" aria-live="polite" id="step-3-hint">Upload at least one file to continue.</p>
-          <div class="d-flex justify-content-between align-items-center mt-4">
-            <button class="btn-back-step" id="step-3-back"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg> Back</button>
-            <button class="btn-next" id="step-3-next">Continue <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></button>
-          </div>
-        </div>
-
-        <!-- Step 4: Debt inventory -->
-        <div id="step-4" class="step-card pop-in" style="display:none;">
-          <div class="step-eyebrow">Step 4 of 5</div>
-          <h2 class="step-title">List your current debts</h2>
-          <p style="font-size:0.875rem;color:#64748B;margin-bottom:1.25rem;">Include everything: credit cards, auto loans, student loans, personal loans, medical debt. Add as many rows as you need.</p>
-          <div class="debt-table-wrap">
-            <table class="debt-table" id="debt-table" aria-label="Debt inventory">
-              <thead><tr><th style="min-width:140px;">Debt name</th><th style="min-width:110px;">Balance ($)</th><th style="min-width:100px;">Rate (%)</th><th style="min-width:130px;">Min. payment ($)</th><th style="width:2rem;"></th></tr></thead>
-              <tbody id="debt-rows"></tbody>
-            </table>
-          </div>
-          <button class="btn-add-row" id="add-debt-row" type="button"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg> Add debt row</button>
-
-          <!-- Zero-debt confirmation — shown only when no rows have a name filled in -->
-          <div id="zero-debt-confirm" style="display:none;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:0.5rem;padding:0.875rem 1rem;margin-bottom:1.25rem;">
-            <div class="agree-row" style="margin-bottom:0;">
-              <input type="checkbox" id="zero-debt-checkbox" class="agree-checkbox" aria-required="true"/>
-              <label for="zero-debt-checkbox" class="agree-label" style="font-size:0.82rem;color:#FCD34D;">
-                I have zero debt — confirm and continue
-              </label>
-            </div>
-          </div>
-          <p id="step-4-error" style="font-size:0.75rem;color:#F87171;display:none;margin-bottom:0.75rem;" role="alert" aria-live="polite"></p>
-
-          <div class="d-flex justify-content-between align-items-center">
-            <button class="btn-back-step" id="step-4-back"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg> Back</button>
-            <button class="btn-next" id="step-4-next">Continue <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></button>
-          </div>
-        </div>
-
-        <!-- Step 5: Notes -->
-        <div id="step-5" class="step-card pop-in" style="display:none;">
-          <div class="step-eyebrow">Step 5 of 5</div>
-          <h2 class="step-title">Anything else we should know?</h2>
-          <p style="font-size:0.875rem;color:#64748B;margin-bottom:1.25rem;">Flag anything that might not show up in your statements — irregular expenses, goals, context.</p>
-          <textarea id="audit-notes" class="notes-textarea" placeholder="Examples: 'I pay car insurance quarterly in March — about $480.' / 'My goal is to pay off my credit card debt in 18 months.'" aria-label="Additional notes and context"></textarea>
-
-          <!-- Promo code field -->
-          <div class="field-group" style="margin-bottom:1.25rem;">
-            <label for="portal-promo" style="display:block;font-size:0.75rem;font-weight:500;color:#94A3B8;margin-bottom:0.375rem;">
-              Promo code <span style="color:#64748B;font-weight:400;">(optional — applies discount at checkout)</span>
-            </label>
-            <input
-              type="text"
-              id="portal-promo"
-              style="width:100%;background:rgba(15,23,42,0.6);border:1px solid #334155;border-radius:0.5rem;color:#F8FAFC;padding:0.75rem 1rem;font-size:0.875rem;font-family:inherit;text-transform:uppercase;letter-spacing:0.05em;transition:border-color 0.2s;"
-              placeholder="Enter promo code if you have one"
-              autocomplete="off"
-            />
-          </div>
-
-          <p id="submit-error" style="font-size:0.78rem;color:#F87171;display:none;margin-bottom:0.75rem;" role="alert" aria-live="polite"></p>
-
-          <div class="d-flex justify-content-between align-items-center">
-            <button class="btn-back-step" id="step-5-back"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg> Back</button>
-            <a
-              id="gumroad-btn"
-              class="btn-submit"
-              href="https://elijahlogic.gumroad.com/l/pshph"
-              data-gumroad-overlay-checkout="true"
-              style="text-decoration:none;"
-              aria-label="Submit documents and pay"
-            >
-              Submit Documents &amp; Pay $79
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+  <section class="hero-bg" aria-labelledby="hero-heading">
+    <div class="glow-blob glow-indigo" aria-hidden="true"></div>
+    <div class="glow-blob glow-emerald" aria-hidden="true"></div>
+    <div class="container position-relative">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+          <h1 id="hero-heading" class="font-display fw-bold text-white mb-4" style="font-size:clamp(2.2rem,5vw,3.5rem);line-height:1.15;">
+            Stop wondering where <span class="text-emerald"> your money goes.</span>
+          </h1>
+          <p style="color:#94A3B8;font-size:1.05rem;line-height:1.7;max-width:32rem;" class="mb-4">
+            In 7 business days, a real financial specialist personally reviews your numbers, maps every dollar, and records a custom video walkthrough built around your actual situation — no algorithms, no automation, just human expertise applied to your specific life.
+          </p>
+          <ul class="list-unstyled mb-4" aria-label="What's included">
+            <li class="d-flex align-items-start gap-2 mb-3" style="color:#CBD5E1;font-size:0.9rem;">
+              <svg style="width:1.1rem;height:1.1rem;flex-shrink:0;margin-top:2px;" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>A <strong class="text-white">personalized spending map</strong> across every category in your life</span>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3" style="color:#CBD5E1;font-size:0.9rem;">
+              <svg style="width:1.1rem;height:1.1rem;flex-shrink:0;margin-top:2px;" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>A <strong class="text-white">real human reviews your numbers</strong> — no algorithm, no automation, just an experienced set of eyes on your actual situation</span>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3" style="color:#CBD5E1;font-size:0.9rem;">
+              <svg style="width:1.1rem;height:1.1rem;flex-shrink:0;margin-top:2px;" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>A <strong class="text-white">debt payoff sequence</strong> using avalanche or snowball — whichever wins for you</span>
+            </li>
+            <li class="d-flex align-items-start gap-2 mb-3" style="color:#CBD5E1;font-size:0.9rem;">
+              <svg style="width:1.1rem;height:1.1rem;flex-shrink:0;margin-top:2px;" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>A <strong class="text-white">video walkthrough</strong> + downloadable PDF blueprint and interactive budget spreadsheet</span>
+            </li>
+            <li class="d-flex align-items-start gap-2" style="color:#CBD5E1;font-size:0.9rem;">
+              <svg style="width:1.1rem;height:1.1rem;flex-shrink:0;margin-top:2px;" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span><strong class="text-white">No upsells. No recurring fees.</strong> You pay once and own the results.</span>
+            </li>
+          </ul>
+          <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3 pt-1">
+            <a href="#auth-section" class="btn-primary-cl px-4 py-3" style="font-size:1rem;" aria-label="Get started for $79">
+              Get Started Now
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
+            <p class="mb-0" style="color:#64748B;font-size:0.75rem;">Secure upload · No credit card until checkout</p>
           </div>
         </div>
+        <div class="col-lg-6 d-none d-lg-flex justify-content-center align-items-center position-relative" aria-hidden="true" style="user-select:none;">
+          <div class="text-center position-relative">
+            <div style="font-size:0.8rem;font-weight:500;color:#64748B;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;">One flat fee</div>
+            <div class="price-anchor">$79</div>
+            <div style="font-size:1rem;font-weight:300;color:#94A3B8;margin-top:0.75rem;">Everything. One time. Done.</div>
+            <div class="price-ring"><div class="price-ring-circle"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <!-- Step 6: Success -->
-        <div id="step-success" class="step-card pop-in" style="display:none;">
-          <div class="wizard-success">
-            <div class="wizard-success-ring"><svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
-            <h2 class="font-display fw-bold text-white mb-2" style="font-size:1.6rem;">Documents securely received!</h2>
-            <p style="color:#94A3B8;font-size:0.95rem;max-width:28rem;margin:0 auto;">Your custom spending and debt blueprint is being built. Check back here in <strong style="color:#F8FAFC;">7 business days</strong> for your results.</p>
-            <div class="wizard-success-timeline">
-              <div class="timeline-row"><div class="timeline-dot"></div><div><div style="font-size:0.85rem;font-weight:600;color:#F8FAFC;">Submitted</div><div style="font-size:0.75rem;color:#64748B;">Your documents are uploaded and queued for review</div></div></div>
-              <div class="timeline-row"><div class="timeline-dot pending"></div><div><div style="font-size:0.85rem;font-weight:600;color:#64748B;">In review</div><div style="font-size:0.75rem;color:#475569;">Transactions categorized, debt sequence being built</div></div></div>
-              <div class="timeline-row"><div class="timeline-dot pending"></div><div><div style="font-size:0.85rem;font-weight:600;color:#64748B;">Blueprint ready</div><div style="font-size:0.75rem;color:#475569;">Your PDF, spreadsheet, and walkthrough video will appear here</div></div></div>
+  <div class="trust-strip">
+    <div class="container">
+      <div class="row row-cols-2 row-cols-sm-3 g-4 text-center">
+        <div class="col">
+          <div class="font-display fw-bold text-white" style="font-size:1.4rem;">7 days</div>
+          <div style="color:#94A3B8;font-size:0.75rem;margin-top:0.25rem;">Average turnaround</div>
+        </div>
+        <div class="col">
+          <div class="font-display fw-bold text-white" style="font-size:1.4rem;">100%</div>
+          <div style="color:#94A3B8;font-size:0.75rem;margin-top:0.25rem;">Personalized to your data</div>
+        </div>
+        <div class="col">
+          <div class="font-display fw-bold text-white" style="font-size:1.4rem;">Private</div>
+          <div style="color:#94A3B8;font-size:0.75rem;margin-top:0.25rem;">Your data, secured &amp; deleted</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section style="padding:5rem 0;" aria-labelledby="how-it-works-heading">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 id="how-it-works-heading" class="font-display fw-bold text-white mb-3" style="font-size:clamp(1.6rem,4vw,2.4rem);">How the audit works</h2>
+        <p style="color:#94A3B8;max-width:32rem;" class="mx-auto mb-0">You upload your documents once. We analyze, structure, and deliver a complete financial picture — no jargon, no vague advice.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon icon-emerald">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <h3 class="text-white fw-semibold mb-2" style="font-size:0.95rem;">Upload your statements</h3>
+            <p style="color:#94A3B8;font-size:0.875rem;line-height:1.65;" class="mb-0">Securely share 3 months of bank and credit card statements plus recent paystubs. Black out any SSNs first.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon icon-indigo">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--indigo-light)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <h3 class="text-white fw-semibold mb-2" style="font-size:0.95rem;">We build your blueprint</h3>
+            <p style="color:#94A3B8;font-size:0.875rem;line-height:1.65;" class="mb-0">A real person manually reviews every transaction, sequences your debt, and surfaces the patterns that matter. No automation — just human analysis. Delivered in 7 business days.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon icon-gold">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--gold)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <h3 class="text-white fw-semibold mb-2" style="font-size:0.95rem;">Download &amp; act</h3>
+            <p style="color:#94A3B8;font-size:0.875rem;line-height:1.65;" class="mb-0">Log back in to watch your walkthrough video, download your PDF blueprint, and open your interactive budget spreadsheet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-bottom:5rem;" aria-labelledby="schedule-heading">
+    <div class="container">
+      <div class="mx-auto" style="max-width:38rem;">
+        <div class="feature-card text-center" style="padding:2.5rem;">
+          <div class="feature-icon icon-indigo mx-auto mb-3">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--indigo-light)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 id="schedule-heading" class="text-white fw-semibold mb-2" style="font-size:1.05rem;">Have questions before you start?</h3>
+          <p style="color:#94A3B8;font-size:0.875rem;line-height:1.65;max-width:26rem;" class="mx-auto mb-4">Book a free 15-minute intro call. We'll walk through how the audit works and make sure it's the right fit for you — no pressure.</p>
+          <a
+            href="https://calendar.google.com/appointments/schedules/AcZssZ2dsrbs0c1Mbw8l3xmDS_RvwdrAQ4Gho689KWvmtGP_2sxmE2gmIMBDAyWfAmFYdH2QVH3kTvky"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary-cl px-4 py-2"
+            style="font-size:0.875rem;border-radius:0.625rem;background:linear-gradient(135deg,var(--indigo),#4F46E5);"
+            aria-label="Schedule a free intro call">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Schedule a Free 15-Min Call
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="auth-section" style="padding-bottom:8rem;scroll-margin-top:5rem;" aria-labelledby="auth-heading">
+    <div class="container">
+      <div class="mx-auto" style="max-width:26rem;">
+        <div class="text-center mb-4">
+          <h2 id="auth-heading" class="font-display fw-bold text-white mb-2" style="font-size:1.5rem;">Create your account</h2>
+          <p style="color:#94A3B8;font-size:0.875rem;" class="mb-0">Access is instant. Your audit portal opens right after sign-up.</p>
+        </div>
+
+        <div class="auth-card" id="auth-card" role="region" aria-label="Authentication">
+          <div class="auth-tabs" role="tablist" aria-label="Account options">
+            <button id="tab-signup" class="auth-tab active" role="tab" aria-selected="true" aria-controls="pane-signup">Create Account</button>
+            <button id="tab-login"  class="auth-tab"        role="tab" aria-selected="false" aria-controls="pane-login">Sign In</button>
+          </div>
+
+          <!-- Sign Up pane -->
+          <div id="pane-signup" class="auth-pane" role="tabpanel" aria-labelledby="tab-signup">
+            <div class="field-group">
+              <label for="signup-name" class="field-label">Full name</label>
+              <input type="text" id="signup-name" class="field" placeholder="Jane Smith" autocomplete="name"/>
+            </div>
+            <div class="field-group">
+              <label for="signup-email" class="field-label">Email address</label>
+              <input type="email" id="signup-email" class="field" placeholder="jane@example.com" autocomplete="email"/>
+            </div>
+            <div class="field-group">
+              <label for="signup-password" class="field-label">Password</label>
+              <input type="password" id="signup-password" class="field" placeholder="At least 8 characters" autocomplete="new-password"/>
+            </div>
+            <div class="field-group">
+              <div class="field-row">
+                <label for="signup-promo" class="field-label mb-0">Promo code <span style="color:#64748B;font-weight:400;">(optional)</span></label>
+                <span id="promo-badge" style="display:none;font-size:0.7rem;font-weight:600;color:var(--emerald);background:rgba(16,185,129,0.12);border-radius:9999px;padding:0.15rem 0.6rem;">&#10003; Free audit applied</span>
+              </div>
+              <input type="text" id="signup-promo" class="field" placeholder="Enter code if you have one" autocomplete="off" style="text-transform:uppercase;letter-spacing:0.05em;"/>
+              <div class="promo-checking" id="promo-checking" aria-live="polite">Checking code&#8230;</div>
+            </div>
+            <p id="signup-error" class="msg-error" role="alert" aria-live="polite"></p>
+            <button id="signup-submit" type="button" class="btn-primary-cl w-100 py-3 mb-3">
+              <span class="btn-label">Create Account &amp; Continue</span>
+              <span class="btn-spinner" aria-hidden="true"></span>
+            </button>
+            <p class="text-center mb-0" style="color:#64748B;font-size:0.75rem;line-height:1.6;">
+              By creating an account you agree to our <a href="#" class="link-indigo">Terms of Service</a> and <a href="#" class="link-indigo">Privacy Policy</a>.
+            </p>
+          </div>
+
+          <!-- Sign In pane -->
+          <div id="pane-login" class="auth-pane" style="display:none;" role="tabpanel" aria-labelledby="tab-login">
+            <div id="login-form-container">
+              <div class="field-group">
+                <label for="login-email" class="field-label">Email address</label>
+                <input type="email" id="login-email" class="field" placeholder="jane@example.com" autocomplete="email"/>
+              </div>
+              <div class="field-group">
+                <div class="field-row">
+                  <label for="login-password" class="field-label mb-0">Password</label>
+                  <button id="show-reset-btn" type="button" class="btn-link-subtle">Forgot password?</button>
+                </div>
+                <input type="password" id="login-password" class="field" placeholder="Your password" autocomplete="current-password"/>
+              </div>
+              <p id="login-error" class="msg-error" role="alert" aria-live="polite"></p>
+              <button id="login-submit" type="button" class="btn-primary-cl w-100 py-3">
+                <span class="btn-label">Sign In to My Portal</span>
+                <span class="btn-spinner" aria-hidden="true"></span>
+              </button>
+            </div>
+            <div id="reset-form-container" style="display:none;">
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <button id="back-to-login-btn" type="button" class="btn-back" aria-label="Back to sign in">
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <span class="text-white fw-semibold" style="font-size:0.875rem;">Reset your password</span>
+              </div>
+              <p style="color:#94A3B8;font-size:0.75rem;" class="mb-3">Enter your email and we'll send a reset link.</p>
+              <div class="field-group">
+                <label for="reset-email" class="field-label">Email address</label>
+                <input type="email" id="reset-email" class="field" placeholder="jane@example.com" autocomplete="email"/>
+              </div>
+              <p id="reset-success" class="msg-success" role="status" aria-live="polite">&#10003; If that address is on file, a reset link is on its way.</p>
+              <p id="reset-error" class="msg-error" role="alert" aria-live="polite"></p>
+              <button id="reset-submit" type="button" class="btn-primary-cl w-100 py-3">
+                <span class="btn-label">Send Reset Link</span>
+                <span class="btn-spinner" aria-hidden="true"></span>
+              </button>
             </div>
           </div>
         </div>
-      </div>
-      <!-- /wizard-state -->
 
-      <!-- STATE 2: DASHBOARD -->
-      <div id="dashboard-state" style="display:none;">
-        <div class="dashboard-header">
-          <div>
-            <div style="font-size:0.78rem;color:#64748B;margin-bottom:0.25rem;">Welcome back</div>
-            <div class="font-display fw-bold text-white" style="font-size:1.3rem;" id="dashboard-name">Your Blueprint is Ready</div>
+        <div id="auth-success" class="auth-success-state pop-in" role="status" aria-live="polite" aria-label="Authentication successful">
+          <div class="success-icon-ring">
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
           </div>
-          <div class="status-badge"><span class="status-dot"></span>Audit Complete</div>
-        </div>
-        <div class="video-section">
-          <div class="video-label">Your walkthrough video</div>
-          <div id="video-container" class="video-placeholder" aria-label="Video walkthrough">
-            <div class="video-play-ring"><svg width="20" height="20" fill="var(--indigo-light)" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
-            <div style="font-size:0.8rem;color:#475569;">Video walkthrough will appear here</div>
+          <h3 class="font-display fw-bold text-white mb-2" style="font-size:1.2rem;">You're in!</h3>
+          <p id="auth-success-msg" style="color:#94A3B8;font-size:0.875rem;" class="mb-3">Your secure portal is ready. Upload your documents to kick off your audit.</p>
+          <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:0.5rem;padding:0.75rem 1rem;margin-bottom:1.25rem;font-size:0.78rem;color:#FCD34D;text-align:left;">
+            <strong>Check your email</strong> — we just sent you a welcome message. If you don't see it in your inbox within a few minutes, check your spam folder and mark it as not spam.
           </div>
-        </div>
-        <div class="deliverables-section">
-          <div class="section-label">Your deliverables</div>
-          <a id="pdf-btn" href="#" class="deliverable-btn" aria-label="Download Custom Blueprint PDF">
-            <div class="deliverable-icon pdf"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--gold)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
-            <div class="deliverable-text-wrap"><div class="deliverable-title">Download Custom Blueprint</div><div class="deliverable-sub">PDF · Your full spending map &amp; debt payoff plan</div></div>
-            <svg class="deliverable-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-          </a>
-          <a id="sheets-btn" href="#" class="deliverable-btn" aria-label="Access Interactive Budget Spreadsheet" target="_blank" rel="noopener noreferrer">
-            <div class="deliverable-icon sheet"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg></div>
-            <div class="deliverable-text-wrap"><div class="deliverable-title">Access Your Interactive Budget Spreadsheet</div><div class="deliverable-sub">Google Sheets · Pre-filled with your numbers</div></div>
-            <svg class="deliverable-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          <a id="portal-link" href="portal/" class="btn-primary-cl w-100 py-3">
+            Open My Audit Portal
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           </a>
         </div>
-        <div class="section-label">Settings</div>
-        <div class="settings-section">
-          <a href="#" id="open-pw-modal" class="settings-row" aria-label="Update your password"><div><div class="settings-row-label">Update Password</div><div class="settings-row-sub">Change your account password</div></div><svg class="settings-row-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
-          <a href="#" class="settings-row danger" aria-label="Request data deletion"><div><div class="settings-row-label">Request Data Deletion</div><div class="settings-row-sub" style="color:#475569;">GDPR / Privacy · Permanently remove your files and account</div></div><svg class="settings-row-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
-        </div>
       </div>
-      <!-- /dashboard-state -->
-
     </div>
-  </main>
-</div>
+  </section>
 
-<!-- Password update modal -->
-<div id="pw-modal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="pw-modal-title">
-  <div class="modal-card">
-    <button class="modal-close" id="close-pw-modal" aria-label="Close">
-      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-    </button>
-    <div class="modal-title" id="pw-modal-title">Update Password</div>
-    <div class="modal-sub">Enter your current password to confirm it's you, then choose a new one.</div>
+  <footer class="site-footer">
+    <div class="container" style="max-width:48rem;">
+      <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
+        <div class="footer-logo-icon">
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <span class="font-display fw-bold" style="font-size:0.875rem;color:#94A3B8;">Clean Slate</span>
+      </div>
+      <p class="mx-auto mb-3" style="font-size:0.72rem;color:#475569;max-width:36rem;line-height:1.6;">This service provides educational cash-flow analysis only. It is not licensed financial, legal, tax, or investment advice. Results are informational and do not constitute a fiduciary relationship.</p>
+      <div class="footer-links d-flex align-items-center justify-content:center gap-4 mb-2">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="mailto:hello@cleanslateaudit.com">Contact</a>
+      </div>
+      <p style="font-size:0.72rem;color:#334155;" class="mb-0">&#169; 2025 Clean Slate. All rights reserved.</p>
+    </div>
+  </footer>
 
-    <label for="pw-current" class="modal-field-label">Current password</label>
-    <input type="password" id="pw-current" class="modal-field" placeholder="Your current password" autocomplete="current-password"/>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmB3g3hGQP6Gvs7FDPIYWzKTcxV8" crossorigin="anonymous"></script>
 
-    <label for="pw-new" class="modal-field-label">New password</label>
-    <input type="password" id="pw-new" class="modal-field" placeholder="At least 8 characters" autocomplete="new-password"/>
+  <script type="module">
+    import { initializeApp }                         from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword,
+             signInWithEmailAndPassword,
+             sendPasswordResetEmail }                from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc }             from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    <label for="pw-confirm" class="modal-field-label">Confirm new password</label>
-    <input type="password" id="pw-confirm" class="modal-field" placeholder="Repeat new password" autocomplete="new-password"/>
+    // ── Firebase config ──────────────────────────────────────────
+    const firebaseConfig = {
+      apiKey:            "AIzaSyCAaV-KqLvO7SlMTsxESvDrHs3VByRmlAY",
+      authDomain:        "cleanslate-d2abc.firebaseapp.com",
+      projectId:         "cleanslate-d2abc",
+      storageBucket:     "cleanslate-d2abc.firebasestorage.app",
+      messagingSenderId: "100758365889",
+      appId:             "1:100758365889:web:bffece3bda6fb64046d640",
+      measurementId:     "G-3SV37N8RLT"
+    };
 
-    <p class="modal-msg-error" id="pw-error" role="alert" aria-live="polite"></p>
-    <p class="modal-msg-success" id="pw-success" role="status" aria-live="polite">&#10003; Password updated successfully.</p>
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
 
-    <button class="btn-modal-submit" id="pw-submit" type="button">
-      <span class="btn-label">Update Password</span>
-      <span class="btn-spinner" aria-hidden="true"></span>
-    </button>
-  </div>
-</div>
+    // ── Cloudflare Worker URL ────────────────────────────────────
+    const WORKER_URL = 'https://summer-mode-328d.elijah-029.workers.dev';
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmB3g3hGQP6Gvs7FDPIYWzKTcxV8" crossorigin="anonymous"></script>
-
-<script type="module">
-  import { initializeApp }                              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut,
-           updatePassword, reauthenticateWithCredential,
-           EmailAuthProvider }                            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc }          from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-  const firebaseConfig = {
-    apiKey:            "AIzaSyCAaV-KqLvO7SlMTsxESvDrHs3VByRmlAY",
-    authDomain:        "cleanslate-d2abc.firebaseapp.com",
-    projectId:         "cleanslate-d2abc",
-    storageBucket:     "cleanslate-d2abc.firebasestorage.app",
-    messagingSenderId: "100758365889",
-    appId:             "1:100758365889:web:bffece3bda6fb64046d640",
-    measurementId:     "G-3SV37N8RLT"
-  };
-
-  const app     = initializeApp(firebaseConfig);
-  const auth    = getAuth(app);
-  const db      = getFirestore(app);
-  const storage = getStorage(app);
-
-  // ── Cloudflare Worker URL ────────────────────────────────────
-  const WORKER_URL = 'https://summer-mode-328d.elijah-029.workers.dev';
-
-  // ── Email helper — fire-and-forget, never blocks UI ─────────
-  async function sendEmail(to, subject, html) {
-    try {
-      await fetch(WORKER_URL, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ to, subject, html }),
-      });
-    } catch (e) {
-      console.warn('Email send failed:', e);
-    }
-  }
-
-  // ── Auth gate ────────────────────────────────────────────────
-  onAuthStateChanged(auth, async user => {
-    if (!user) {
-      window.location.href = '../?signin=true';
-      return;
-    }
-
-    // Fetch user doc from Firestore
-    const snap = await getDoc(doc(db, 'users', user.uid));
-    const data = snap.exists() ? snap.data() : {};
-
-    // Hide loading, show UI
-    document.getElementById('portal-loading').style.display = 'none';
-    document.getElementById('portal-nav').style.display     = '';
-    document.getElementById('portal-main').style.display    = '';
-
-    if (data.auditStatus === 'completed') {
-      showDashboard(user.uid, data);
-    } else {
-      showWizard();
-    }
-  });
-
-  // ── Logout ───────────────────────────────────────────────────
-  document.getElementById('logout-btn').addEventListener('click', async () => {
-    await signOut(auth);
-    window.location.href = '../';
-  });
-
-  // ── Password update modal ────────────────────────────────────
-  const pwModal   = document.getElementById('pw-modal');
-  const pwError   = document.getElementById('pw-error');
-  const pwSuccess = document.getElementById('pw-success');
-  const pwSubmit  = document.getElementById('pw-submit');
-
-  function openPwModal() {
-    document.getElementById('pw-current').value = '';
-    document.getElementById('pw-new').value     = '';
-    document.getElementById('pw-confirm').value = '';
-    pwError.style.display   = 'none';
-    pwSuccess.style.display = 'none';
-    pwSubmit.disabled = false;
-    pwSubmit.classList.remove('btn-loading');
-    pwModal.style.display = 'flex';
-    document.getElementById('pw-current').focus();
-  }
-
-  function closePwModal() {
-    pwModal.style.display = 'none';
-  }
-
-  document.getElementById('open-pw-modal').addEventListener('click', e => {
-    e.preventDefault();
-    openPwModal();
-  });
-
-  document.getElementById('close-pw-modal').addEventListener('click', closePwModal);
-
-  // Close on backdrop click
-  pwModal.addEventListener('click', e => {
-    if (e.target === pwModal) closePwModal();
-  });
-
-  // Close on Escape key
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && pwModal.style.display !== 'none') closePwModal();
-  });
-
-  pwSubmit.addEventListener('click', async () => {
-    pwError.style.display   = 'none';
-    pwSuccess.style.display = 'none';
-
-    const current = document.getElementById('pw-current').value;
-    const newPw   = document.getElementById('pw-new').value;
-    const confirm = document.getElementById('pw-confirm').value;
-
-    // Client-side validation
-    if (!current) {
-      pwError.textContent = 'Please enter your current password.';
-      pwError.style.display = 'block'; return;
-    }
-    if (newPw.length < 8) {
-      pwError.textContent = 'New password must be at least 8 characters.';
-      pwError.style.display = 'block'; return;
-    }
-    if (newPw !== confirm) {
-      pwError.textContent = 'New passwords don\u2019t match. Please check and try again.';
-      pwError.style.display = 'block'; return;
-    }
-    if (newPw === current) {
-      pwError.textContent = 'New password must be different from your current password.';
-      pwError.style.display = 'block'; return;
-    }
-
-    pwSubmit.disabled = true;
-    pwSubmit.classList.add('btn-loading');
-
-    try {
-      const user       = auth.currentUser;
-      const credential = EmailAuthProvider.credential(user.email, current);
-
-      // Reauthenticate first — Firebase requires this before a password change
-      await reauthenticateWithCredential(user, credential);
-
-      // Now update the password
-      await updatePassword(user, newPw);
-
-      pwSuccess.style.display = 'block';
-      document.getElementById('pw-current').value = '';
-      document.getElementById('pw-new').value     = '';
-      document.getElementById('pw-confirm').value = '';
-
-      // Auto-close after 2 seconds
-      setTimeout(closePwModal, 2000);
-
-    } catch (err) {
-      const messages = {
-        'auth/wrong-password':        'Current password is incorrect. Please try again.',
-        'auth/invalid-credential':    'Current password is incorrect. Please try again.',
-        'auth/too-many-requests':     'Too many attempts. Please wait a moment and try again.',
-        'auth/requires-recent-login': 'Session expired. Please sign out and sign back in, then try again.',
-        'auth/weak-password':         'New password is too weak. Please choose a stronger one.',
-      };
-      pwError.textContent   = messages[err.code] || 'Something went wrong. Please try again.';
-      pwError.style.display = 'block';
-    } finally {
-      pwSubmit.disabled = false;
-      pwSubmit.classList.remove('btn-loading');
-    }
-  });
-
-  // ── STATE 2: Dashboard ───────────────────────────────────────
-  async function showDashboard(uid, data) {
-    document.getElementById('wizard-state').style.display    = 'none';
-    document.getElementById('dashboard-state').style.display = '';
-
-    if (data.displayName) {
-      document.getElementById('dashboard-name').textContent = data.displayName + '\u2019s Blueprint is Ready';
-    }
-
-    // Loom video embed — regex extracts ID robustly, ignoring trailing slashes and query params
-    if (data.loomUrl) {
-      const loomMatch = data.loomUrl.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/);
-      if (loomMatch) {
-        document.getElementById('video-container').innerHTML =
-          `<iframe src="https://www.loom.com/embed/${loomMatch[1]}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;"></iframe>`;
-      }
-    }
-
-    // PDF download URL from Storage
-    if (data.pdfPath) {
+    // ── Email helper — fire-and-forget, never blocks UI ─────────
+    async function sendEmail(to, subject, html) {
       try {
-        const pdfUrl = await getDownloadURL(ref(storage, data.pdfPath));
-        document.getElementById('pdf-btn').href = pdfUrl;
-      } catch (e) { console.warn('PDF not yet available:', e); }
-    }
-
-    // Google Sheets link
-    if (data.sheetsUrl) {
-      document.getElementById('sheets-btn').href = data.sheetsUrl;
-    }
-  }
-
-  // ── STATE 1: Wizard ──────────────────────────────────────────
-  function showWizard() {
-    document.getElementById('wizard-state').style.display    = '';
-    document.getElementById('dashboard-state').style.display = 'none';
-    goToStep(1);
-    // Pre-fill promo from URL param, then build the initial Gumroad checkout URL
-    const urlPromo   = new URLSearchParams(window.location.search).get('promo');
-    const promoField = document.getElementById('portal-promo');
-    if (urlPromo && promoField) promoField.value = urlPromo.toUpperCase();
-    buildGumroadUrl();
-  }
-
-  // ── Wizard state machine ─────────────────────────────────────
-  const TOTAL_STEPS = 5;
-  const PROGRESS    = { 1: 20, 2: 40, 3: 60, 4: 80, 5: 100 };
-  let currentStep   = 1;
-
-  // File stores (held in memory for upload at submit)
-  let incomeFiles    = [];
-  let statementFiles = [];
-
-  function goToStep(n) {
-    for (let i = 1; i <= TOTAL_STEPS; i++) {
-      const el = document.getElementById('step-' + i);
-      if (el) el.style.display = 'none';
-    }
-    document.getElementById('step-success').style.display = 'none';
-    const target = document.getElementById('step-' + n);
-    if (target) {
-      target.style.display = '';
-      target.classList.remove('pop-in'); void target.offsetWidth; target.classList.add('pop-in');
-    }
-    currentStep = n;
-    updateProgress(n);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function updateProgress(step) {
-    document.getElementById('progress-fill').style.width = (PROGRESS[step] || 100) + '%';
-    document.querySelector('.wizard-progress').setAttribute('aria-valuenow', step);
-    for (let i = 1; i <= TOTAL_STEPS; i++) {
-      const label = document.getElementById('label-' + i);
-      label.classList.remove('active', 'done');
-      if (i < step)   label.classList.add('done');
-      if (i === step) label.classList.add('active');
-    }
-  }
-
-  // Step 1 — Terms
-  const agreeCheckbox = document.getElementById('agree-checkbox');
-  const step1Next     = document.getElementById('step-1-next');
-  agreeCheckbox.addEventListener('change', () => { step1Next.disabled = !agreeCheckbox.checked; });
-  step1Next.addEventListener('click', () => { if (agreeCheckbox.checked) goToStep(2); });
-
-  // Step 2 — Income
-  setupFileUpload('file-income', 'file-list-2', 'upload-zone-2', files => {
-    incomeFiles = files;
-    document.getElementById('step-2-next').disabled = files.length === 0;
-    document.getElementById('step-2-hint').style.display = files.length > 0 ? 'none' : '';
-  });
-  document.getElementById('step-2-next').disabled = true;
-  document.getElementById('step-2-back').addEventListener('click', () => goToStep(1));
-  document.getElementById('step-2-next').addEventListener('click', () => { if (incomeFiles.length > 0) goToStep(3); });
-
-  // Step 3 — Statements
-  setupFileUpload('file-statements', 'file-list-3', 'upload-zone-3', files => {
-    statementFiles = files;
-    document.getElementById('step-3-next').disabled = files.length === 0;
-    document.getElementById('step-3-hint').style.display = files.length > 0 ? 'none' : '';
-  });
-  document.getElementById('step-3-next').disabled = true;
-  document.getElementById('step-3-back').addEventListener('click', () => goToStep(2));
-  document.getElementById('step-3-next').addEventListener('click', () => { if (statementFiles.length > 0) goToStep(4); });
-
-  // Step 4 — Debt
-  let debtRowCount = 0;
-
-  function hasNamedDebtRow() {
-    return Array.from(document.querySelectorAll('#debt-rows tr')).some(row => {
-      const input = row.querySelector('input');
-      return input && input.value.trim() !== '';
-    });
-  }
-
-  function updateDebtGate() {
-    const hasDebts   = hasNamedDebtRow();
-    const zeroBox    = document.getElementById('zero-debt-checkbox');
-    const zeroPanel  = document.getElementById('zero-debt-confirm');
-    const step4Err   = document.getElementById('step-4-error');
-
-    // Show zero-debt confirm only when table is empty
-    zeroPanel.style.display = hasDebts ? 'none' : '';
-    if (hasDebts) zeroBox.checked = false;
-    step4Err.style.display = 'none';
-  }
-
-  function addDebtRow() {
-    debtRowCount++;
-    const id  = debtRowCount;
-    const row = document.createElement('tr');
-    row.id    = 'debt-row-' + id;
-    row.innerHTML = `
-      <td><input type="text"   class="debt-input" placeholder="e.g. Visa card" aria-label="Debt name ${id}"/></td>
-      <td><input type="text"   class="debt-input" placeholder="0.00" aria-label="Balance ${id}"/></td>
-      <td><input type="text"   class="debt-input" placeholder="0.00" aria-label="Rate ${id}"/></td>
-      <td><input type="text"   class="debt-input" placeholder="0.00" aria-label="Min payment ${id}"/></td>
-      <td><button class="btn-remove-row" type="button" aria-label="Remove row ${id}" onclick="removeDebtRow(${id})"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button></td>`;
-    document.getElementById('debt-rows').appendChild(row);
-    const firstInput = row.querySelector('input');
-    firstInput.focus();
-    // Update gate whenever any input changes
-    row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', updateDebtGate));
-  }
-
-  window.removeDebtRow = function(id) {
-    const r = document.getElementById('debt-row-' + id);
-    if (r) { r.remove(); updateDebtGate(); }
-  };
-
-  addDebtRow();
-  updateDebtGate();
-
-  document.getElementById('add-debt-row').addEventListener('click', addDebtRow);
-  document.getElementById('step-4-back').addEventListener('click', () => goToStep(3));
-  document.getElementById('step-4-next').addEventListener('click', () => {
-    const hasDebts  = hasNamedDebtRow();
-    const zeroBox   = document.getElementById('zero-debt-checkbox');
-    const step4Err  = document.getElementById('step-4-error');
-
-    if (!hasDebts && !zeroBox.checked) {
-      step4Err.textContent = 'Please list at least one debt, or check the box to confirm you have zero debt.';
-      step4Err.style.display = 'block';
-      return;
-    }
-    step4Err.style.display = 'none';
-    goToStep(5);
-  });
-
-  // Step 5 — Notes, promo & Gumroad
-  document.getElementById('step-5-back').addEventListener('click', () => goToStep(4));
-
-  // ── Gumroad URL builder ──────────────────────────────────────
-  // Called on load and whenever the promo field changes.
-  // Builds the checkout URL with the user's email and promo code.
-  const GUMROAD_BASE = 'https://elijahlogic.gumroad.com/l/pshph';
-
-  function buildGumroadUrl() {
-    const email = auth.currentUser ? auth.currentUser.email : '';
-    const promo = document.getElementById('portal-promo')?.value.trim().toUpperCase() || '';
-    let url     = GUMROAD_BASE;
-    const params = [];
-    if (email) params.push(`email=${encodeURIComponent(email)}`);
-    if (promo) params.push(`wanted=true&off_code=${encodeURIComponent(promo)}`);
-    if (params.length) url += '?' + params.join('&');
-    document.getElementById('gumroad-btn').href = url;
-  }
-
-  // Update URL live as user edits the promo field
-  document.getElementById('portal-promo')?.addEventListener('input', buildGumroadUrl);
-
-  // ── Gumroad sale listener ────────────────────────────────────
-  // Fires when Gumroad confirms a successful purchase via postMessage.
-  // Only then do we upload files and write to Firestore.
-  window.addEventListener('message', async function(ev) {
-    if (!ev.data) return;
-    try {
-      const data = JSON.parse(ev.data);
-      if (data.post_message_name === 'sale') {
-        await executeSecureFileUpload();
-      }
-    } catch (e) {
-      // Safely ignore non-JSON messages from other iframes
-    }
-  }, false);
-
-  // ── executeSecureFileUpload ──────────────────────────────────
-  // Runs only after Gumroad confirms payment. Uploads files,
-  // writes to Firestore, sends emails, shows success screen.
-  async function executeSecureFileUpload() {
-    const submitErr = document.getElementById('submit-error');
-    if (submitErr) submitErr.style.display = 'none';
-
-    const gumroadBtn = document.getElementById('gumroad-btn');
-    if (gumroadBtn) {
-      gumroadBtn.style.pointerEvents = 'none';
-      gumroadBtn.style.opacity       = '0.6';
-      gumroadBtn.textContent         = 'Uploading…';
-    }
-
-    const user  = auth.currentUser;
-    const uid   = user.uid;
-    const notes = document.getElementById('audit-notes')?.value.trim() || '';
-
-    // Backstop validation
-    if (incomeFiles.length === 0) {
-      if (submitErr) { submitErr.textContent = 'Please go back to Step 2 and upload at least one income document.'; submitErr.style.display = 'block'; }
-      if (gumroadBtn) { gumroadBtn.style.pointerEvents = ''; gumroadBtn.style.opacity = '1'; gumroadBtn.textContent = 'Submit Documents & Pay $79'; }
-      return;
-    }
-    if (statementFiles.length === 0) {
-      if (submitErr) { submitErr.textContent = 'Please go back to Step 3 and upload at least one bank or credit card statement.'; submitErr.style.display = 'block'; }
-      if (gumroadBtn) { gumroadBtn.style.pointerEvents = ''; gumroadBtn.style.opacity = '1'; gumroadBtn.textContent = 'Submit Documents & Pay $79'; }
-      return;
-    }
-
-    // Collect debt rows
-    const sanitize = v => parseFloat(String(v).replace(/[^\d.-]/g, '')) || 0;
-    const debts = [];
-    document.querySelectorAll('#debt-rows tr').forEach(row => {
-      const inputs = row.querySelectorAll('input');
-      if (inputs[0] && inputs[0].value.trim()) {
-        debts.push({
-          name:       inputs[0].value.trim(),
-          balance:    sanitize(inputs[1].value),
-          rate:       sanitize(inputs[2].value),
-          minPayment: sanitize(inputs[3].value),
+        await fetch(WORKER_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ to, subject, html }),
         });
+      } catch (e) {
+        // Email failure is non-fatal — log but don't surface to user
+        console.warn('Email send failed:', e);
       }
-    });
-
-    try {
-      // Upload income files to Storage
-      const incomeFilePaths = [];
-      for (const file of incomeFiles) {
-        const path = `clients/${uid}/income/${file.name}`;
-        await uploadBytes(ref(storage, path), file);
-        incomeFilePaths.push(path);
-      }
-
-      // Upload statement files to Storage
-      const statementFilePaths = [];
-      for (const file of statementFiles) {
-        const path = `clients/${uid}/statements/${file.name}`;
-        await uploadBytes(ref(storage, path), file);
-        statementFilePaths.push(path);
-      }
-
-      // Write submission to Firestore
-      await setDoc(doc(db, 'users', uid), {
-        auditStatus:        'submitted',
-        submittedAt:        new Date(),
-        notes:              notes,
-        debts:              debts,
-        incomeFilePaths:    incomeFilePaths,
-        statementFilePaths: statementFilePaths,
-      }, { merge: true });
-
-      // Fetch display name for emails
-      const userSnap    = await getDoc(doc(db, 'users', uid));
-      const displayName = userSnap.exists() ? (userSnap.data().displayName || 'there') : 'there';
-      const userEmail   = auth.currentUser.email;
-
-      // ── Email A: Upload confirmation to client ───────────────
-      sendEmail(
-        userEmail,
-        'Documents Securely Received \u2014 Clean Slate Audit',
-        `<div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;color:#1E293B;">
-          <h2 style="color:#10B981;">We\u2019ve got your files, ${displayName}!</h2>
-          <p>Your documents have been securely received and your custom spending and debt blueprint is now being built.</p>
-          <p><strong>Estimated turnaround: 7 business days.</strong></p>
-          <p>When your blueprint is ready, you\u2019ll receive another email and your portal will update automatically. Log back in anytime to check your status.</p>
-          <p style="margin-top:1.5rem;">
-            <a href="https://logicnerds.github.io/cleanslate/portal/" style="background:#10B981;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;">Check My Portal</a>
-          </p>
-          <p style="color:#64748B;font-size:0.85rem;margin-top:2rem;">If you have any questions in the meantime, just reply to this email.</p>
-          <p style="color:#64748B;font-size:0.85rem;">\u2014 The Clean Slate Team</p>
-        </div>`
-      );
-
-      // ── Email B: Admin audit-ready alert ─────────────────────
-      sendEmail(
-        'elijah@logicnerds.net',
-        '\uD83D\uDCC2 Audit Ready to Build!',
-        `<div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;color:#1E293B;">
-          <h2>A client just finished their wizard.</h2>
-          <p>Their documents are uploaded and waiting in the admin panel.</p>
-          <table style="border-collapse:collapse;width:100%;margin-top:1rem;">
-            <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Name</td><td style="padding:0.5rem 0;font-weight:600;">${displayName}</td></tr>
-            <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Email</td><td style="padding:0.5rem 0;">${userEmail}</td></tr>
-            <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Income files</td><td style="padding:0.5rem 0;">${incomeFilePaths.length} uploaded</td></tr>
-            <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Statement files</td><td style="padding:0.5rem 0;">${statementFilePaths.length} uploaded</td></tr>
-            <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Debts listed</td><td style="padding:0.5rem 0;">${debts.length}</td></tr>
-          </table>
-          <p style="margin-top:1.5rem;">
-            <a href="https://logicnerds.github.io/cleanslate/admin/" style="background:#6366F1;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;">Open Admin Panel</a>
-          </p>
-        </div>`
-      );
-
-      showSuccessScreen();
-    } catch (err) {
-      console.error('Submission error:', err);
-      if (submitErr) { submitErr.textContent = 'Upload failed. Please check your connection and try again.'; submitErr.style.display = 'block'; }
-      if (gumroadBtn) { gumroadBtn.style.pointerEvents = ''; gumroadBtn.style.opacity = '1'; gumroadBtn.textContent = 'Submit Documents & Pay $79'; }
     }
-  }
 
-  function showSuccessScreen() {
-    for (let i = 1; i <= TOTAL_STEPS; i++) {
-      const el = document.getElementById('step-' + i);
-      if (el) el.style.display = 'none';
-    }
-    document.getElementById('progress-fill').style.width = '100%';
-    for (let i = 1; i <= TOTAL_STEPS; i++) {
-      const label = document.getElementById('label-' + i);
-      label.classList.remove('active'); label.classList.add('done');
-    }
-    const s = document.getElementById('step-success');
-    s.style.display = ''; s.classList.remove('pop-in'); void s.offsetWidth; s.classList.add('pop-in');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+    // ── Promo verification via Worker ────────────────────────────
+    let promoVerified      = null;
+    let promoDebounceTimer = null;
 
-  // ── File upload helper ───────────────────────────────────────
-  // Files accumulate across selections/drops rather than overwriting.
-  // Each listed file has an × button to remove it individually.
-  function setupFileUpload(inputId, listId, zoneId, onFilesSelected) {
-    const input     = document.getElementById(inputId);
-    const list      = document.getElementById(listId);
-    const zone      = document.getElementById(zoneId);
-    let accumulated = []; // master list for this upload zone
-
-    function renderAccumulated() {
-      list.innerHTML = '';
-      accumulated.forEach((f, idx) => {
-        const li = document.createElement('li');
-        li.style.cssText = 'display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--emerald);padding:0.3rem 0;border-bottom:1px solid rgba(255,255,255,0.04);';
-        li.innerHTML = `
-          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</span>
-          <span style="color:#475569;flex-shrink:0;">${(f.size/1024).toFixed(0)} KB</span>
-          <button type="button" aria-label="Remove ${f.name}" style="background:none;border:none;color:#475569;cursor:pointer;padding:0 0.2rem;line-height:1;flex-shrink:0;transition:color 0.15s;" onmouseover="this.style.color='#F87171'" onmouseout="this.style.color='#475569'" data-idx="${idx}">
-            <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>`;
-        li.querySelector('button').addEventListener('click', () => {
-          accumulated.splice(idx, 1);
-          renderAccumulated();
-          onFilesSelected([...accumulated]);
+    async function verifyPromoWithWorker(code) {
+      try {
+        const res  = await fetch(WORKER_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ action: 'verifyPromo', code }),
         });
-        list.appendChild(li);
-      });
-      onFilesSelected([...accumulated]);
+        const data = await res.json();
+        return data.valid === true;
+      } catch (e) {
+        console.warn('Promo check failed:', e);
+        return false;
+      }
     }
 
-    function addFiles(newFiles) {
-      Array.from(newFiles).forEach(f => {
-        // Deduplicate by name+size so dropping the same file twice doesn't double it
-        if (!accumulated.some(e => e.name === f.name && e.size === f.size)) {
-          accumulated.push(f);
+    // ── DOM refs ─────────────────────────────────────────────────
+    const tabSignup      = document.getElementById('tab-signup');
+    const tabLogin       = document.getElementById('tab-login');
+    const paneSignup     = document.getElementById('pane-signup');
+    const paneLogin      = document.getElementById('pane-login');
+    const signupSubmit   = document.getElementById('signup-submit');
+    const signupError    = document.getElementById('signup-error');
+    const loginSubmit    = document.getElementById('login-submit');
+    const loginError     = document.getElementById('login-error');
+    const showResetBtn   = document.getElementById('show-reset-btn');
+    const backToLogin    = document.getElementById('back-to-login-btn');
+    const loginFormCont  = document.getElementById('login-form-container');
+    const resetFormCont  = document.getElementById('reset-form-container');
+    const resetSubmit    = document.getElementById('reset-submit');
+    const resetSuccess   = document.getElementById('reset-success');
+    const resetError     = document.getElementById('reset-error');
+    const authCard       = document.getElementById('auth-card');
+    const authSuccess    = document.getElementById('auth-success');
+    const navLoginBtn    = document.getElementById('nav-login-btn');
+    const promoInput     = document.getElementById('signup-promo');
+    const promoBadge     = document.getElementById('promo-badge');
+    const promoChecking  = document.getElementById('promo-checking');
+
+    // ── Helpers ──────────────────────────────────────────────────
+    function showError(el, msg) { el.textContent = msg; el.style.display = 'block'; }
+    function clearError(el)     { el.textContent = '';  el.style.display = 'none'; }
+    function isValidEmail(v)    { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+
+    function setLoading(btn, loading) {
+      btn.disabled = loading;
+      btn.classList.toggle('btn-loading', loading);
+    }
+
+    function showAuthSuccess(isFreeAudit) {
+      authCard.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      authCard.style.opacity    = '0';
+      authCard.style.transform  = 'translateY(-8px)';
+      setTimeout(() => {
+        authCard.style.display = 'none';
+        document.getElementById('auth-success-msg').textContent = isFreeAudit
+          ? 'Your complimentary audit is confirmed. Upload your documents in the portal to kick things off.'
+          : 'Your secure portal is ready. Upload your documents to kick off your audit.';
+        authSuccess.style.display = 'block';
+        authSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 240);
+    }
+
+    // ── Tab switching ────────────────────────────────────────────
+    function activateTab(activeTab, activePane, inactiveTab, inactivePane) {
+      activeTab.classList.add('active');    activeTab.setAttribute('aria-selected', 'true');
+      inactiveTab.classList.remove('active'); inactiveTab.setAttribute('aria-selected', 'false');
+      activePane.style.display = ''; inactivePane.style.display = 'none';
+    }
+    tabSignup.addEventListener('click', () => activateTab(tabSignup, paneSignup, tabLogin, paneLogin));
+    tabLogin.addEventListener('click', () => {
+      activateTab(tabLogin, paneLogin, tabSignup, paneSignup);
+      loginFormCont.style.display = ''; resetFormCont.style.display = 'none';
+    });
+    navLoginBtn.addEventListener('click', () => activateTab(tabLogin, paneLogin, tabSignup, paneSignup));
+
+    // ── Promo live validation via Worker (debounced 500ms) ───────
+    promoInput.addEventListener('input', () => {
+      const val = promoInput.value.trim().toUpperCase();
+      promoVerified = null;
+      promoBadge.style.display     = 'none';
+      promoInput.style.borderColor  = '#334155';
+      promoChecking.style.display   = 'none';
+      clearTimeout(promoDebounceTimer);
+      if (!val) return;
+      promoDebounceTimer = setTimeout(async () => {
+        promoChecking.style.display = 'block';
+        const valid = await verifyPromoWithWorker(val);
+        promoChecking.style.display = 'none';
+        promoVerified = valid;
+        if (valid) {
+          promoBadge.style.display     = 'inline-block';
+          promoInput.style.borderColor  = 'var(--emerald)';
+        } else {
+          promoBadge.style.display     = 'none';
+          promoInput.style.borderColor  = '#334155';
         }
-      });
-      renderAccumulated();
-      // Reset input so the same file can be re-selected after removal
-      input.value = '';
+      }, 500);
+    });
+
+    // ── Sign Up ──────────────────────────────────────────────────
+    signupSubmit.addEventListener('click', async () => {
+      clearError(signupError);
+      const name     = document.getElementById('signup-name').value.trim();
+      const email    = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const promo    = promoInput.value.trim().toUpperCase();
+
+      if (!name)                return showError(signupError, 'Please enter your full name.');
+      if (!isValidEmail(email)) return showError(signupError, 'Please enter a valid email address.');
+      if (password.length < 8)  return showError(signupError, 'Password must be at least 8 characters.');
+      if (promo && promoVerified === null)  return showError(signupError, 'Please wait \u2014 your promo code is still being verified.');
+      if (promo && promoVerified === false) return showError(signupError, 'That promo code isn\u2019t valid. Leave it blank to proceed at $79, or double-check your code.');
+
+      const isFreeAudit = promo !== '' && promoVerified === true;
+      setLoading(signupSubmit, true);
+
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+
+        await setDoc(doc(db, 'users', cred.user.uid), {
+          displayName:  name,
+          email:        email,
+          auditStatus:  'pending',
+          freeAudit:    isFreeAudit,
+          promoCode:    promo || null,
+          createdAt:    new Date(),
+        });
+
+        // ── Email A: Welcome email to client ─────────────────────
+        sendEmail(
+          email,
+          'Welcome to Clean Slate Audit!',
+          `<div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;color:#1E293B;">
+            <h2 style="color:#10B981;">Welcome, ${name}!</h2>
+            <p>Thanks for signing up for Clean Slate Audit. Your account is active and your portal is ready.</p>
+            <p>Here's what happens next:</p>
+            <ol style="padding-left:1.25rem;line-height:1.9;color:#334155;">
+              <li>Log into your portal and complete the short onboarding wizard</li>
+              <li>Upload your bank statements, paystubs, and any other relevant documents</li>
+              <li>A real person will manually review your numbers and build your custom blueprint</li>
+              <li>You'll receive an email when your blueprint is ready — typically within 7 business days</li>
+            </ol>
+            <p>Your blueprint includes a personalized spending map, a debt payoff sequence, a video walkthrough, a downloadable PDF, and an interactive budget spreadsheet.</p>
+            <p style="margin-top:1.5rem;">
+              <a href="https://logicnerds.github.io/cleanslate/portal/" style="background:#10B981;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;">Open My Portal</a>
+            </p>
+            <p style="color:#64748B;font-size:0.85rem;margin-top:2rem;">If you have any questions at any point, just reply to this email and we'll get back to you.</p>
+            <p style="color:#64748B;font-size:0.85rem;">— Elijah<br>Clean Slate Audit</p>
+          </div>`
+        );
+
+        // ── Email B: Admin new signup alert ──────────────────────
+        sendEmail(
+          'elijah@logicnerds.net',
+          '\uD83D\uDD25 New User Signup!',
+          `<div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;color:#1E293B;">
+            <h2>New client just signed up.</h2>
+            <table style="border-collapse:collapse;width:100%;margin-top:1rem;">
+              <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Name</td><td style="padding:0.5rem 0;font-weight:600;">${name}</td></tr>
+              <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Email</td><td style="padding:0.5rem 0;">${email}</td></tr>
+              <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Promo code</td><td style="padding:0.5rem 0;">${promo || 'None'}</td></tr>
+              <tr><td style="padding:0.5rem 0;color:#64748B;font-size:0.9rem;">Free audit</td><td style="padding:0.5rem 0;">${isFreeAudit ? 'Yes' : 'No \u2014 $79'}</td></tr>
+            </table>
+            <p style="margin-top:1.5rem;color:#64748B;font-size:0.85rem;">They haven't uploaded documents yet. You'll get another notification when they complete the wizard.</p>
+          </div>`
+        );
+
+        showAuthSuccess(isFreeAudit);
+      } catch (err) {
+        const messages = {
+          'auth/email-already-in-use': 'An account with that email already exists. Try signing in instead.',
+          'auth/weak-password':        'Password must be at least 6 characters.',
+          'auth/invalid-email':        'Please enter a valid email address.',
+        };
+        showError(signupError, messages[err.code] || err.message);
+        setLoading(signupSubmit, false);
+      }
+    });
+
+    // ── Login ────────────────────────────────────────────────────
+    loginSubmit.addEventListener('click', async () => {
+      clearError(loginError);
+      const email    = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      if (!isValidEmail(email)) return showError(loginError, 'Please enter a valid email address.');
+      if (!password)            return showError(loginError, 'Please enter your password.');
+
+      setLoading(loginSubmit, true);
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        showAuthSuccess(false);
+      } catch (err) {
+        const messages = {
+          'auth/invalid-credential':  'Incorrect email or password. Please try again.',
+          'auth/user-not-found':      'No account found with that email.',
+          'auth/wrong-password':      'Incorrect password. Please try again.',
+          'auth/too-many-requests':   'Too many attempts. Please wait a moment and try again.',
+        };
+        showError(loginError, messages[err.code] || 'Sign in failed. Please try again.');
+        setLoading(loginSubmit, false);
+      }
+    });
+
+    // ── Forgot password ──────────────────────────────────────────
+    showResetBtn.addEventListener('click', () => {
+      loginFormCont.style.display = 'none'; resetFormCont.style.display = '';
+      resetSuccess.style.display  = 'none'; clearError(resetError);
+      document.getElementById('reset-email').value = '';
+    });
+    backToLogin.addEventListener('click', () => {
+      resetFormCont.style.display = 'none'; loginFormCont.style.display = '';
+    });
+    resetSubmit.addEventListener('click', async () => {
+      clearError(resetError);
+      const email = document.getElementById('reset-email').value.trim();
+      if (!isValidEmail(email)) return showError(resetError, 'Please enter a valid email address.');
+      setLoading(resetSubmit, true);
+      try {
+        await sendPasswordResetEmail(auth, email);
+        resetSuccess.style.display = 'block';
+      } catch (err) {
+        showError(resetError, 'Could not send reset email. Please try again.');
+      } finally {
+        setLoading(resetSubmit, false);
+      }
+    });
+
+    // ── Auto-open Sign In tab if redirected from portal ─────────
+    if (new URLSearchParams(window.location.search).get('signin') === 'true') {
+      activateTab(tabLogin, paneLogin, tabSignup, paneSignup);
+      document.getElementById('auth-section').scrollIntoView({ behavior: 'smooth' });
     }
 
-    input.addEventListener('change', () => addFiles(input.files));
-    zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag-over'); });
-    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-    zone.addEventListener('drop', e => {
-      e.preventDefault(); zone.classList.remove('drag-over');
-      if (e.dataTransfer?.files.length) addFiles(e.dataTransfer.files);
+    // ── Smooth scroll ────────────────────────────────────────────
+    document.querySelectorAll('a[href="#auth-section"]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById('auth-section').scrollIntoView({ behavior: 'smooth' });
+      });
     });
-  }
-</script>
+  </script>
+
 </body>
 </html>
