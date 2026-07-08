@@ -1,669 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin — Clean Slate</title>
-
-  <!-- Bootstrap 5 CSS via CDN -->
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-    crossorigin="anonymous"
-  />
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap"
-    rel="stylesheet"
-  />
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
-    /* === Design tokens === */
-    :root {
-      --navy:         #0F172A;
-      --navy-light:   #1E293B;
-      --navy-mid:     #162032;
-      --navy-muted:   #334155;
-      --emerald:      #10B981;
-      --emerald-dark: #059669;
-      --indigo:       #6366F1;
-      --indigo-light: #818CF8;
-      --gold:         #F59E0B;
-      --red:          #F87171;
-      --sidebar-w:    17rem;
-    }
-
-    /* === Base === */
-    html, body {
-      height: 100%;
-      font-family: 'Inter', system-ui, sans-serif;
-      background: var(--navy);
-      color: #F8FAFC;
-      margin: 0;
-    }
-    * { box-sizing: border-box; }
-    .font-display { font-family: 'Playfair Display', Georgia, serif; }
-
-    /* ─────────────────────────────────────────────────────────────
-       LAYOUT: fixed top nav + two-panel split below
-       Left panel (queue) is fixed; right panel scrolls.
-    ───────────────────────────────────────────────────────────── */
-    .admin-nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 3.5rem;
-      background: var(--navy-mid);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      display: flex;
-      align-items: center;
-      z-index: 200;
-      padding: 0 1.25rem;
-    }
-    .nav-logo-icon {
-      width: 1.5rem; height: 1.5rem; border-radius: 5px;
-      background: var(--emerald);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .admin-badge {
-      font-size: 0.65rem; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      background: rgba(99,102,241,0.15);
-      border: 1px solid rgba(99,102,241,0.3);
-      color: var(--indigo-light);
-      border-radius: 4px;
-      padding: 0.15rem 0.5rem;
-    }
-
-    .admin-body {
-      display: flex;
-      margin-top: 3.5rem;
-      height: calc(100vh - 3.5rem);
-    }
-
-    /* ── LEFT: Client queue ──────────────────────────────────── */
-    .queue-panel {
-      width: var(--sidebar-w);
-      flex-shrink: 0;
-      background: var(--navy-mid);
-      border-right: 1px solid rgba(255,255,255,0.06);
-      display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 3.5rem;
-      left: 0;
-      bottom: 0;
-      overflow: hidden;
-    }
-    .queue-header {
-      padding: 1rem 1.1rem 0.75rem;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      flex-shrink: 0;
-    }
-    .queue-title {
-      font-size: 0.7rem; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: #475569;
-    }
-    .queue-count {
-      font-size: 0.7rem; color: #475569;
-    }
-    .queue-search {
-      width: 100%;
-      background: rgba(15,23,42,0.5);
-      border: 1px solid #1E293B;
-      border-radius: 0.4rem;
-      color: #F8FAFC;
-      padding: 0.45rem 0.75rem;
-      font-size: 0.78rem;
-      font-family: inherit;
-      margin-top: 0.6rem;
-    }
-    .queue-search:focus {
-      outline: none;
-      border-color: var(--indigo);
-      box-shadow: 0 0 0 2px rgba(99,102,241,0.12);
-    }
-    .queue-search::placeholder { color: #334155; }
-
-    .queue-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 0.4rem 0;
-    }
-    .queue-list::-webkit-scrollbar { width: 4px; }
-    .queue-list::-webkit-scrollbar-track { background: transparent; }
-    .queue-list::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 2px; }
-
-    .queue-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.7rem 1.1rem;
-      cursor: pointer;
-      border-left: 2px solid transparent;
-      transition: background 0.12s, border-color 0.12s;
-    }
-    .queue-item:hover   { background: rgba(255,255,255,0.03); }
-    .queue-item.active  {
-      background: rgba(99,102,241,0.08);
-      border-left-color: var(--indigo);
-    }
-    .queue-avatar {
-      width: 2rem; height: 2rem; border-radius: 50%;
-      background: var(--navy-muted);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.72rem; font-weight: 700;
-      color: #94A3B8; flex-shrink: 0;
-      text-transform: uppercase;
-    }
-    .queue-item-name {
-      font-size: 0.82rem; font-weight: 600;
-      color: #CBD5E1; line-height: 1.2;
-    }
-    .queue-item-date {
-      font-size: 0.68rem; color: #475569; margin-top: 0.1rem;
-    }
-    .status-pill {
-      margin-left: auto;
-      font-size: 0.6rem; font-weight: 700;
-      letter-spacing: 0.05em; text-transform: uppercase;
-      border-radius: 9999px; padding: 0.2rem 0.5rem;
-      white-space: nowrap; flex-shrink: 0;
-    }
-    .pill-awaiting  { background: rgba(245,158,11,0.12); color: var(--gold); border: 1px solid rgba(245,158,11,0.25); }
-    .pill-ready     { background: rgba(99,102,241,0.12); color: var(--indigo-light); border: 1px solid rgba(99,102,241,0.25); }
-    .pill-completed { background: rgba(16,185,129,0.12); color: var(--emerald); border: 1px solid rgba(16,185,129,0.25); }
-
-    /* ── RIGHT: Workstation ──────────────────────────────────── */
-    .workstation-panel {
-      margin-left: var(--sidebar-w);
-      flex: 1;
-      overflow-y: auto;
-      padding: 1.75rem 2rem 5rem;
-    }
-
-    /* Empty state */
-    .empty-state {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      height: 100%;
-      color: #334155;
-      text-align: center;
-      padding: 2rem;
-    }
-    .empty-icon {
-      width: 3rem; height: 3rem; border-radius: 50%;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid #1E293B;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 1rem;
-    }
-
-    /* Client header row */
-    .client-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-    }
-    .client-name-block .client-name {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-weight: 700; font-size: 1.4rem;
-      color: #F8FAFC; line-height: 1.2;
-    }
-    .client-name-block .client-meta {
-      font-size: 0.75rem; color: #475569; margin-top: 0.2rem;
-    }
-
-    /* Section card */
-    .ws-card {
-      background: rgba(30,41,59,0.55);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 0.875rem;
-      margin-bottom: 1.25rem;
-      overflow: hidden;
-    }
-    .ws-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.875rem 1.25rem;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .ws-card-title {
-      font-size: 0.7rem; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: #475569;
-    }
-    .ws-card-body { padding: 1.25rem; }
-
-    /* Notes display */
-    .notes-display {
-      font-size: 0.875rem;
-      color: #94A3B8;
-      line-height: 1.75;
-      white-space: pre-wrap;
-      min-height: 4rem;
-    }
-    .notes-display.empty { color: #334155; font-style: italic; }
-
-    /* Debt table */
-    .debt-view-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.82rem;
-    }
-    .debt-view-table th {
-      text-align: left;
-      font-size: 0.65rem; font-weight: 700;
-      letter-spacing: 0.07em; text-transform: uppercase;
-      color: #475569;
-      padding: 0 0.75rem 0.6rem;
-      border-bottom: 1px solid #1E293B;
-    }
-    .debt-view-table td {
-      padding: 0.55rem 0.75rem;
-      color: #CBD5E1;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-    }
-    .debt-view-table tr:last-child td { border-bottom: none; }
-    .debt-view-table .num { font-variant-numeric: tabular-nums; color: #94A3B8; }
-    .debt-view-table .rate { color: var(--gold); }
-    .debt-total-row td {
-      border-top: 1px solid #1E293B !important;
-      border-bottom: none !important;
-      font-weight: 600;
-      color: #F8FAFC;
-      padding-top: 0.75rem !important;
-    }
-
-    /* File download buttons */
-    .file-dl-btn {
-      display: flex; align-items: center; gap: 0.75rem;
-      background: rgba(15,23,42,0.5);
-      border: 1px solid #1E293B;
-      border-radius: 0.6rem;
-      padding: 0.75rem 1rem;
-      cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
-      text-decoration: none;
-      margin-bottom: 0.6rem;
-      width: 100%;
-    }
-    .file-dl-btn:hover {
-      border-color: rgba(16,185,129,0.35);
-      background: rgba(16,185,129,0.04);
-    }
-    .file-dl-icon {
-      width: 2rem; height: 2rem; border-radius: 0.4rem;
-      background: rgba(16,185,129,0.1);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .file-dl-name { font-size: 0.82rem; font-weight: 500; color: #CBD5E1; }
-    .file-dl-meta { font-size: 0.7rem; color: #475569; margin-top: 0.1rem; }
-    .file-dl-arrow { margin-left: auto; color: #334155; }
-
-    /* Admin upload form */
-    .admin-field-label {
-      display: block;
-      font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.05em; text-transform: uppercase;
-      color: #475569; margin-bottom: 0.4rem;
-    }
-    .admin-field {
-      width: 100%;
-      background: rgba(15,23,42,0.6);
-      border: 1px solid #1E293B;
-      border-radius: 0.5rem;
-      color: #F8FAFC;
-      padding: 0.65rem 0.9rem;
-      font-size: 0.85rem;
-      font-family: inherit;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      margin-bottom: 1rem;
-    }
-    .admin-field:focus {
-      outline: none;
-      border-color: var(--indigo);
-      box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
-    }
-    .admin-field::placeholder { color: #334155; }
-
-    .upload-row {
-      display: flex; align-items: center; gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    .file-pick-zone {
-      flex: 1;
-      background: rgba(15,23,42,0.4);
-      border: 1px dashed #1E293B;
-      border-radius: 0.5rem;
-      padding: 0.65rem 1rem;
-      font-size: 0.82rem; color: #475569;
-      cursor: pointer;
-      position: relative;
-      transition: border-color 0.15s, color 0.15s;
-    }
-    .file-pick-zone:hover { border-color: var(--emerald); color: var(--emerald); }
-    .file-pick-zone input[type="file"] {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      opacity: 0; cursor: pointer;
-    }
-    .file-pick-label { font-size: 0.72rem; color: #475569; white-space: nowrap; }
-
-    /* Deliver button */
-    .btn-deliver {
-      width: 100%;
-      background: linear-gradient(135deg, var(--emerald), var(--emerald-dark));
-      color: #fff; border: none; font-weight: 700;
-      border-radius: 0.75rem; padding: 0.9rem 1.5rem;
-      cursor: pointer; font-size: 0.9rem;
-      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
-      transition: transform 0.15s, box-shadow 0.15s;
-      letter-spacing: 0.01em;
-    }
-    .btn-deliver:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(16,185,129,0.3); }
-    .btn-deliver:active { transform: translateY(0); }
-
-    /* Deliver confirmation toast */
-    .toast-confirm {
-      position: fixed;
-      bottom: 1.5rem; left: 50%;
-      transform: translateX(-50%) translateY(4px);
-      background: var(--navy-light);
-      border: 1px solid rgba(16,185,129,0.3);
-      border-radius: 0.625rem;
-      padding: 0.75rem 1.25rem;
-      display: flex; align-items: center; gap: 0.6rem;
-      font-size: 0.82rem; color: var(--emerald);
-      font-weight: 600;
-      opacity: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      z-index: 500;
-      pointer-events: none;
-    }
-    .toast-confirm.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* Pop-in */
-    @keyframes popIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .pop-in { animation: popIn 0.25s ease forwards; }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 3px; }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-    }
-
-    /* Responsive: collapse sidebar on small screens */
-    @media (max-width: 768px) {
-      .queue-panel { display: none; }
-      .workstation-panel { margin-left: 0; padding: 1.25rem 1rem 4rem; }
-    }
+    :root{--navy:#0F172A;--navy-light:#1E293B;--navy-mid:#162032;--navy-muted:#334155;--emerald:#10B981;--emerald-dark:#059669;--indigo:#6366F1;--indigo-light:#818CF8;--gold:#F59E0B;--red:#F87171;--sidebar-w:17rem}
+    html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--navy);color:#F8FAFC;margin:0}
+    *{box-sizing:border-box}
+    .font-display{font-family:'Playfair Display',Georgia,serif}
+    .admin-nav{position:fixed;top:0;left:0;right:0;height:3.5rem;background:var(--navy-mid);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;z-index:200;padding:0 1.25rem}
+    .nav-logo-icon{width:1.5rem;height:1.5rem;border-radius:5px;background:var(--emerald);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .admin-badge{font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:var(--indigo-light);border-radius:4px;padding:0.15rem 0.5rem}
+    .admin-body{display:flex;margin-top:3.5rem;height:calc(100vh - 3.5rem)}
+    .queue-panel{width:var(--sidebar-w);flex-shrink:0;background:var(--navy-mid);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;position:fixed;top:3.5rem;left:0;bottom:0;overflow:hidden}
+    .queue-header{padding:1rem 1.1rem 0.75rem;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0}
+    .queue-title{font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#475569}
+    .queue-count{font-size:0.7rem;color:#475569}
+    .queue-search{width:100%;background:rgba(15,23,42,0.5);border:1px solid #1E293B;border-radius:0.4rem;color:#F8FAFC;padding:0.45rem 0.75rem;font-size:0.78rem;font-family:inherit;margin-top:0.6rem}
+    .queue-search:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 2px rgba(99,102,241,0.12)}
+    .queue-search::placeholder{color:#334155}
+    .queue-list{flex:1;overflow-y:auto;padding:0.4rem 0}
+    .queue-list::-webkit-scrollbar{width:4px}.queue-list::-webkit-scrollbar-track{background:transparent}.queue-list::-webkit-scrollbar-thumb{background:#1E293B;border-radius:2px}
+    .queue-item{display:flex;align-items:center;gap:0.75rem;padding:0.7rem 1.1rem;cursor:pointer;border-left:2px solid transparent;transition:background 0.12s,border-color 0.12s}
+    .queue-item:hover{background:rgba(255,255,255,0.03)}.queue-item.active{background:rgba(99,102,241,0.08);border-left-color:var(--indigo)}
+    .queue-avatar{width:2rem;height:2rem;border-radius:50%;background:var(--navy-muted);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;color:#94A3B8;flex-shrink:0;text-transform:uppercase}
+    .queue-item-name{font-size:0.82rem;font-weight:600;color:#CBD5E1;line-height:1.2}
+    .queue-item-date{font-size:0.68rem;color:#475569;margin-top:0.1rem}
+    .status-pill{margin-left:auto;font-size:0.6rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;border-radius:9999px;padding:0.2rem 0.5rem;white-space:nowrap;flex-shrink:0}
+    .pill-awaiting{background:rgba(245,158,11,0.12);color:var(--gold);border:1px solid rgba(245,158,11,0.25)}
+    .pill-ready{background:rgba(99,102,241,0.12);color:var(--indigo-light);border:1px solid rgba(99,102,241,0.25)}
+    .pill-completed{background:rgba(16,185,129,0.12);color:var(--emerald);border:1px solid rgba(16,185,129,0.25)}
+    .workstation-panel{margin-left:var(--sidebar-w);flex:1;overflow-y:auto;padding:1.75rem 2rem 5rem}
+    .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#334155;text-align:center;padding:2rem}
+    .empty-icon{width:3rem;height:3rem;border-radius:50%;background:rgba(255,255,255,0.03);border:1px solid #1E293B;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+    .client-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.5rem}
+    .client-name-block .client-name{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.4rem;color:#F8FAFC;line-height:1.2}
+    .client-name-block .client-meta{font-size:0.75rem;color:#475569;margin-top:0.2rem}
+    .ws-card{background:rgba(30,41,59,0.55);border:1px solid rgba(255,255,255,0.06);border-radius:0.875rem;margin-bottom:1.25rem;overflow:hidden}
+    .ws-card-header{display:flex;align-items:center;justify-content:space-between;padding:0.875rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .ws-card-title{font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#475569}
+    .ws-card-body{padding:1.25rem}
+    .notes-display{font-size:0.875rem;color:#94A3B8;line-height:1.75;white-space:pre-wrap;min-height:4rem}
+    .notes-display.empty{color:#334155;font-style:italic}
+    .debt-view-table{width:100%;border-collapse:collapse;font-size:0.82rem}
+    .debt-view-table th{text-align:left;font-size:0.65rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#475569;padding:0 0.75rem 0.6rem;border-bottom:1px solid #1E293B}
+    .debt-view-table td{padding:0.55rem 0.75rem;color:#CBD5E1;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .debt-view-table tr:last-child td{border-bottom:none}
+    .debt-view-table .num{font-variant-numeric:tabular-nums;color:#94A3B8}.debt-view-table .rate{color:var(--gold)}
+    .debt-total-row td{border-top:1px solid #1E293B!important;border-bottom:none!important;font-weight:600;color:#F8FAFC;padding-top:0.75rem!important}
+    .file-dl-btn{display:flex;align-items:center;gap:0.75rem;background:rgba(15,23,42,0.5);border:1px solid #1E293B;border-radius:0.6rem;padding:0.75rem 1rem;cursor:pointer;transition:border-color 0.15s,background 0.15s;text-decoration:none;margin-bottom:0.6rem;width:100%}
+    .file-dl-btn:hover{border-color:rgba(16,185,129,0.35);background:rgba(16,185,129,0.04)}
+    .file-dl-icon{width:2rem;height:2rem;border-radius:0.4rem;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .file-dl-name{font-size:0.82rem;font-weight:500;color:#CBD5E1}.file-dl-meta{font-size:0.7rem;color:#475569;margin-top:0.1rem}.file-dl-arrow{margin-left:auto;color:#334155}
+    .admin-field-label{display:block;font-size:0.7rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#475569;margin-bottom:0.4rem}
+    .admin-field{width:100%;background:rgba(15,23,42,0.6);border:1px solid #1E293B;border-radius:0.5rem;color:#F8FAFC;padding:0.65rem 0.9rem;font-size:0.85rem;font-family:inherit;transition:border-color 0.2s,box-shadow 0.2s;margin-bottom:1rem}
+    .admin-field:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 2px rgba(99,102,241,0.15)}.admin-field::placeholder{color:#334155}
+    .upload-row{display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem}
+    .file-pick-zone{flex:1;background:rgba(15,23,42,0.4);border:1px dashed #1E293B;border-radius:0.5rem;padding:0.65rem 1rem;font-size:0.82rem;color:#475569;cursor:pointer;position:relative;transition:border-color 0.15s,color 0.15s}
+    .file-pick-zone:hover{border-color:var(--emerald);color:var(--emerald)}
+    .file-pick-zone input[type="file"]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+    .file-pick-label{font-size:0.72rem;color:#475569;white-space:nowrap}
+    .btn-deliver{width:100%;background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));color:#fff;border:none;font-weight:700;border-radius:0.75rem;padding:0.9rem 1.5rem;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;gap:0.6rem;transition:transform 0.15s,box-shadow 0.15s;letter-spacing:0.01em}
+    .btn-deliver:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(16,185,129,0.3)}.btn-deliver:active{transform:translateY(0)}
+    .btn-deliver:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .toast-confirm{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(4px);background:var(--navy-light);border:1px solid rgba(16,185,129,0.3);border-radius:0.625rem;padding:0.75rem 1.25rem;display:flex;align-items:center;gap:0.6rem;font-size:0.82rem;color:var(--emerald);font-weight:600;opacity:0;transition:opacity 0.3s ease,transform 0.3s ease;z-index:500;pointer-events:none}
+    .toast-confirm.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    /* Loading */
+    .portal-loading{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:1rem}
+    .spinner-ring{width:2.5rem;height:2.5rem;border:3px solid rgba(255,255,255,0.08);border-top-color:var(--emerald);border-radius:50%;animation:spin 0.7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes popIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .pop-in{animation:popIn 0.25s ease forwards}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#1E293B;border-radius:3px}
+    @media(max-width:768px){.queue-panel{display:none}.workstation-panel{margin-left:0;padding:1.25rem 1rem 4rem}}
+    @media(prefers-reduced-motion:reduce){*,::before,::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
   </style>
 </head>
-
 <body>
 
-  <!-- ── TOP NAV ─────────────────────────────────────────────── -->
-  <nav class="admin-nav" aria-label="Admin navigation">
+  <!-- Loading -->
+  <div class="portal-loading" id="portal-loading">
+    <div class="spinner-ring"></div>
+    <div style="font-size:0.85rem;color:#475569;">Verifying access…</div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="admin-nav" aria-label="Admin navigation" id="admin-nav" style="display:none;">
     <div class="d-flex align-items-center gap-2">
-      <div class="nav-logo-icon">
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-      </div>
+      <div class="nav-logo-icon"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
       <span class="font-display fw-bold text-white" style="font-size:0.95rem;">Clean Slate</span>
       <span class="admin-badge">Admin</span>
     </div>
     <div class="ms-auto d-flex align-items-center gap-3">
       <span style="font-size:0.75rem;color:#334155;" id="nav-clock"></span>
-      <a href="../" style="font-size:0.78rem;color:#475569;text-decoration:none;transition:color 0.15s;"
-         onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#475569'">
-        ← Back to site
-      </a>
+      <a href="../" style="font-size:0.78rem;color:#475569;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='#CBD5E1'" onmouseout="this.style.color='#475569'">← Back to site</a>
     </div>
   </nav>
 
-  <div class="admin-body">
+  <div class="admin-body" id="admin-body" style="display:none;">
 
-    <!-- ── LEFT: CLIENT QUEUE ─────────────────────────────────── -->
+    <!-- Left: Queue -->
     <aside class="queue-panel" aria-label="Client queue">
       <div class="queue-header">
         <div class="d-flex align-items-center justify-content-between">
           <span class="queue-title">Client Queue</span>
           <span class="queue-count" id="queue-count"></span>
         </div>
-        <input
-          type="search"
-          class="queue-search"
-          id="queue-search"
-          placeholder="Search clients…"
-          aria-label="Search clients"
-        />
+        <input type="search" class="queue-search" id="queue-search" placeholder="Search clients…" aria-label="Search clients"/>
       </div>
       <div class="queue-list" id="queue-list" role="list" aria-label="Client list"></div>
     </aside>
 
-    <!-- ── RIGHT: WORKSTATION ─────────────────────────────────── -->
+    <!-- Right: Workstation -->
     <main class="workstation-panel" id="workstation" aria-label="Client workstation">
-
-      <!-- Empty state (shown before a client is selected) -->
       <div class="empty-state" id="empty-state">
-        <div class="empty-icon">
-          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#334155" stroke-width="1.5" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
-        </div>
+        <div class="empty-icon"><svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#334155" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
         <div style="font-size:0.82rem;color:#334155;">Select a client to open their workstation</div>
       </div>
-
-      <!-- Client workstation (hidden until a client is selected) -->
       <div id="client-workstation" style="display:none;" aria-live="polite"></div>
-
     </main>
   </div>
 
-  <!-- Delivery confirmation toast -->
   <div class="toast-confirm" id="deliver-toast" role="status" aria-live="polite">
     <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
     Audit marked as complete and delivered!
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmB3g3hGQP6Gvs7FDPIYWzKTcxV8" crossorigin="anonymous"></script>
 
-  <!-- Bootstrap JS -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmB3g3hGQP6Gvs7FDPIYWzKTcxV8"
-    crossorigin="anonymous"
-  ></script>
+  <script type="module">
+    import { initializeApp }                               from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut }        from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, getDocs,
+             doc, updateDoc, getDoc }                      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getStorage, ref, getDownloadURL, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-  <script>
-    // ─────────────────────────────────────────────────────────────
-    // FIREBASE CONFIGURATION PLACEHOLDER
-    // ─────────────────────────────────────────────────────────────
     const firebaseConfig = {
-      apiKey:            "REPLACE_WITH_YOUR_API_KEY",
-      authDomain:        "REPLACE_WITH_YOUR_AUTH_DOMAIN",
-      projectId:         "REPLACE_WITH_YOUR_PROJECT_ID",
-      storageBucket:     "REPLACE_WITH_YOUR_STORAGE_BUCKET",
-      messagingSenderId: "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
-      appId:             "REPLACE_WITH_YOUR_APP_ID",
+      apiKey:            "AIzaSyCAaV-KqLvO7SlMTsxESvDrHs3VByRmlAY",
+      authDomain:        "cleanslate-d2abc.firebaseapp.com",
+      projectId:         "cleanslate-d2abc",
+      storageBucket:     "cleanslate-d2abc.firebasestorage.app",
+      messagingSenderId: "100758365889",
+      appId:             "1:100758365889:web:bffece3bda6fb64046d640",
+      measurementId:     "G-3SV37N8RLT"
     };
-    // TODO: Initialize Firebase and restrict this page to your admin UID only:
-    // import { initializeApp } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js";
-    // import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-auth.js";
-    // import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-firestore.js";
-    // import { getStorage, ref, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.x.x/firebase-storage.js";
-    // const ADMIN_UID = "REPLACE_WITH_YOUR_FIREBASE_UID";
-    // const app = initializeApp(firebaseConfig);
-    // const auth = getAuth(app); const db = getFirestore(app); const storage = getStorage(app);
-    // onAuthStateChanged(auth, user => {
-    //   if (!user || user.uid !== ADMIN_UID) { window.location.href = '../'; return; }
-    //   loadClients(); // fetch from Firestore
-    // });
-    // ─────────────────────────────────────────────────────────────
 
+    const ADMIN_UID = "D8noLoyd4DNJPBdqyok6fBV2VRv2";
 
-    // ─────────────────────────────────────────────────────────────
-    // MOCK CLIENT DATA
-    // Replace with real Firestore data in production.
-    // Each client object mirrors what you'd store in a Firestore
-    // users/{uid} document.
-    // ─────────────────────────────────────────────────────────────
-    const MOCK_CLIENTS = [
-      {
-        id: 'client-001',
-        name: 'Maria Vasquez',
-        email: 'maria.v@example.com',
-        submittedAt: '2025-06-28',
-        status: 'ready',
-        notes: "Pays car insurance quarterly in March — roughly $520.\nWants to pay off her Discover card within 12 months.\nExpects a $1,800 tax refund in February each year.\nSide income from Etsy varies — avg about $200/mo.",
-        debts: [
-          { name: 'Discover Card',    balance: 4820.00, rate: 22.99, minPayment: 96.00 },
-          { name: 'Car Loan',         balance: 11340.00, rate: 6.49,  minPayment: 248.00 },
-          { name: 'Student Loan',     balance: 18700.00, rate: 4.99,  minPayment: 195.00 },
-        ],
-        incomeFiles:    ['paystub_may2025.pdf', 'paystub_june2025.pdf', 'W2_2024.pdf'],
-        statementFiles: ['chase_checking_apr.pdf', 'chase_checking_may.pdf', 'chase_checking_jun.pdf', 'discover_apr.pdf', 'discover_may.pdf', 'discover_jun.pdf'],
-      },
-      {
-        id: 'client-002',
-        name: 'Devon Okafor',
-        email: 'devon.o@example.com',
-        submittedAt: '2025-06-30',
-        status: 'awaiting',
-        notes: '',
-        debts: [],
-        incomeFiles:    [],
-        statementFiles: [],
-      },
-      {
-        id: 'client-003',
-        name: 'Priya Nair',
-        email: 'priya.n@example.com',
-        submittedAt: '2025-07-01',
-        status: 'completed',
-        notes: "Holiday bonus around $3,000 each December.\nGoal: build 6-month emergency fund while paying off medical debt.\nHusband also employed — household income provided on joint tax return.",
-        debts: [
-          { name: 'Medical Debt',     balance: 2100.00, rate: 0,     minPayment: 75.00 },
-          { name: 'Chase Sapphire',   balance: 7640.00, rate: 20.24, minPayment: 152.00 },
-          { name: 'Personal Loan',    balance: 5500.00, rate: 11.99, minPayment: 136.00 },
-        ],
-        incomeFiles:    ['joint_1040_2024.pdf', 'paystub_june2025.pdf'],
-        statementFiles: ['bofa_apr.pdf', 'bofa_may.pdf', 'bofa_jun.pdf', 'chase_apr.pdf', 'chase_may.pdf', 'chase_jun.pdf'],
-      },
-      {
-        id: 'client-004',
-        name: 'James Whitfield',
-        email: 'james.w@example.com',
-        submittedAt: '2025-07-03',
-        status: 'awaiting',
-        notes: "Freelance developer — income fluctuates monthly.\nHighest earning months are Q4.\nWants to eliminate all credit card debt before buying a house.",
-        debts: [
-          { name: 'Amex Blue',        balance: 3200.00, rate: 19.99, minPayment: 64.00 },
-          { name: 'Citi Double Cash', balance: 5875.00, rate: 21.49, minPayment: 117.00 },
-        ],
-        incomeFiles:    ['1099_2024.pdf', 'bank_statements_q1.pdf'],
-        statementFiles: ['wellsfargo_apr.pdf', 'wellsfargo_may.pdf', 'wellsfargo_jun.pdf'],
-      },
-      {
-        id: 'client-005',
-        name: 'Sandra Park',
-        email: 'sandra.p@example.com',
-        submittedAt: '2025-07-05',
-        status: 'ready',
-        notes: "Two kids — childcare is $1,400/mo, ends Sept 2026 when youngest starts school.\nReceives $650/mo child support.\nGoal: build emergency fund and start investing by end of year.",
-        debts: [
-          { name: 'Sallie Mae Loan',  balance: 24000.00, rate: 6.8,  minPayment: 278.00 },
-          { name: 'Capital One',      balance: 1980.00,  rate: 26.99, minPayment: 50.00 },
-        ],
-        incomeFiles:    ['paystub_may2025.pdf', 'paystub_june2025.pdf', 'support_agreement.pdf'],
-        statementFiles: ['usbank_apr.pdf', 'usbank_may.pdf', 'usbank_jun.pdf', 'capitalone_apr.pdf', 'capitalone_may.pdf', 'capitalone_jun.pdf'],
-      },
-    ];
+    const app     = initializeApp(firebaseConfig);
+    const auth    = getAuth(app);
+    const db      = getFirestore(app);
+    const storage = getStorage(app);
 
-    // ─────────────────────────────────────────────────────────────
-    // STATE
-    // ─────────────────────────────────────────────────────────────
-    let clients       = [...MOCK_CLIENTS];
-    let activeId      = null;
-
-    // ─────────────────────────────────────────────────────────────
-    // BOOT
-    // ─────────────────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-      renderQueue(clients);
+    // ── Auth gate: admin only ────────────────────────────────────
+    onAuthStateChanged(auth, async user => {
+      if (!user || user.uid !== ADMIN_UID) {
+        window.location.href = '../';
+        return;
+      }
+      document.getElementById('portal-loading').style.display = 'none';
+      document.getElementById('admin-nav').style.display      = '';
+      document.getElementById('admin-body').style.display     = 'flex';
       startClock();
+      await loadClients();
     });
 
-    // ─────────────────────────────────────────────────────────────
-    // CLOCK
-    // ─────────────────────────────────────────────────────────────
+    // ── Clock ────────────────────────────────────────────────────
     function startClock() {
       function tick() {
-        const now = new Date();
         document.getElementById('nav-clock').textContent =
-          now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       }
-      tick();
-      setInterval(tick, 30000);
+      tick(); setInterval(tick, 30000);
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // RENDER QUEUE
-    // ─────────────────────────────────────────────────────────────
+    // ── Load clients from Firestore ──────────────────────────────
+    let clients  = [];
+    let activeId = null;
+
+    async function loadClients() {
+      const snap = await getDocs(collection(db, 'users'));
+      clients = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Exclude admin's own account from the queue
+      clients = clients.filter(c => c.id !== ADMIN_UID);
+      renderQueue(clients);
+    }
+
+    // ── Render queue ─────────────────────────────────────────────
     function renderQueue(list) {
       const container = document.getElementById('queue-list');
       document.getElementById('queue-count').textContent = list.length + ' client' + (list.length !== 1 ? 's' : '');
       container.innerHTML = '';
 
       if (!list.length) {
-        container.innerHTML = '<div style="padding:1.5rem 1.1rem;font-size:0.78rem;color:#334155;">No clients found.</div>';
+        container.innerHTML = '<div style="padding:1.5rem 1.1rem;font-size:0.78rem;color:#334155;">No clients yet.</div>';
         return;
       }
 
-      // Sort: ready first, then awaiting, then completed
-      const order = { ready: 0, awaiting: 1, completed: 2 };
-      const sorted = [...list].sort((a, b) => order[a.status] - order[b.status]);
+      const order  = { ready: 0, submitted: 1, awaiting: 2, pending: 3, completed: 4 };
+      const sorted = [...list].sort((a, b) => (order[a.auditStatus] ?? 5) - (order[b.auditStatus] ?? 5));
 
       sorted.forEach(client => {
-        const initials = client.name.split(' ').map(w => w[0]).join('').slice(0, 2);
-        const pillClass = { awaiting: 'pill-awaiting', ready: 'pill-ready', completed: 'pill-completed' }[client.status];
-        const pillLabel = { awaiting: 'Awaiting Docs', ready: 'Ready to Audit', completed: 'Completed' }[client.status];
+        const initials   = (client.displayName || client.email || '??').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+        const pillClass  = statusPillClass(client.auditStatus);
+        const pillLabel  = statusLabel(client.auditStatus);
+        const dateStr    = client.submittedAt ? formatDate(client.submittedAt.toDate ? client.submittedAt.toDate() : new Date(client.submittedAt)) : '—';
 
         const item = document.createElement('div');
         item.className = 'queue-item' + (client.id === activeId ? ' active' : '');
         item.setAttribute('role', 'listitem');
         item.setAttribute('tabindex', '0');
-        item.setAttribute('aria-label', client.name + ' — ' + pillLabel);
+        item.setAttribute('aria-label', (client.displayName || client.email) + ' — ' + pillLabel);
         item.dataset.id = client.id;
 
         item.innerHTML = `
           <div class="queue-avatar">${initials}</div>
           <div style="min-width:0;flex:1;">
-            <div class="queue-item-name">${client.name}</div>
-            <div class="queue-item-date">${formatDate(client.submittedAt)}</div>
+            <div class="queue-item-name">${escHtml(client.displayName || client.email || 'Unknown')}</div>
+            <div class="queue-item-date">${dateStr}</div>
           </div>
-          <span class="status-pill ${pillClass}">${pillLabel}</span>
-        `;
+          <span class="status-pill ${pillClass}">${pillLabel}</span>`;
 
         item.addEventListener('click', () => selectClient(client.id));
         item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') selectClient(client.id); });
@@ -671,43 +232,44 @@
       });
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // QUEUE SEARCH
-    // ─────────────────────────────────────────────────────────────
-    document.getElementById('queue-search').addEventListener('input', function () {
+    // ── Search ───────────────────────────────────────────────────
+    document.getElementById('queue-search').addEventListener('input', function() {
       const q = this.value.trim().toLowerCase();
-      const filtered = q ? clients.filter(c => c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q)) : clients;
-      renderQueue(filtered);
+      renderQueue(q ? clients.filter(c => (c.displayName || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q)) : clients);
     });
 
-    // ─────────────────────────────────────────────────────────────
-    // SELECT CLIENT → render workstation
-    // ─────────────────────────────────────────────────────────────
-    function selectClient(id) {
+    // ── Select client ────────────────────────────────────────────
+    async function selectClient(id) {
       activeId = id;
-      const client = clients.find(c => c.id === id);
-      if (!client) return;
-
-      // Update active state in queue
-      document.querySelectorAll('.queue-item').forEach(el => {
-        el.classList.toggle('active', el.dataset.id === id);
-      });
+      document.querySelectorAll('.queue-item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
 
       document.getElementById('empty-state').style.display = 'none';
       const ws = document.getElementById('client-workstation');
       ws.style.display = '';
-      ws.innerHTML = buildWorkstation(client);
-      ws.classList.remove('pop-in');
-      void ws.offsetWidth;
-      ws.classList.add('pop-in');
+      ws.innerHTML = '<div style="padding:3rem;text-align:center;color:#334155;font-size:0.85rem;">Loading client data…</div>';
+
+      const client = clients.find(c => c.id === id);
+      if (!client) return;
+
+      // Resolve Storage download URLs for uploaded files
+      const resolveUrls = async (paths) => {
+        if (!paths || !paths.length) return [];
+        return Promise.all(paths.map(async path => {
+          try { return { name: path.split('/').pop(), url: await getDownloadURL(ref(storage, path)) }; }
+          catch (e) { return { name: path.split('/').pop(), url: null }; }
+        }));
+      };
+
+      const incomeFiles    = await resolveUrls(client.incomeFilePaths);
+      const statementFiles = await resolveUrls(client.statementFilePaths);
+
+      ws.innerHTML = buildWorkstation(client, incomeFiles, statementFiles);
+      ws.classList.remove('pop-in'); void ws.offsetWidth; ws.classList.add('pop-in');
 
       // Bind deliver button
-      const deliverBtn = document.getElementById('btn-deliver-' + id);
-      if (deliverBtn) {
-        deliverBtn.addEventListener('click', () => deliverAudit(id));
-      }
+      document.getElementById('btn-deliver-' + id)?.addEventListener('click', () => deliverAudit(id));
 
-      // Bind PDF file picker label
+      // Bind PDF label
       const pdfInput = document.getElementById('pdf-upload-' + id);
       const pdfLabel = document.getElementById('pdf-label-' + id);
       if (pdfInput && pdfLabel) {
@@ -717,246 +279,189 @@
       }
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // BUILD WORKSTATION HTML
-    // ─────────────────────────────────────────────────────────────
-    function buildWorkstation(client) {
-      const pillClass = { awaiting: 'pill-awaiting', ready: 'pill-ready', completed: 'pill-completed' }[client.status];
-      const pillLabel = { awaiting: 'Awaiting Docs', ready: 'Ready to Audit', completed: 'Completed' }[client.status];
+    // ── Build workstation HTML ───────────────────────────────────
+    function buildWorkstation(client, incomeFiles, statementFiles) {
+      const pillClass = statusPillClass(client.auditStatus);
+      const pillLabel = statusLabel(client.auditStatus);
+      const dateStr   = client.submittedAt ? formatDate(client.submittedAt.toDate ? client.submittedAt.toDate() : new Date(client.submittedAt)) : '—';
 
       // Debt rows
       let debtRows = '';
       let totalBalance = 0, totalMin = 0;
-      if (client.debts.length) {
+      if (client.debts && client.debts.length) {
         client.debts.forEach(d => {
-          totalBalance += d.balance;
-          totalMin     += d.minPayment;
-          debtRows += `
-            <tr>
-              <td>${d.name}</td>
-              <td class="num">$${fmt(d.balance)}</td>
-              <td class="rate">${d.rate > 0 ? d.rate.toFixed(2) + '%' : '—'}</td>
-              <td class="num">$${fmt(d.minPayment)}</td>
-            </tr>`;
+          totalBalance += d.balance || 0;
+          totalMin     += d.minPayment || 0;
+          debtRows += `<tr>
+            <td>${escHtml(d.name)}</td>
+            <td class="num">$${fmt(d.balance || 0)}</td>
+            <td class="rate">${d.rate > 0 ? d.rate.toFixed(2) + '%' : '—'}</td>
+            <td class="num">$${fmt(d.minPayment || 0)}</td></tr>`;
         });
-        debtRows += `
-          <tr class="debt-total-row">
-            <td>Total</td>
-            <td class="num">$${fmt(totalBalance)}</td>
-            <td></td>
-            <td class="num">$${fmt(totalMin)}/mo</td>
-          </tr>`;
+        debtRows += `<tr class="debt-total-row"><td>Total</td><td class="num">$${fmt(totalBalance)}</td><td></td><td class="num">$${fmt(totalMin)}/mo</td></tr>`;
       } else {
         debtRows = '<tr><td colspan="4" style="color:#334155;font-style:italic;padding:0.75rem;">No debt entries submitted yet.</td></tr>';
       }
 
-      // Income file buttons
-      const incomeFilesBtns = client.incomeFiles.length
-        ? client.incomeFiles.map(f => fileButton(f, client.id, 'income')).join('')
-        : '<p style="font-size:0.82rem;color:#334155;font-style:italic;margin:0;">No income documents uploaded yet.</p>';
+      const fileButtons = (files, folder) => files.length
+        ? files.map(f => f.url
+            ? `<a href="${f.url}" class="file-dl-btn" target="_blank" rel="noopener noreferrer" aria-label="Download ${escHtml(f.name)}"><div class="file-dl-icon"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div><div class="file-dl-name">${escHtml(f.name)}</div><div class="file-dl-meta">Click to download</div></div><svg class="file-dl-arrow" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>`
+            : `<div class="file-dl-btn" style="opacity:0.4;cursor:default;"><div class="file-dl-icon"><svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div><div><div class="file-dl-name">${escHtml(f.name)}</div><div class="file-dl-meta">URL unavailable</div></div></div>`
+          ).join('')
+        : '<p style="font-size:0.82rem;color:#334155;font-style:italic;margin:0;">No files uploaded yet.</p>';
 
-      // Statement file buttons
-      const statementFilesBtns = client.statementFiles.length
-        ? client.statementFiles.map(f => fileButton(f, client.id, 'statements')).join('')
-        : '<p style="font-size:0.82rem;color:#334155;font-style:italic;margin:0;">No statement documents uploaded yet.</p>';
-
-      // Notes
       const notesHtml = client.notes
         ? `<div class="notes-display">${escHtml(client.notes)}</div>`
         : `<div class="notes-display empty">Client left no additional notes.</div>`;
 
       return `
-        <!-- Client header -->
         <div class="client-header">
           <div class="client-name-block">
-            <div class="client-name">${escHtml(client.name)}</div>
-            <div class="client-meta">${escHtml(client.email)} &nbsp;·&nbsp; Submitted ${formatDate(client.submittedAt)}</div>
+            <div class="client-name">${escHtml(client.displayName || client.email || 'Unknown')}</div>
+            <div class="client-meta">${escHtml(client.email || '')} &nbsp;·&nbsp; Submitted ${dateStr}</div>
           </div>
           <span class="status-pill ${pillClass}" style="font-size:0.68rem;padding:0.3rem 0.75rem;">${pillLabel}</span>
         </div>
 
-        <!-- Client notes -->
         <div class="ws-card">
-          <div class="ws-card-header">
-            <span class="ws-card-title">Client Notes &amp; Goals</span>
-          </div>
+          <div class="ws-card-header"><span class="ws-card-title">Client Notes &amp; Goals</span></div>
           <div class="ws-card-body">${notesHtml}</div>
         </div>
 
-        <!-- Debt inventory -->
         <div class="ws-card">
           <div class="ws-card-header">
             <span class="ws-card-title">Debt Inventory</span>
-            ${client.debts.length ? `<span style="font-size:0.72rem;color:#475569;">${client.debts.length} item${client.debts.length !== 1 ? 's' : ''}</span>` : ''}
+            ${client.debts?.length ? `<span style="font-size:0.72rem;color:#475569;">${client.debts.length} item${client.debts.length !== 1 ? 's' : ''}</span>` : ''}
           </div>
           <div class="ws-card-body" style="padding:0.75rem 0 0;">
             <div style="overflow-x:auto;padding:0 1.25rem 1.25rem;">
-              <table class="debt-view-table" aria-label="Debt inventory for ${escHtml(client.name)}">
-                <thead>
-                  <tr>
-                    <th>Debt</th>
-                    <th>Balance</th>
-                    <th>Rate</th>
-                    <th>Min. Payment</th>
-                  </tr>
-                </thead>
+              <table class="debt-view-table" aria-label="Debt inventory for ${escHtml(client.displayName || '')}">
+                <thead><tr><th>Debt</th><th>Balance</th><th>Rate</th><th>Min. Payment</th></tr></thead>
                 <tbody>${debtRows}</tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- Income documents -->
         <div class="ws-card">
           <div class="ws-card-header">
             <span class="ws-card-title">Income Documents</span>
-            <span style="font-size:0.72rem;color:#475569;">${client.incomeFiles.length} file${client.incomeFiles.length !== 1 ? 's' : ''}</span>
+            <span style="font-size:0.72rem;color:#475569;">${incomeFiles.length} file${incomeFiles.length !== 1 ? 's' : ''}</span>
           </div>
-          <div class="ws-card-body">${incomeFilesBtns}</div>
+          <div class="ws-card-body">${fileButtons(incomeFiles, 'income')}</div>
         </div>
 
-        <!-- Bank & credit card statements -->
         <div class="ws-card">
           <div class="ws-card-header">
             <span class="ws-card-title">Bank &amp; Credit Card Statements</span>
-            <span style="font-size:0.72rem;color:#475569;">${client.statementFiles.length} file${client.statementFiles.length !== 1 ? 's' : ''}</span>
+            <span style="font-size:0.72rem;color:#475569;">${statementFiles.length} file${statementFiles.length !== 1 ? 's' : ''}</span>
           </div>
-          <div class="ws-card-body">${statementFilesBtns}</div>
+          <div class="ws-card-body">${fileButtons(statementFiles, 'statements')}</div>
         </div>
 
-        <!-- Admin delivery form -->
         <div class="ws-card">
-          <div class="ws-card-header">
-            <span class="ws-card-title">Deliver Audit Results</span>
-          </div>
+          <div class="ws-card-header"><span class="ws-card-title">Deliver Audit Results</span></div>
           <div class="ws-card-body">
-
             <label class="admin-field-label" for="loom-${client.id}">Loom video link</label>
-            <input
-              type="url"
-              id="loom-${client.id}"
-              class="admin-field"
-              placeholder="https://www.loom.com/share/..."
-              aria-label="Loom video link for ${escHtml(client.name)}"
-            />
+            <input type="url" id="loom-${client.id}" class="admin-field" placeholder="https://www.loom.com/share/..." value="${escHtml(client.loomUrl || '')}" aria-label="Loom video link"/>
 
             <label class="admin-field-label" for="sheets-${client.id}">Google Sheets link</label>
-            <input
-              type="url"
-              id="sheets-${client.id}"
-              class="admin-field"
-              placeholder="https://docs.google.com/spreadsheets/..."
-              aria-label="Google Sheets link for ${escHtml(client.name)}"
-            />
+            <input type="url" id="sheets-${client.id}" class="admin-field" placeholder="https://docs.google.com/spreadsheets/..." value="${escHtml(client.sheetsUrl || '')}" aria-label="Google Sheets link"/>
 
             <label class="admin-field-label">PDF Blueprint</label>
             <div class="upload-row">
               <div class="file-pick-zone" role="button" tabindex="0" aria-label="Choose PDF blueprint file">
-                <input type="file" id="pdf-upload-${client.id}" accept=".pdf" aria-label="Upload PDF blueprint" />
-                <span id="pdf-label-${client.id}" class="file-pick-label">Choose PDF…</span>
+                <input type="file" id="pdf-upload-${client.id}" accept=".pdf" aria-label="Upload PDF blueprint"/>
+                <span id="pdf-label-${client.id}" class="file-pick-label">${client.pdfPath ? '✓ PDF already uploaded — choose new to replace' : 'Choose PDF…'}</span>
               </div>
             </div>
 
-            <div style="margin-top:0.25rem;margin-bottom:1.5rem;">
-              <p style="font-size:0.72rem;color:#334155;margin:0;">
-                <!-- TODO: On click, upload PDF to Firebase Storage at
-                     storage/clients/{uid}/blueprint.pdf, then save the Loom link,
-                     Sheets link, and PDF download URL to Firestore users/{uid},
-                     and set auditStatus: 'completed'. -->
-              </p>
-            </div>
+            <p id="deliver-error-${client.id}" style="font-size:0.78rem;color:#F87171;display:none;margin-bottom:0.75rem;" role="alert" aria-live="polite"></p>
 
             <button class="btn-deliver" id="btn-deliver-${client.id}" type="button">
               <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
               Mark Audit as Complete &amp; Deliver
             </button>
-
           </div>
-        </div>
-      `;
+        </div>`;
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // DELIVER AUDIT
-    // ─────────────────────────────────────────────────────────────
-    function deliverAudit(id) {
+    // ── Deliver audit ────────────────────────────────────────────
+    async function deliverAudit(id) {
       const loomVal   = document.getElementById('loom-' + id)?.value.trim();
       const sheetsVal = document.getElementById('sheets-' + id)?.value.trim();
+      const pdfInput  = document.getElementById('pdf-upload-' + id);
+      const errEl     = document.getElementById('deliver-error-' + id);
+      const btn       = document.getElementById('btn-deliver-' + id);
 
-      // Basic validation
+      errEl.style.display = 'none';
+
       if (!loomVal && !sheetsVal) {
-        alert('Please add at least a Loom link or Google Sheets link before delivering.');
+        errEl.textContent = 'Please add at least a Loom link or Google Sheets link before delivering.';
+        errEl.style.display = 'block';
         return;
       }
 
-      // Update local status
-      const client = clients.find(c => c.id === id);
-      if (client) client.status = 'completed';
+      btn.disabled = true;
+      btn.textContent = 'Delivering…';
 
-      // TODO: In production, write to Firestore:
-      // await updateDoc(doc(db, 'users', id), {
-      //   auditStatus:  'completed',
-      //   loomUrl:      loomVal,
-      //   sheetsUrl:    sheetsVal,
-      //   deliveredAt:  new Date(),
-      // });
-      // Then upload PDF to Storage if a file was selected.
+      try {
+        let pdfPath = null;
 
-      // Re-render queue to reflect new status
-      renderQueue(clients);
+        // Upload PDF to Storage if one was selected
+        if (pdfInput?.files[0]) {
+          pdfPath = `clients/${id}/blueprint.pdf`;
+          await uploadBytes(ref(storage, pdfPath), pdfInput.files[0]);
+        }
 
-      // Update the status pill in the workstation header
-      const pillEl = document.querySelector('#client-workstation .status-pill');
-      if (pillEl) {
-        pillEl.className = 'status-pill pill-completed';
-        pillEl.style.fontSize = '0.68rem';
-        pillEl.style.padding  = '0.3rem 0.75rem';
-        pillEl.textContent = 'Completed';
+        // Write delivery data to Firestore
+        const update = {
+          auditStatus:  'completed',
+          deliveredAt:  new Date(),
+          loomUrl:      loomVal  || null,
+          sheetsUrl:    sheetsVal || null,
+        };
+        if (pdfPath) update.pdfPath = pdfPath;
+
+        await updateDoc(doc(db, 'users', id), update);
+
+        // Update local clients cache
+        const client = clients.find(c => c.id === id);
+        if (client) Object.assign(client, update);
+
+        renderQueue(clients);
+
+        // Update status pill in workstation
+        const pillEl = document.querySelector('#client-workstation .status-pill');
+        if (pillEl) { pillEl.className = 'status-pill pill-completed'; pillEl.style.cssText = 'font-size:0.68rem;padding:0.3rem 0.75rem;'; pillEl.textContent = 'Completed'; }
+
+        // Toast
+        const toast = document.getElementById('deliver-toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+
+      } catch (err) {
+        console.error('Delivery error:', err);
+        errEl.textContent = 'Delivery failed. Please check your connection and try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Mark Audit as Complete & Deliver';
       }
-
-      // Show toast
-      const toast = document.getElementById('deliver-toast');
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    // ─────────────────────────────────────────────────────────────
-    // HELPERS
-    // ─────────────────────────────────────────────────────────────
-    function fileButton(filename, clientId, folder) {
-      // TODO: Replace href with Firebase Storage getDownloadURL() result
-      // e.g. const url = await getDownloadURL(ref(storage, `clients/${clientId}/${folder}/${filename}`));
-      return `
-        <a href="#" class="file-dl-btn" aria-label="Download ${filename}" download>
-          <div class="file-dl-icon">
-            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          </div>
-          <div>
-            <div class="file-dl-name">${escHtml(filename)}</div>
-            <div class="file-dl-meta">Click to download from Firebase Storage</div>
-          </div>
-          <svg class="file-dl-arrow" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-        </a>`;
-    }
+    // ── Helpers ──────────────────────────────────────────────────
+    function statusPillClass(s) { return { submitted:'pill-ready', ready:'pill-ready', awaiting:'pill-awaiting', pending:'pill-awaiting', completed:'pill-completed' }[s] || 'pill-awaiting'; }
+    function statusLabel(s)     { return { submitted:'Ready to Audit', ready:'Ready to Audit', awaiting:'Awaiting Docs', pending:'Awaiting Docs', completed:'Completed' }[s] || 'Awaiting Docs'; }
 
-    function fmt(n) {
-      return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    function fmt(n) { return (n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function formatDate(d) {
+      if (!d) return '';
+      const date = d instanceof Date ? d : new Date(d);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
-
-    function formatDate(iso) {
-      if (!iso) return '';
-      const d = new Date(iso + 'T12:00:00');
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-
     function escHtml(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
   </script>
-
 </body>
 </html>
