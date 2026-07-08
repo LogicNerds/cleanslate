@@ -248,8 +248,17 @@
       ws.style.display = '';
       ws.innerHTML = '<div style="padding:3rem;text-align:center;color:#334155;font-size:0.85rem;">Loading client data…</div>';
 
-      const client = clients.find(c => c.id === id);
-      if (!client) return;
+      // Always fetch fresh from Firestore so we never show stale data
+      const snap = await getDoc(doc(db, 'users', id));
+      if (!snap.exists()) {
+        ws.innerHTML = '<div style="padding:3rem;text-align:center;color:#F87171;font-size:0.85rem;">Client record not found.</div>';
+        return;
+      }
+      const client = { id: snap.id, ...snap.data() };
+
+      // Update local cache too so queue re-renders correctly
+      const idx = clients.findIndex(c => c.id === id);
+      if (idx !== -1) clients[idx] = client;
 
       // Resolve Storage download URLs for uploaded files
       const resolveUrls = async (paths) => {
