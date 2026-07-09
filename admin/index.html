@@ -470,7 +470,8 @@
         if (dashboardInput?.files[0]) {
           dashboardPath = `clients/${id}/dashboard.html`;
           await uploadBytes(ref(storage, dashboardPath), dashboardInput.files[0], {
-            contentType: 'application/octet-stream',
+            contentType: 'text/html',
+            customMetadata: { 'Content-Disposition': 'inline' },
           });
         }
 
