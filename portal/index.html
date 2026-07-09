@@ -506,7 +506,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmB3g3hGQP6Gvs7FDPIYWzKTcxV8" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
 <script type="module">
   import { initializeApp }                              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -706,15 +706,12 @@
       }
     }
 
-    // Dashboard HTML — fetch and inject via srcdoc to bypass Storage content-disposition header
+    // Dashboard HTML — point iframe src directly at Storage download URL
     if (data.dashboardPath) {
       try {
-        const dashUrl  = await getDownloadURL(ref(storage, data.dashboardPath));
-        const response = await fetch(dashUrl);
-        const html     = await response.text();
-
-        const frame = document.getElementById('dashboard-frame');
-        frame.srcdoc = html;
+        const dashUrl = await getDownloadURL(ref(storage, data.dashboardPath));
+        const frame   = document.getElementById('dashboard-frame');
+        frame.src     = dashUrl;
 
         // Auto-size iframe to its content height once loaded
         frame.addEventListener('load', () => {
@@ -722,7 +719,7 @@
             const h = frame.contentDocument.documentElement.scrollHeight;
             frame.style.height = h + 'px';
           } catch (e) {
-            // Cross-origin fallback — shouldn't happen with srcdoc but just in case
+            // Cross-origin fallback
             frame.style.height = '2400px';
           }
         });
