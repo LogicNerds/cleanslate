@@ -104,9 +104,6 @@
       .portal-main { padding:1.5rem 0.75rem 4rem; }
       /* Dashboard header stacks gracefully */
       .dashboard-header { flex-direction:column; align-items:flex-start; gap:0.625rem; padding:1.1rem 1.25rem; }
-      /* Deliverable buttons — tighten */
-      .deliverable-btn { padding:0.875rem 1rem; }
-      .deliverable-title { font-size:0.82rem; }
       /* Step nav buttons full-width on very small screens */
       .btn-submit { font-size:0.85rem; padding:0.85rem 1rem; }
     }
@@ -130,16 +127,7 @@
     .video-label{padding:1rem 1.5rem 0.75rem;font-size:0.72rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#64748B;border-bottom:1px solid rgba(255,255,255,0.05)}
     .video-placeholder{background:#0A1020;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem}
     .video-play-ring{width:3.5rem;height:3.5rem;border-radius:50%;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);display:flex;align-items:center;justify-content:center}
-    .deliverables-section{margin-bottom:1.5rem}
     .section-label{font-size:0.72rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#64748B;margin-bottom:0.875rem}
-    .deliverable-btn{display:flex;align-items:center;gap:1rem;width:100%;background:rgba(30,41,59,0.6);border:1px solid rgba(255,255,255,0.08);border-radius:0.875rem;padding:1.1rem 1.25rem;cursor:pointer;transition:border-color 0.2s,background 0.2s,transform 0.15s;text-decoration:none;margin-bottom:0.75rem}
-    .deliverable-btn:hover{border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.04);transform:translateY(-1px)}
-    .deliverable-icon{width:2.5rem;height:2.5rem;border-radius:0.625rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .deliverable-icon.pdf{background:rgba(245,158,11,0.12)}.deliverable-icon.sheet{background:rgba(16,185,129,0.12)}
-    .deliverable-text-wrap{flex:1;text-align:left}
-    .deliverable-title{font-size:0.9rem;font-weight:600;color:#F8FAFC;margin-bottom:0.15rem}
-    .deliverable-sub{font-size:0.75rem;color:#64748B}
-    .deliverable-arrow{color:#334155;flex-shrink:0}
     .settings-section{background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.06);border-radius:1rem;overflow:hidden}
     .settings-row{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background 0.15s;text-decoration:none}
     .settings-row:last-child{border-bottom:none}.settings-row:hover{background:rgba(255,255,255,0.03)}
@@ -452,7 +440,7 @@
             <div class="wizard-success-timeline">
               <div class="timeline-row"><div class="timeline-dot"></div><div><div style="font-size:0.85rem;font-weight:600;color:#F8FAFC;">Submitted</div><div style="font-size:0.75rem;color:#64748B;">Your documents are uploaded and queued for review</div></div></div>
               <div class="timeline-row"><div class="timeline-dot pending"></div><div><div style="font-size:0.85rem;font-weight:600;color:#64748B;">In review</div><div style="font-size:0.75rem;color:#475569;">Transactions categorized, debt sequence being built</div></div></div>
-              <div class="timeline-row"><div class="timeline-dot pending"></div><div><div style="font-size:0.85rem;font-weight:600;color:#64748B;">Blueprint ready</div><div style="font-size:0.75rem;color:#475569;">Your PDF, spreadsheet, and walkthrough video will appear here</div></div></div>
+              <div class="timeline-row"><div class="timeline-dot pending"></div><div><div style="font-size:0.85rem;font-weight:600;color:#64748B;">Blueprint ready</div><div style="font-size:0.75rem;color:#475569;">Your video walkthrough and interactive dashboard will appear here</div></div></div>
             </div>
           </div>
         </div>
@@ -475,18 +463,8 @@
             <div style="font-size:0.8rem;color:#475569;">Video walkthrough will appear here</div>
           </div>
         </div>
-        <div class="deliverables-section">
-          <div class="section-label">Your deliverables</div>
-          <a id="pdf-btn" href="#" class="deliverable-btn" aria-label="Download Custom Blueprint PDF">
-            <div class="deliverable-icon pdf"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--gold)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
-            <div class="deliverable-text-wrap"><div class="deliverable-title">Download Custom Blueprint</div><div class="deliverable-sub">PDF · Your full spending map &amp; debt payoff plan</div></div>
-            <svg class="deliverable-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-          </a>
-          <a id="sheets-btn" href="#" class="deliverable-btn" aria-label="Access Interactive Budget Spreadsheet" target="_blank" rel="noopener noreferrer">
-            <div class="deliverable-icon sheet"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg></div>
-            <div class="deliverable-text-wrap"><div class="deliverable-title">Access Your Interactive Budget Spreadsheet</div><div class="deliverable-sub">Google Sheets · Pre-filled with your numbers</div></div>
-            <svg class="deliverable-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-          </a>
+        <div id="dashboard-section" style="display:none;margin-bottom:1.5rem;">
+          <iframe id="dashboard-frame" style="width:100%;border:none;border-radius:1rem;display:block;" scrolling="no" title="Your interactive blueprint dashboard"></iframe>
         </div>
         <div class="section-label">Settings</div>
         <div class="settings-section">
@@ -709,7 +687,7 @@
       document.getElementById('dashboard-name').textContent = data.displayName + '\u2019s Blueprint is Ready';
     }
 
-    // Loom video embed — regex extracts ID robustly, ignoring trailing slashes and query params
+    // Loom video embed
     if (data.loomUrl) {
       const loomMatch = data.loomUrl.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/);
       if (loomMatch) {
@@ -718,17 +696,31 @@
       }
     }
 
-    // PDF download URL from Storage
-    if (data.pdfPath) {
+    // Dashboard HTML — fetch and inject via srcdoc to bypass Storage content-disposition header
+    if (data.dashboardPath) {
       try {
-        const pdfUrl = await getDownloadURL(ref(storage, data.pdfPath));
-        document.getElementById('pdf-btn').href = pdfUrl;
-      } catch (e) { console.warn('PDF not yet available:', e); }
-    }
+        const dashUrl  = await getDownloadURL(ref(storage, data.dashboardPath));
+        const response = await fetch(dashUrl);
+        const html     = await response.text();
 
-    // Google Sheets link
-    if (data.sheetsUrl) {
-      document.getElementById('sheets-btn').href = data.sheetsUrl;
+        const frame = document.getElementById('dashboard-frame');
+        frame.srcdoc = html;
+
+        // Auto-size iframe to its content height once loaded
+        frame.addEventListener('load', () => {
+          try {
+            const h = frame.contentDocument.documentElement.scrollHeight;
+            frame.style.height = h + 'px';
+          } catch (e) {
+            // Cross-origin fallback — shouldn't happen with srcdoc but just in case
+            frame.style.height = '2400px';
+          }
+        });
+
+        document.getElementById('dashboard-section').style.display = '';
+      } catch (e) {
+        console.warn('Dashboard HTML not yet available:', e);
+      }
     }
   }
 
