@@ -424,8 +424,8 @@
         <div class="ws-card">
           <div class="ws-card-header"><span class="ws-card-title">Deliver Audit Results</span></div>
           <div class="ws-card-body">
-            <label class="admin-field-label" for="loom-${client.id}">Loom video link</label>
-            <input type="url" id="loom-${client.id}" class="admin-field" placeholder="https://www.loom.com/share/..." value="${escHtml(client.loomUrl || '')}" aria-label="Loom video link"/>
+            <label class="admin-field-label" for="loom-${client.id}">Video walkthrough link</label>
+            <input type="url" id="loom-${client.id}" class="admin-field" placeholder="YouTube, Loom, or Vimeo URL" value="${escHtml(client.loomUrl || '')}" aria-label="Video walkthrough link"/>
 
             <label class="admin-field-label">Dashboard HTML</label>
             <div class="upload-row">
@@ -455,7 +455,7 @@
       errEl.style.display = 'none';
 
       if (!loomVal) {
-        errEl.textContent = 'Please add a Loom link before delivering.';
+        errEl.textContent = 'Please add a video link before delivering.';
         errEl.style.display = 'block';
         return;
       }
