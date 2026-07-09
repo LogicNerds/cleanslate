@@ -687,12 +687,22 @@
       document.getElementById('dashboard-name').textContent = data.displayName + '\u2019s Blueprint is Ready';
     }
 
-    // Loom video embed
+    // Video embed — supports Loom, YouTube, and Vimeo
     if (data.loomUrl) {
-      const loomMatch = data.loomUrl.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/);
-      if (loomMatch) {
+      const url = data.loomUrl;
+      let embedSrc = null;
+
+      const loom    = url.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/);
+      const youtube = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+      const vimeo   = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+
+      if (loom)    embedSrc = `https://www.loom.com/embed/${loom[1]}`;
+      if (youtube) embedSrc = `https://www.youtube.com/embed/${youtube[1]}`;
+      if (vimeo)   embedSrc = `https://player.vimeo.com/video/${vimeo[1]}`;
+
+      if (embedSrc) {
         document.getElementById('video-container').innerHTML =
-          `<iframe src="https://www.loom.com/embed/${loomMatch[1]}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;"></iframe>`;
+          `<iframe src="${embedSrc}" frameborder="0" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" style="width:100%;aspect-ratio:16/9;"></iframe>`;
       }
     }
 
