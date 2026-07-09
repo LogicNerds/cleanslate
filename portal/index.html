@@ -706,12 +706,18 @@
       }
     }
 
-    // Dashboard HTML — point iframe src directly at Storage download URL
+    // Dashboard HTML — proxied through Worker to avoid CORS/Content-Disposition issues
     if (data.dashboardPath) {
       try {
-        const dashUrl = await getDownloadURL(ref(storage, data.dashboardPath));
-        const frame   = document.getElementById('dashboard-frame');
-        frame.src     = dashUrl;
+        const dashUrl  = await getDownloadURL(ref(storage, data.dashboardPath));
+        const response = await fetch(WORKER_URL, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ action: 'fetchDashboard', url: dashUrl }),
+        });
+        const html  = await response.text();
+        const frame = document.getElementById('dashboard-frame');
+        frame.srcdoc = html;
 
         // Auto-size iframe to its content height once loaded
         frame.addEventListener('load', () => {
@@ -719,7 +725,6 @@
             const h = frame.contentDocument.documentElement.scrollHeight;
             frame.style.height = h + 'px';
           } catch (e) {
-            // Cross-origin fallback
             frame.style.height = '2400px';
           }
         });
