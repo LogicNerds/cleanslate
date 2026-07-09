@@ -328,7 +328,10 @@
         <div id="step-4" class="step-card pop-in" style="display:none;">
           <div class="step-eyebrow">Step 4 of 5</div>
           <h2 class="step-title">List your current debts</h2>
-          <p style="font-size:0.875rem;color:#64748B;margin-bottom:1.25rem;">Include everything: credit cards, auto loans, student loans, personal loans, medical debt. Add as many rows as you need.</p>
+          <p style="font-size:0.875rem;color:#64748B;margin-bottom:0.75rem;">Include everything: credit cards, auto loans, student loans, personal loans, medical debt. Add as many rows as you need.</p>
+          <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:0.5rem;padding:0.75rem 1rem;margin-bottom:1.25rem;font-size:0.82rem;color:#CBD5E1;line-height:1.5;">
+            Don't forget to add any car loans you may have. If you have a mortgage, <strong style="color:#F8FAFC;">DO NOT add it here</strong> — it's covered by the rent/mortgage question in the next step.
+          </div>
           <div class="debt-table-wrap">
             <table class="debt-table" id="debt-table" aria-label="Debt inventory">
               <thead><tr><th style="min-width:140px;">Debt name</th><th style="min-width:110px;">Balance ($)</th><th style="min-width:100px;">Rate (%)</th><th style="min-width:130px;">Min. payment ($)</th><th style="width:2rem;"></th></tr></thead>
@@ -362,40 +365,36 @@
           <h2 class="step-title">Almost done — a few quick questions</h2>
           <p style="font-size:0.875rem;color:#64748B;margin-bottom:1.5rem;">These take 30 seconds and help us calculate your specific financial blindspots.</p>
 
-          <!-- Q1: Subscription spend -->
-          <div class="q-block">
-            <label for="q-subscriptions" class="q-label">
-              Roughly how much do you think you spend each month on recurring digital subscriptions <span style="color:#64748B;">(streaming, apps, software, storage)?</span>
-            </label>
-            <input type="number" id="q-subscriptions" class="q-input" placeholder="e.g. 85" min="0" step="1" aria-label="Monthly subscription spend estimate"/>
-          </div>
-
-          <!-- Q2: Lifestyle spend -->
-          <div class="q-block">
-            <label for="q-lifestyle" class="q-label">
-              How much do you estimate you spend per month on convenience and dining out <span style="color:#64748B;">(DoorDash, fast food, bars, coffee shops)?</span>
-            </label>
-            <input type="number" id="q-lifestyle" class="q-input" placeholder="e.g. 320" min="0" step="1" aria-label="Monthly lifestyle spend estimate"/>
-          </div>
-
-          <!-- Q3: Core objective -->
-          <div class="q-block">
-            <label for="q-objective" class="q-label">
-              If we find extra money from hidden leaks, where do you want that money redirected?
-            </label>
-            <select id="q-objective" class="q-select" aria-label="Primary financial objective">
-              <option value="" disabled selected>Select your priority&hellip;</option>
-              <option value="pay-debt">Aggressively pay down debt</option>
-              <option value="emergency-fund">Build an emergency savings fund</option>
-            </select>
-          </div>
-
-          <!-- Q4: Rent/mortgage -->
+          <!-- Q1: Rent/mortgage -->
           <div class="q-block">
             <label for="q-rent" class="q-label">
               What is your monthly rent or mortgage payment?
             </label>
             <input type="number" id="q-rent" class="q-input" placeholder="e.g. 1450" min="0" step="1" aria-label="Monthly rent or mortgage"/>
+          </div>
+
+          <!-- Q2: Utilities -->
+          <div class="q-block">
+            <label for="q-utilities" class="q-label">
+              Roughly how much do you spend on utilities each month? <span style="color:#64748B;">(electric, gas/heat, water, internet, cell phone bill)</span>
+            </label>
+            <input type="number" id="q-utilities" class="q-input" placeholder="e.g. 280" min="0" step="1" aria-label="Monthly utilities estimate"/>
+          </div>
+
+          <!-- Q3: Insurance -->
+          <div class="q-block">
+            <label for="q-insurance" class="q-label">
+              How much do you pay in insurance premiums each month? <span style="color:#64748B;">(health, auto, renters or homeowners, life)</span>
+            </label>
+            <input type="number" id="q-insurance" class="q-input" placeholder="e.g. 420" min="0" step="1" aria-label="Monthly insurance premiums estimate"/>
+          </div>
+
+          <!-- Q4: Gas -->
+          <div class="q-block">
+            <label for="q-gas" class="q-label">
+              Roughly how much do you spend on gas each month? <span style="color:#64748B;">(for your vehicle(s))</span>
+            </label>
+            <input type="number" id="q-gas" class="q-input" placeholder="e.g. 150" min="0" step="1" aria-label="Monthly gas spend estimate"/>
           </div>
 
           <!-- Q5: Groceries -->
@@ -406,7 +405,31 @@
             <input type="number" id="q-groceries" class="q-input" placeholder="e.g. 600" min="0" step="1" aria-label="Monthly grocery spend estimate"/>
           </div>
 
-          <!-- Q6: Debt payments -->
+          <!-- Q6: Childcare -->
+          <div class="q-block">
+            <label for="q-childcare" class="q-label">
+              Do you pay for childcare? If so, how much per month? <span style="color:#64748B;">(daycare, after-school programs, babysitting, nanny)</span>
+            </label>
+            <input type="number" id="q-childcare" class="q-input" placeholder="e.g. 0" min="0" step="1" aria-label="Monthly childcare spend estimate"/>
+          </div>
+
+          <!-- Q7: Subscriptions -->
+          <div class="q-block">
+            <label for="q-subscriptions" class="q-label">
+              Roughly how much do you think you spend each month on recurring digital subscriptions <span style="color:#64748B;">(streaming, apps, software, storage)?</span>
+            </label>
+            <input type="number" id="q-subscriptions" class="q-input" placeholder="e.g. 85" min="0" step="1" aria-label="Monthly subscription spend estimate"/>
+          </div>
+
+          <!-- Q8: Lifestyle spend -->
+          <div class="q-block">
+            <label for="q-lifestyle" class="q-label">
+              How much do you estimate you spend per month on convenience and dining out <span style="color:#64748B;">(DoorDash, fast food, bars, coffee shops)?</span>
+            </label>
+            <input type="number" id="q-lifestyle" class="q-input" placeholder="e.g. 320" min="0" step="1" aria-label="Monthly lifestyle spend estimate"/>
+          </div>
+
+          <!-- Q9: Debt payments -->
           <div class="q-block">
             <label for="q-debtpayment" class="q-label">
               How much do you pay toward debt each month in total?
@@ -417,6 +440,18 @@
               <label for="q-use-minimums" class="agree-label" style="font-size:0.8rem;">Use my minimum monthly payments total from my debt list above</label>
             </div>
             <p id="q-minimums-hint" style="font-size:0.72rem;color:#64748B;display:none;margin-top:0.375rem;">Total minimum payments from your debt list: <strong id="q-minimums-total" style="color:#94A3B8;">$0</strong></p>
+          </div>
+
+          <!-- Q10: Core objective -->
+          <div class="q-block">
+            <label for="q-objective" class="q-label">
+              If we find extra money from hidden leaks, where do you want that money redirected?
+            </label>
+            <select id="q-objective" class="q-select" aria-label="Primary financial objective">
+              <option value="" disabled selected>Select your priority&hellip;</option>
+              <option value="pay-debt">Aggressively pay down debt</option>
+              <option value="emergency-fund">Build an emergency savings fund</option>
+            </select>
           </div>
 
           <hr class="q-divider"/>
@@ -996,6 +1031,10 @@
       monthlyRent:            parseFloat(document.getElementById('q-rent').value)          || null,
       estimatedGroceries:     parseFloat(document.getElementById('q-groceries').value)     || null,
       monthlyDebtPayment:     parseFloat(document.getElementById('q-debtpayment').value)   || null,
+      estimatedUtilities:     parseFloat(document.getElementById('q-utilities').value)     || null,
+      estimatedInsurance:     parseFloat(document.getElementById('q-insurance').value)     || null,
+      estimatedGas:           parseFloat(document.getElementById('q-gas').value)           || null,
+      estimatedChildcare:     parseFloat(document.getElementById('q-childcare').value)     || null,
       usedMinimumPayments:    document.getElementById('q-use-minimums').checked,
     };
 
