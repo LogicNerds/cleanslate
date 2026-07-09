@@ -727,8 +727,13 @@
             #admin-json-input + button { display: none !important; }
             #admin-json-input { display: none !important; }
             .floating-bar {
-              position: sticky !important;
-              bottom: 0 !important;
+              position: static !important;
+              box-shadow: none !important;
+              border-top: 1px solid rgba(255,255,255,0.1) !important;
+              margin-top: 2rem !important;
+            }
+            body {
+              padding-bottom: 0 !important;
             }
           </style>`;
 
