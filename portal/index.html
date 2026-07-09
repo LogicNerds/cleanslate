@@ -464,7 +464,7 @@
           </div>
         </div>
         <div id="dashboard-section" style="display:none;margin-bottom:1.5rem;">
-          <iframe id="dashboard-frame" style="width:100%;border:none;border-radius:1rem;display:block;" scrolling="no" title="Your interactive blueprint dashboard"></iframe>
+          <iframe id="dashboard-frame" style="width:100%;height:90vh;border:none;border-radius:1rem;display:block;" title="Your interactive blueprint dashboard"></iframe>
         </div>
         <div class="section-label">Settings</div>
         <div class="settings-section">
@@ -717,33 +717,17 @@
         });
         let html = await response.text();
 
-        // Inject portal-mode overrides:
-        // 1. Hide the admin importer
-        // 2. Convert fixed floating bar to sticky so it works inside the iframe
+        // Inject portal-mode overrides: hide the admin importer only
         const portalStyles = `
           <style id="portal-overrides">
             #admin-json-input,
             #admin-json-input ~ button,
             #admin-json-input + button { display: none !important; }
-            #admin-json-input { display: none !important; }
-            #floating-bar {
-              position: static !important;
-              box-shadow: none !important;
-              backdrop-filter: none !important;
-              -webkit-backdrop-filter: none !important;
-              border-top: 1px solid rgba(255,255,255,0.1) !important;
-              margin-top: 2rem !important;
-            }
-            body {
-              padding-bottom: 0 !important;
-            }
           </style>`;
 
-        // Also hide the importer card by targeting it via a script
         const portalScript = `
           <script id="portal-init">
             document.addEventListener('DOMContentLoaded', function() {
-              // Hide admin importer card (parent of admin-json-input)
               var inp = document.getElementById('admin-json-input');
               if (inp) {
                 var card = inp.closest('.card');
@@ -752,23 +736,12 @@
             });
           <\/script>`;
 
-        // Insert before closing </head>
+        // Insert before closing </head> and </body>
         html = html.replace('</head>', portalStyles + '</head>');
-        // Insert before closing </body>
         html = html.replace('</body>', portalScript + '</body>');
 
         const frame = document.getElementById('dashboard-frame');
         frame.srcdoc = html;
-
-        // Auto-size iframe to its content height once loaded
-        frame.addEventListener('load', () => {
-          try {
-            const h = frame.contentDocument.documentElement.scrollHeight;
-            frame.style.height = h + 'px';
-          } catch (e) {
-            frame.style.height = '2400px';
-          }
-        });
 
         document.getElementById('dashboard-section').style.display = '';
       } catch (e) {
