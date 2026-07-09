@@ -294,12 +294,12 @@
       // Bind deliver button
       document.getElementById('btn-deliver-' + id)?.addEventListener('click', () => deliverAudit(id));
 
-      // Bind PDF label
-      const pdfInput = document.getElementById('pdf-upload-' + id);
-      const pdfLabel = document.getElementById('pdf-label-' + id);
-      if (pdfInput && pdfLabel) {
-        pdfInput.addEventListener('change', () => {
-          pdfLabel.textContent = pdfInput.files[0] ? pdfInput.files[0].name : 'Choose PDF…';
+      // Bind dashboard HTML label
+      const dashboardInput = document.getElementById('dashboard-upload-' + id);
+      const dashboardLabel = document.getElementById('dashboard-label-' + id);
+      if (dashboardInput && dashboardLabel) {
+        dashboardInput.addEventListener('change', () => {
+          dashboardLabel.textContent = dashboardInput.files[0] ? dashboardInput.files[0].name : 'Choose HTML\u2026';
         });
       }
     }
@@ -427,14 +427,11 @@
             <label class="admin-field-label" for="loom-${client.id}">Loom video link</label>
             <input type="url" id="loom-${client.id}" class="admin-field" placeholder="https://www.loom.com/share/..." value="${escHtml(client.loomUrl || '')}" aria-label="Loom video link"/>
 
-            <label class="admin-field-label" for="sheets-${client.id}">Google Sheets link</label>
-            <input type="url" id="sheets-${client.id}" class="admin-field" placeholder="https://docs.google.com/spreadsheets/..." value="${escHtml(client.sheetsUrl || '')}" aria-label="Google Sheets link"/>
-
-            <label class="admin-field-label">PDF Blueprint</label>
+            <label class="admin-field-label">Dashboard HTML</label>
             <div class="upload-row">
-              <div class="file-pick-zone" role="button" tabindex="0" aria-label="Choose PDF blueprint file">
-                <input type="file" id="pdf-upload-${client.id}" accept=".pdf" aria-label="Upload PDF blueprint"/>
-                <span id="pdf-label-${client.id}" class="file-pick-label">${client.pdfPath ? '✓ PDF already uploaded — choose new to replace' : 'Choose PDF…'}</span>
+              <div class="file-pick-zone" role="button" tabindex="0" aria-label="Choose dashboard HTML file">
+                <input type="file" id="dashboard-upload-${client.id}" accept=".html" aria-label="Upload dashboard HTML"/>
+                <span id="dashboard-label-${client.id}" class="file-pick-label">${client.dashboardPath ? '\u2713 Dashboard already uploaded \u2014 choose new to replace' : 'Choose HTML\u2026'}</span>
               </div>
             </div>
 
@@ -450,44 +447,44 @@
 
     // ── Deliver audit ────────────────────────────────────────────
     async function deliverAudit(id) {
-      const loomVal   = document.getElementById('loom-' + id)?.value.trim();
-      const sheetsVal = document.getElementById('sheets-' + id)?.value.trim();
-      const pdfInput  = document.getElementById('pdf-upload-' + id);
-      const errEl     = document.getElementById('deliver-error-' + id);
-      const btn       = document.getElementById('btn-deliver-' + id);
+      const loomVal       = document.getElementById('loom-' + id)?.value.trim();
+      const dashboardInput = document.getElementById('dashboard-upload-' + id);
+      const errEl         = document.getElementById('deliver-error-' + id);
+      const btn           = document.getElementById('btn-deliver-' + id);
 
       errEl.style.display = 'none';
 
-      if (!loomVal && !sheetsVal) {
-        errEl.textContent = 'Please add at least a Loom link or Google Sheets link before delivering.';
+      if (!loomVal) {
+        errEl.textContent = 'Please add a Loom link before delivering.';
         errEl.style.display = 'block';
         return;
       }
 
       btn.disabled = true;
-      btn.textContent = 'Delivering…';
+      btn.textContent = 'Delivering\u2026';
 
       try {
-        let pdfPath = null;
+        let dashboardPath = null;
 
-        // Upload PDF to Storage if one was selected
-        if (pdfInput?.files[0]) {
-          pdfPath = `clients/${id}/blueprint.pdf`;
-          await uploadBytes(ref(storage, pdfPath), pdfInput.files[0]);
+        // Upload dashboard HTML to Storage if one was selected
+        if (dashboardInput?.files[0]) {
+          dashboardPath = `clients/${id}/dashboard.html`;
+          await uploadBytes(ref(storage, dashboardPath), dashboardInput.files[0], {
+            contentType: 'text/html',
+          });
         }
 
         // Write delivery data to Firestore
         const update = {
           auditStatus:  'completed',
           deliveredAt:  new Date(),
-          loomUrl:      loomVal  || null,
-          sheetsUrl:    sheetsVal || null,
+          loomUrl:      loomVal || null,
         };
-        if (pdfPath) update.pdfPath = pdfPath;
+        if (dashboardPath) update.dashboardPath = dashboardPath;
 
         await updateDoc(doc(db, 'users', id), update);
 
-        // ── Email A: Blueprint ready notification to client ──────
+        // ── Email: Blueprint ready notification to client ────────
         const clientSnap  = await getDoc(doc(db, 'users', id));
         const clientData  = clientSnap.exists() ? clientSnap.data() : {};
         const clientEmail = clientData.email || null;
@@ -496,20 +493,15 @@
         if (clientEmail) {
           sendEmail(
             clientEmail,
-            'Your Clean Slate Audit Blueprint is Ready!',
+            'Your Clean Slate Blueprint is Ready!',
             `<div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;color:#1E293B;">
               <h2 style="color:#10B981;">Your blueprint is ready, ${clientName}!</h2>
-              <p>Your custom spending and debt audit is complete. Log into your portal to:</p>
-              <ul style="padding-left:1.25rem;color:#334155;line-height:1.9;">
-                <li>Watch your personal video walkthrough</li>
-                <li>Download your custom PDF blueprint</li>
-                <li>Open your interactive budget spreadsheet</li>
-              </ul>
+              <p>Your custom audit is complete. Log into your portal to watch your personal video walkthrough and explore your interactive blueprint dashboard.</p>
               <p style="margin-top:1.5rem;">
                 <a href="https://logicnerds.github.io/cleanslate/portal/index.html" style="background:#10B981;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;">View My Blueprint</a>
               </p>
               <p style="color:#64748B;font-size:0.85rem;margin-top:2rem;">If you have any questions about your results, just reply to this email.</p>
-              <p style="color:#64748B;font-size:0.85rem;">\u2014 The Clean Slate Team</p>
+              <p style="color:#64748B;font-size:0.85rem;">\u2014 Elijah<br>Clean Slate Audit</p>
             </div>`
           );
         }
