@@ -715,7 +715,41 @@
           headers: { 'Content-Type': 'application/json' },
           body:    JSON.stringify({ action: 'fetchDashboard', url: dashUrl }),
         });
-        const html  = await response.text();
+        let html = await response.text();
+
+        // Inject portal-mode overrides:
+        // 1. Hide the admin importer
+        // 2. Convert fixed floating bar to sticky so it works inside the iframe
+        const portalStyles = `
+          <style id="portal-overrides">
+            #admin-json-input,
+            #admin-json-input ~ button,
+            #admin-json-input + button { display: none !important; }
+            #admin-json-input { display: none !important; }
+            .floating-bar {
+              position: sticky !important;
+              bottom: 0 !important;
+            }
+          </style>`;
+
+        // Also hide the importer card by targeting it via a script
+        const portalScript = `
+          <script id="portal-init">
+            document.addEventListener('DOMContentLoaded', function() {
+              // Hide admin importer card (parent of admin-json-input)
+              var inp = document.getElementById('admin-json-input');
+              if (inp) {
+                var card = inp.closest('.card');
+                if (card) card.style.display = 'none';
+              }
+            });
+          <\/script>`;
+
+        // Insert before closing </head>
+        html = html.replace('</head>', portalStyles + '</head>');
+        // Insert before closing </body>
+        html = html.replace('</body>', portalScript + '</body>');
+
         const frame = document.getElementById('dashboard-frame');
         frame.srcdoc = html;
 
