@@ -72,6 +72,19 @@
     .btn-loading .btn-label{display:none}
     /* Promo checking indicator */
     .promo-checking{font-size:0.7rem;color:#64748B;margin-top:0.3rem;display:none}
+    /* Hero money-flow visual */
+    .money-flow-card{position:relative;background:rgba(30,41,59,0.6);border:1px solid rgba(99,102,241,0.15);border-radius:1rem;padding:2rem 1.75rem 1.75rem;max-width:420px;margin:0 auto}
+    .money-flow-chart-wrap{position:relative;height:150px;margin-bottom:0.75rem}
+    .money-flow-svg{position:absolute;top:0;left:0;overflow:visible}
+    .money-flow-bars{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:10px;height:100%}
+    .money-flow-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+    .money-flow-bar{width:42px;border-radius:6px 6px 0 0;transition:height 2.2s ease}
+    .money-flow-labels{display:flex;justify-content:space-between;gap:10px;margin-bottom:1.5rem}
+    .money-flow-label-col{flex:1;text-align:center}
+    .money-flow-label-title{font-size:0.62rem;color:#94A3B8;text-transform:uppercase;letter-spacing:0.04em}
+    .money-flow-label-value{font-family:'Playfair Display',Georgia,serif;font-weight:900;font-size:1rem}
+    .money-flow-tagline{text-align:center;font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.15rem;color:#F8FAFC;margin:0}
+    @media(max-width:991.98px){.money-flow-card{margin-top:2.5rem}}
   </style>
 </head>
 
@@ -138,6 +151,48 @@
               <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
             <p class="mb-0" style="color:#64748B;font-size:0.75rem;">Secure upload · No credit card until checkout</p>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="money-flow-card">
+            <div class="money-flow-chart-wrap">
+              <svg width="100%" height="100%" viewBox="0 0 420 150" class="money-flow-svg" aria-hidden="true">
+                <path id="mf-p1" d="M 65 115 C 90 115, 90 122, 130 122" fill="none" stroke="#818CF8" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.5"/>
+                <path id="mf-p2" d="M 165 100 C 190 100, 190 95, 220 95" fill="none" stroke="#FCD34D" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.5"/>
+                <path id="mf-p3" d="M 255 55 C 280 55, 280 65, 310 65" fill="none" stroke="#5DCAA5" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.5"/>
+                <circle r="3" fill="#FCD34D"><animateMotion dur="2s" repeatCount="indefinite" begin="1.6s"><mpath href="#mf-p1"/></animateMotion></circle>
+                <circle r="3" fill="#FCD34D"><animateMotion dur="2s" repeatCount="indefinite" begin="2.4s"><mpath href="#mf-p1"/></animateMotion></circle>
+                <circle r="3" fill="#5DCAA5"><animateMotion dur="2s" repeatCount="indefinite" begin="2s"><mpath href="#mf-p2"/></animateMotion></circle>
+                <circle r="3" fill="#5DCAA5"><animateMotion dur="2s" repeatCount="indefinite" begin="2.8s"><mpath href="#mf-p2"/></animateMotion></circle>
+                <circle r="3" fill="#818CF8"><animateMotion dur="2s" repeatCount="indefinite" begin="2.4s"><mpath href="#mf-p3"/></animateMotion></circle>
+                <circle r="3" fill="#818CF8"><animateMotion dur="2s" repeatCount="indefinite" begin="3.2s"><mpath href="#mf-p3"/></animateMotion></circle>
+              </svg>
+              <div class="money-flow-bars">
+                <div class="money-flow-col"><div id="mf-bar-leak" class="money-flow-bar" style="height:78%;background:linear-gradient(180deg,#818CF8,#6366F1);"></div></div>
+                <div class="money-flow-col"><div id="mf-bar-found" class="money-flow-bar" style="height:5%;background:linear-gradient(180deg,#FCD34D,#F59E0B);"></div></div>
+                <div class="money-flow-col"><div id="mf-bar-savings" class="money-flow-bar" style="height:2%;background:linear-gradient(180deg,#5DCAA5,#0F6E56);"></div></div>
+                <div class="money-flow-col"><div id="mf-bar-debt" class="money-flow-bar" style="height:100%;background:linear-gradient(180deg,#F87171,#DC2626);"></div></div>
+              </div>
+            </div>
+            <div class="money-flow-labels">
+              <div class="money-flow-label-col">
+                <div class="money-flow-label-title">Leaks</div>
+                <div id="mf-lbl-leak" class="money-flow-label-value" style="color:#818CF8;">$310/mo</div>
+              </div>
+              <div class="money-flow-label-col">
+                <div class="money-flow-label-title">Found money</div>
+                <div id="mf-lbl-found" class="money-flow-label-value" style="color:#FCD34D;">$0/mo</div>
+              </div>
+              <div class="money-flow-label-col">
+                <div class="money-flow-label-title">Savings</div>
+                <div id="mf-lbl-savings" class="money-flow-label-value" style="color:#5DCAA5;">$0</div>
+              </div>
+              <div class="money-flow-label-col">
+                <div class="money-flow-label-title">Debt</div>
+                <div id="mf-lbl-debt" class="money-flow-label-value" style="color:#F87171;">$40,000</div>
+              </div>
+            </div>
+            <p class="money-flow-tagline">Give your money a purpose.</p>
           </div>
         </div>
       </div>
@@ -640,6 +695,43 @@
         document.getElementById('auth-section').scrollIntoView({ behavior: 'smooth' });
       });
     });
+  </script>
+
+  <script>
+    (function(){
+      function animateCount(el, start, end, duration, prefix, suffix){
+        var startTime = null;
+        function step(ts){
+          if(!startTime) startTime = ts;
+          var progress = Math.min((ts - startTime) / duration, 1);
+          var value = Math.round(start + (end - start) * progress);
+          el.textContent = prefix + value.toLocaleString() + suffix;
+          if(progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+      var moneyFlowCard = document.querySelector('.money-flow-card');
+      if(!moneyFlowCard) return;
+      var played = false;
+      function playMoneyFlow(){
+        if(played) return;
+        played = true;
+        document.getElementById('mf-bar-leak').style.height = '25%';
+        document.getElementById('mf-bar-found').style.height = '58%';
+        document.getElementById('mf-bar-savings').style.height = '82%';
+        document.getElementById('mf-bar-debt').style.height = '13%';
+        animateCount(document.getElementById('mf-lbl-leak'), 310, 55, 2200, '$', '/mo');
+        animateCount(document.getElementById('mf-lbl-found'), 0, 255, 2200, '$', '/mo');
+        animateCount(document.getElementById('mf-lbl-savings'), 0, 10000, 2200, '$', '');
+        animateCount(document.getElementById('mf-lbl-debt'), 40000, 5000, 2200, '$', '');
+      }
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(entry.isIntersecting) playMoneyFlow();
+        });
+      }, { threshold: 0.4 });
+      observer.observe(moneyFlowCard);
+    })();
   </script>
 
 </body>
