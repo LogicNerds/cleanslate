@@ -90,6 +90,10 @@
     </div>
   </nav>
 
+  <div id="deleted-banner" style="display:none;background:rgba(16,185,129,0.1);border-bottom:1px solid rgba(16,185,129,0.25);padding:0.85rem 1.25rem;text-align:center;margin-top:4rem;">
+    <span style="color:#6EE7B7;font-size:0.85rem;font-weight:500;">&#10003; Your account and all data have been permanently deleted.</span>
+  </div>
+
   <section class="hero-bg" aria-labelledby="hero-heading">
     <div class="glow-blob glow-indigo" aria-hidden="true"></div>
     <div class="glow-blob glow-emerald" aria-hidden="true"></div>
@@ -620,6 +624,13 @@
     if (new URLSearchParams(window.location.search).get('signin') === 'true') {
       activateTab(tabLogin, paneLogin, tabSignup, paneSignup);
       document.getElementById('auth-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ── Show confirmation banner if redirected after account deletion ──
+    if (new URLSearchParams(window.location.search).get('deleted') === 'true') {
+      document.getElementById('deleted-banner').style.display = 'block';
+      // Clean the URL so refreshing doesn't re-show the banner
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
 
     // ── Smooth scroll ────────────────────────────────────────────
