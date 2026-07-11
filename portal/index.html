@@ -475,7 +475,7 @@
             <div class="wizard-success-timeline">
               <div class="timeline-row"><div class="timeline-dot"></div><div><div style="font-size:0.85rem;font-weight:600;color:#F8FAFC;">Submitted</div><div style="font-size:0.75rem;color:#64748B;">Your documents are uploaded and queued for review</div></div></div>
               <div class="timeline-row"><div class="timeline-dot pending"></div><div><div style="font-size:0.85rem;font-weight:600;color:#64748B;">In review</div><div style="font-size:0.75rem;color:#475569;">Transactions categorized, debt sequence being built</div></div></div>
-              <div class="timeline-row"><div class="timeline-dot pending"></div><div><div style="font-size:0.85rem;font-weight:600;color:#64748B;">Blueprint ready</div><div style="font-size:0.75rem;color:#475569;">Your video walkthrough and interactive dashboard will appear here</div></div></div>
+              <div class="timeline-row"><div class="timeline-dot pending"></div><div><div style="font-size:0.85rem;font-weight:600;color:#64748B;">Blueprint ready</div><div style="font-size:0.75rem;color:#475569;">Your video walkthrough and interactive digital workbook will appear here</div></div></div>
             </div>
           </div>
         </div>
@@ -499,14 +499,22 @@
           </div>
         </div>
         <div id="dashboard-section" style="display:none;margin-bottom:1.5rem;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
-            <div class="section-label" style="margin-bottom:0;">Your Blueprint</div>
-            <button id="dashboard-popout" style="background:none;border:1px solid #334155;color:#94A3B8;font-size:0.78rem;font-weight:500;border-radius:0.5rem;padding:0.4rem 0.75rem;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;transition:border-color 0.15s,color 0.15s;" onmouseover="this.style.borderColor='#64748B';this.style.color='#F8FAFC'" onmouseout="this.style.borderColor='#334155';this.style.color='#94A3B8'">
-              <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-              Open in new window
-            </button>
+          <div class="section-label">Your Blueprint</div>
+          <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.06);border-radius:1rem;padding:1.5rem 1.75rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+            <div style="display:flex;align-items:center;gap:0.875rem;">
+              <div style="width:2.75rem;height:2.75rem;border-radius:0.65rem;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6h6v6m-9 4h12a2 2 0 002-2V5a2 2 0 00-2-2H9.828a2 2 0 00-1.414.586L4.586 7.414A2 2 0 004 8.828V19a2 2 0 002 2z"/></svg>
+              </div>
+              <div>
+                <div style="font-size:0.92rem;font-weight:600;color:#F8FAFC;">Your interactive digital workbook</div>
+                <div style="font-size:0.78rem;color:#64748B;" id="dashboard-file-name">Your blueprint, ready to download</div>
+              </div>
+            </div>
+            <a id="dashboard-download" href="#" download style="background:var(--emerald);color:#022c22;padding:0.65rem 1.25rem;border-radius:0.5rem;text-decoration:none;font-size:0.85rem;font-weight:600;display:inline-flex;align-items:center;gap:0.5rem;white-space:nowrap;">
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              Download Workbook
+            </a>
           </div>
-          <iframe id="dashboard-frame" style="width:100%;height:95vh;border:2px solid #1E293B;border-radius:1rem;display:block;" title="Your interactive blueprint dashboard"></iframe>
         </div>
         <div class="section-label">Settings</div>
         <div class="settings-section">
@@ -748,54 +756,20 @@
       }
     }
 
-    // Dashboard HTML — proxied through Worker to avoid CORS/Content-Disposition issues
+    // Client workbook — direct Storage download, no Worker proxy needed for a binary file
     if (data.dashboardPath) {
       try {
-        const dashUrl  = await getDownloadURL(ref(storage, data.dashboardPath));
-        const response = await fetch(WORKER_URL, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ action: 'fetchDashboard', url: dashUrl }),
-        });
-        let html = await response.text();
+        const workbookUrl = await getDownloadURL(ref(storage, data.dashboardPath));
 
-        // Inject portal-mode overrides: hide the admin importer only
-        const portalStyles = `
-          <style id="portal-overrides">
-            #admin-json-input,
-            #admin-json-input ~ button,
-            #admin-json-input + button { display: none !important; }
-          </style>`;
+        const downloadLink = document.getElementById('dashboard-download');
+        downloadLink.href = workbookUrl;
 
-        const portalScript = `
-          <script id="portal-init">
-            document.addEventListener('DOMContentLoaded', function() {
-              var inp = document.getElementById('admin-json-input');
-              if (inp) {
-                var card = inp.closest('.card');
-                if (card) card.style.display = 'none';
-              }
-            });
-          <\/script>`;
-
-        // Insert before closing </head> and </body>
-        html = html.replace('</head>', portalStyles + '</head>');
-        html = html.replace('</body>', portalScript + '</body>');
-
-        const frame = document.getElementById('dashboard-frame');
-        frame.srcdoc = html;
-
-        // Pop out — open dashboard in new window without iframe
-        document.getElementById('dashboard-popout').addEventListener('click', () => {
-          const win = window.open('', '_blank');
-          win.document.open();
-          win.document.write(html);
-          win.document.close();
-        });
+        const fileName = data.dashboardPath.split('/').pop();
+        document.getElementById('dashboard-file-name').textContent = fileName || 'Your blueprint, ready to download';
 
         document.getElementById('dashboard-section').style.display = '';
       } catch (e) {
-        console.warn('Dashboard HTML not yet available:', e);
+        console.warn('Workbook not yet available:', e);
       }
     }
   }
