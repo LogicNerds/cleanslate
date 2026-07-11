@@ -96,6 +96,39 @@
     ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#1E293B;border-radius:3px}
     @media(max-width:768px){.queue-panel{display:none}.workstation-panel{margin-left:0;padding:1.25rem 1rem 4rem}}
     @media(prefers-reduced-motion:reduce){*,::before,::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+
+    /* ── Audit Builder ─────────────────────────────────────────── */
+    .ab-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.75rem;padding-bottom:0.4rem;border-bottom:1px solid rgba(245,158,11,0.2)}
+    .ab-section-label:first-child{margin-top:0}
+    .ab-subsection-label{font-size:0.62rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#475569;margin:1rem 0 0.5rem}
+    .ab-row{display:grid;gap:0.75rem;margin-bottom:0.75rem}
+    .ab-row-2{grid-template-columns:1fr 1fr}
+    .ab-row-3{grid-template-columns:1fr 1fr 1fr}
+    .ab-row-4{grid-template-columns:2fr 1fr 1fr 1fr}
+    .ab-field-group{display:flex;flex-direction:column}
+    .ab-field-label{font-size:0.68rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#64748B;margin-bottom:0.3rem}
+    .ab-field{background:rgba(15,23,42,0.6);border:1px solid #1E293B;border-radius:0.4rem;color:#F8FAFC;padding:0.55rem 0.75rem;font-size:0.85rem;font-family:inherit;width:100%;transition:border-color 0.15s,box-shadow 0.15s}
+    .ab-field:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 2px rgba(99,102,241,0.12)}
+    .ab-field::placeholder{color:#334155}
+    .ab-field.rate-field{color:var(--gold)}
+    .ab-field.flag-high{border-color:rgba(248,113,113,0.4);color:var(--red)}
+    .ab-debt-row{display:grid;grid-template-columns:2fr 1.2fr 1fr 1fr auto;gap:0.5rem;align-items:center;margin-bottom:0.4rem}
+    .ab-sub-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:0.5rem;align-items:center;margin-bottom:0.4rem}
+    .ab-leak-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:0.5rem;align-items:center;margin-bottom:0.4rem}
+    .ab-col-hdr{font-size:0.6rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#334155;padding-bottom:0.25rem}
+    .ab-remove-btn{background:none;border:none;color:#334155;cursor:pointer;padding:0.3rem;border-radius:4px;line-height:1;transition:color 0.15s;flex-shrink:0}
+    .ab-remove-btn:hover{color:var(--red)}
+    .ab-add-btn{background:none;border:1px dashed #1E293B;color:#475569;border-radius:0.4rem;padding:0.5rem 0.9rem;font-size:0.78rem;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:0.35rem;transition:border-color 0.15s,color 0.15s;margin-top:0.25rem}
+    .ab-add-btn:hover{border-color:var(--emerald);color:var(--emerald)}
+    .ab-divider{height:1px;background:rgba(255,255,255,0.05);margin:1.25rem 0}
+    .ab-high-flag{font-size:0.6rem;font-weight:700;color:var(--red);background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);border-radius:3px;padding:0.1rem 0.35rem;white-space:nowrap;display:inline-block}
+    .ab-summary-bar{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:0.5rem;padding:0.75rem 1rem;display:flex;gap:2rem;flex-wrap:wrap;margin-bottom:1rem;font-size:0.8rem}
+    .ab-sum-item{display:flex;flex-direction:column;gap:0.15rem}
+    .ab-sum-label{font-size:0.62rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#475569}
+    .ab-sum-val{font-weight:700;color:var(--emerald)}
+    .btn-publish{width:100%;background:linear-gradient(135deg,var(--indigo),#4F46E5);color:#fff;border:none;font-weight:700;border-radius:0.75rem;padding:0.9rem 1.5rem;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;gap:0.6rem;transition:transform 0.15s,box-shadow 0.15s;margin-top:0.5rem}
+    .btn-publish:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(99,102,241,0.35)}.btn-publish:active{transform:translateY(0)}
+    .btn-publish:disabled{opacity:0.5;cursor:not-allowed;transform:none}
   </style>
 </head>
 <body>
@@ -333,6 +366,14 @@
       ws.innerHTML = buildWorkstation(client, incomeFiles, statementFiles);
       ws.classList.remove('pop-in'); void ws.offsetWidth; ws.classList.add('pop-in');
 
+      // Pre-populate Audit Builder if clientData already saved
+      if (client.clientData) {
+        abPopulate(id, client.clientData);
+      } else {
+        // Seed one blank row in each section so the form isn't empty
+        abAddDebt(id); abAddLeak(id); abAddSub(id);
+      }
+
       // Bind deliver button
       document.getElementById('btn-deliver-' + id)?.addEventListener('click', () => deliverAudit(id));
 
@@ -485,8 +526,107 @@
           <div class="ws-card-body">${fileButtons(statementFiles, 'statements')}</div>
         </div>
 
+        <div class="ws-card" id="audit-builder-card-${client.id}">
+          <div class="ws-card-header">
+            <span class="ws-card-title">Audit Builder</span>
+            <span style="font-size:0.7rem;color:#475569;">Populates the client&#39;s interactive dashboard</span>
+          </div>
+          <div class="ws-card-body" id="ab-body-${client.id}">
+
+            <div class="ab-section-label">Macro Reality</div>
+            <div class="ab-row ab-row-2">
+              <div class="ab-field-group">
+                <label class="ab-field-label">Monthly Net Income</label>
+                <input type="number" class="ab-field" id="ab-income-${client.id}" placeholder="4800" min="0" step="1"/>
+              </div>
+              <div class="ab-field-group">
+                <label class="ab-field-label">Fixed Obligations / mo</label>
+                <input type="number" class="ab-field" id="ab-fixed-${client.id}" placeholder="2800" min="0" step="1"/>
+              </div>
+            </div>
+            <div class="ab-row ab-row-2">
+              <div class="ab-field-group">
+                <label class="ab-field-label">Baseline Debt Payment / mo</label>
+                <input type="number" class="ab-field" id="ab-debtpmt-${client.id}" placeholder="850" min="0" step="1"/>
+              </div>
+              <div class="ab-field-group">
+                <label class="ab-field-label">Groceries (client estimate)</label>
+                <input type="number" class="ab-field" id="ab-groc-${client.id}" placeholder="300" min="0" step="1"/>
+              </div>
+            </div>
+
+            <div class="ab-divider"></div>
+
+            <div class="ab-section-label">Debts <span style="font-weight:400;color:#475569;font-size:0.6rem;text-transform:none;letter-spacing:0;">(highest APR first)</span></div>
+            <div style="display:grid;grid-template-columns:2fr 1.2fr 1fr 1fr auto;gap:0.5rem;margin-bottom:0.3rem;">
+              <span class="ab-col-hdr">Name</span><span class="ab-col-hdr">Balance</span><span class="ab-col-hdr">APR %</span><span class="ab-col-hdr">Min / mo</span><span></span>
+            </div>
+            <div id="ab-debts-${client.id}"></div>
+            <button class="ab-add-btn" onclick="abAddDebt('${client.id}')">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Add debt
+            </button>
+
+            <div class="ab-divider"></div>
+
+            <div class="ab-section-label">Found Money</div>
+
+            <div class="ab-subsection-label">Spending Leaks</div>
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0.5rem;margin-bottom:0.3rem;">
+              <span class="ab-col-hdr">Category</span><span class="ab-col-hdr">Actual / mo</span><span class="ab-col-hdr">Your Target</span>
+            </div>
+            <div id="ab-leaks-${client.id}"></div>
+            <button class="ab-add-btn" onclick="abAddLeak('${client.id}')">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Add category
+            </button>
+
+            <div class="ab-subsection-label" style="margin-top:1rem;">Subscriptions to Cut</div>
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:0.5rem;margin-bottom:0.3rem;">
+              <span class="ab-col-hdr">Subscription</span><span class="ab-col-hdr">Cost / mo</span><span class="ab-col-hdr">Cut? (Yes/No)</span><span></span>
+            </div>
+            <div id="ab-subs-${client.id}"></div>
+            <button class="ab-add-btn" onclick="abAddSub('${client.id}')">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Add subscription
+            </button>
+
+            <div class="ab-divider"></div>
+
+            <div class="ab-section-label">Emergency Fund</div>
+            <div class="ab-row ab-row-2">
+              <div class="ab-field-group">
+                <label class="ab-field-label">Target Amount <span style="font-weight:400;color:#475569;font-size:0.65rem;">(blank = skip Phase 1)</span></label>
+                <input type="number" class="ab-field" id="ab-ef-target-${client.id}" placeholder="8400" min="0" step="100"/>
+              </div>
+              <div class="ab-field-group">
+                <label class="ab-field-label">Already Saved</label>
+                <input type="number" class="ab-field" id="ab-ef-saved-${client.id}" placeholder="0" min="0" step="1"/>
+              </div>
+            </div>
+
+            <div class="ab-divider"></div>
+
+            <div class="ab-section-label">Delivery</div>
+            <div class="ab-row ab-row-2">
+              <div class="ab-field-group">
+                <label class="ab-field-label">Audit Date</label>
+                <input type="date" class="ab-field" id="ab-date-${client.id}"/>
+              </div>
+              <div class="ab-field-group">
+                <label class="ab-field-label">Video Walkthrough URL</label>
+                <input type="url" class="ab-field" id="ab-video-${client.id}" placeholder="YouTube, Loom, or Vimeo URL" value="${escHtml(client.loomUrl || '')}"/>
+              </div>
+            </div>
+
+            <p id="ab-error-${client.id}" style="font-size:0.78rem;color:var(--red);display:none;margin-bottom:0.75rem;" role="alert"></p>
+
+            <button class="btn-publish" id="btn-publish-${client.id}" type="button" onclick="publishAudit('${client.id}')">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              Publish to Client Portal
+            </button>
+          </div>
+        </div>
+
         <div class="ws-card">
-          <div class="ws-card-header"><span class="ws-card-title">Deliver Audit Results</span></div>
+          <div class="ws-card-header"><span class="ws-card-title">Legacy Delivery (Spreadsheet)</span></div>
           <div class="ws-card-body">
             <label class="admin-field-label" for="loom-${client.id}">Video walkthrough link</label>
             <input type="url" id="loom-${client.id}" class="admin-field" placeholder="YouTube, Loom, or Vimeo URL" value="${escHtml(client.loomUrl || '')}" aria-label="Video walkthrough link"/>
@@ -703,6 +843,181 @@
     }
     function escHtml(str) {
       return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── Audit Builder ─────────────────────────────────────────────
+    const REMOVE_SVG = `<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>`;
+
+    function abAddDebt(id, data = {}) {
+      const container = document.getElementById('ab-debts-' + id);
+      const row = document.createElement('div');
+      row.className = 'ab-debt-row';
+      const apr = parseFloat(data.rate) || 0;
+      const highFlag = apr >= 15 ? '<span class="ab-high-flag">HIGH</span>' : '';
+      row.innerHTML = `
+        <input type="text"   class="ab-field" placeholder="e.g. Discover Card" value="${escHtml(data.name||'')}"/>
+        <input type="number" class="ab-field" placeholder="4820"  min="0" step="1"    value="${data.balance||''}"/>
+        <input type="number" class="ab-field rate-field ${apr>=15?'flag-high':''}" placeholder="22.99" min="0" step="0.01" value="${data.rate||''}" oninput="abCheckRate(this)"/>
+        <input type="number" class="ab-field" placeholder="96"    min="0" step="1"    value="${data.min||''}"/>
+        <button class="ab-remove-btn" onclick="this.closest('.ab-debt-row').remove()" aria-label="Remove debt">${REMOVE_SVG}</button>`;
+      container.appendChild(row);
+    }
+
+    function abCheckRate(input) {
+      const val = parseFloat(input.value) || 0;
+      input.classList.toggle('flag-high', val >= 15);
+    }
+
+    function abAddLeak(id, data = {}) {
+      const container = document.getElementById('ab-leaks-' + id);
+      const row = document.createElement('div');
+      row.className = 'ab-leak-row';
+      row.innerHTML = `
+        <input type="text"   class="ab-field" placeholder="e.g. Groceries"   value="${escHtml(data.category||'')}"/>
+        <input type="number" class="ab-field" placeholder="480" min="0" step="1" value="${data.actual||''}"/>
+        <input type="number" class="ab-field" placeholder="300" min="0" step="1" value="${data.target||''}"/>`;
+      container.appendChild(row);
+    }
+
+    function abAddSub(id, data = {}) {
+      const container = document.getElementById('ab-subs-' + id);
+      const row = document.createElement('div');
+      row.className = 'ab-sub-row';
+      row.innerHTML = `
+        <input type="text"   class="ab-field" placeholder="e.g. Hulu" value="${escHtml(data.name||'')}"/>
+        <input type="number" class="ab-field" placeholder="18" min="0" step="1" value="${data.cost||''}"/>
+        <select class="ab-field">
+          <option value="Yes" ${data.cut==='Yes'?'selected':''}>Yes — cut it</option>
+          <option value="No"  ${data.cut==='No' ?'selected':''}>No — keep it</option>
+        </select>
+        <button class="ab-remove-btn" onclick="this.closest('.ab-sub-row').remove()" aria-label="Remove subscription">${REMOVE_SVG}</button>`;
+      container.appendChild(row);
+    }
+
+    function abCollect(id) {
+      // Collect all form values into a clientData object
+      const g = el => document.getElementById(el + id)?.value;
+      const gn = el => parseFloat(document.getElementById(el + id)?.value) || 0;
+
+      const debts = [];
+      document.querySelectorAll(`#ab-debts-${id} .ab-debt-row`).forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const name = inputs[0].value.trim();
+        if (!name) return;
+        debts.push({ name, balance: parseFloat(inputs[1].value)||0, rate: parseFloat(inputs[2].value)||0, min: parseFloat(inputs[3].value)||0 });
+      });
+
+      const leaks = [];
+      document.querySelectorAll(`#ab-leaks-${id} .ab-leak-row`).forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const category = inputs[0].value.trim();
+        if (!category) return;
+        leaks.push({ category, actual: parseFloat(inputs[1].value)||0, target: parseFloat(inputs[2].value)||0 });
+      });
+
+      const subs = [];
+      document.querySelectorAll(`#ab-subs-${id} .ab-sub-row`).forEach(row => {
+        const name = row.querySelector('input[type="text"]').value.trim();
+        if (!name) return;
+        const cost = parseFloat(row.querySelectorAll('input[type="number"]')[0].value)||0;
+        const cut  = row.querySelector('select').value;
+        subs.push({ name, cost, cut });
+      });
+
+      return {
+        clientId:    id,
+        auditDate:   g('ab-date-')    || new Date().toISOString().slice(0,10),
+        income:      gn('ab-income-'),
+        fixedObs:    gn('ab-fixed-'),
+        baseDebtPmt: gn('ab-debtpmt-'),
+        groceries:   gn('ab-groc-'),
+        debts,
+        leaks,
+        subs,
+        efTarget:    parseFloat(document.getElementById('ab-ef-target-'+id)?.value) || null,
+        efSaved:     parseFloat(document.getElementById('ab-ef-saved-'+id)?.value)  || 0,
+        videoUrl:    document.getElementById('ab-video-'+id)?.value.trim() || '',
+      };
+    }
+
+    function abPopulate(id, cd) {
+      // Pre-fill the form from existing clientData in Firestore
+      const set = (elId, val) => { const el = document.getElementById(elId+id); if (el && val != null) el.value = val; };
+      set('ab-income-',    cd.income);
+      set('ab-fixed-',     cd.fixedObs);
+      set('ab-debtpmt-',   cd.baseDebtPmt);
+      set('ab-groc-',      cd.groceries);
+      set('ab-ef-target-', cd.efTarget || '');
+      set('ab-ef-saved-',  cd.efSaved  || 0);
+      set('ab-date-',      cd.auditDate || '');
+      set('ab-video-',     cd.videoUrl  || '');
+      (cd.debts || []).forEach(d  => abAddDebt(id, d));
+      (cd.leaks || []).forEach(l  => abAddLeak(id, l));
+      (cd.subs  || []).forEach(s  => abAddSub(id, s));
+    }
+
+    async function publishAudit(id) {
+      const errEl = document.getElementById('ab-error-' + id);
+      const btn   = document.getElementById('btn-publish-' + id);
+      errEl.style.display = 'none';
+
+      const cd = abCollect(id);
+
+      // Basic validation
+      if (!cd.income)           { errEl.textContent = 'Net income is required.'; errEl.style.display='block'; return; }
+      if (!cd.debts.length)     { errEl.textContent = 'Add at least one debt.';  errEl.style.display='block'; return; }
+      if (!cd.videoUrl)         { errEl.textContent = 'Video URL is required before publishing.'; errEl.style.display='block'; return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Publishing\u2026';
+
+      try {
+        await updateDoc(doc(db, 'users', id), {
+          auditStatus:  'completed',
+          deliveredAt:  new Date(),
+          loomUrl:      cd.videoUrl,
+          clientData:   cd,
+        });
+
+        // Notify client
+        const snap = await getDoc(doc(db, 'users', id));
+        const data = snap.exists() ? snap.data() : {};
+        if (data.email) {
+          sendEmail(
+            data.email,
+            'Your Clean Slate Blueprint is Ready!',
+            `<div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;color:#1E293B;">
+              <h2 style="color:#10B981;">Your blueprint is ready, ${data.displayName || 'there'}!</h2>
+              <p>Your custom audit is complete. Log into your portal to watch your personal video walkthrough and explore your interactive blueprint.</p>
+              <p style="margin-top:1.5rem;">
+                <a href="https://logicnerds.github.io/cleanslate/portal/index.html" style="background:#10B981;color:#fff;padding:0.75rem 1.5rem;border-radius:8px;text-decoration:none;font-weight:600;">View My Blueprint</a>
+              </p>
+              <p style="color:#64748B;font-size:0.85rem;margin-top:2rem;">If you have questions about your results, just reply to this email.</p>
+              <p style="color:#64748B;font-size:0.85rem;">\u2014 Elijah<br>Clean Slate Audit</p>
+            </div>`
+          );
+        }
+
+        // Update local cache + queue
+        const client = clients.find(c => c.id === id);
+        if (client) { client.auditStatus = 'completed'; client.loomUrl = cd.videoUrl; }
+        renderQueue(clients);
+
+        const pillEl = document.querySelector('#client-workstation .status-pill');
+        if (pillEl) { pillEl.className='status-pill pill-completed'; pillEl.style.cssText='font-size:0.68rem;padding:0.3rem 0.75rem;'; pillEl.textContent='Completed'; }
+
+        const toast = document.getElementById('deliver-toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+
+      } catch (err) {
+        console.error('Publish error:', err);
+        errEl.textContent = 'Publish failed. Check your connection and try again.';
+        errEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Publish to Client Portal';
+      }
     }
   </script>
 </body>
