@@ -20,6 +20,7 @@
     .portal-nav .logout-btn:hover{color:#CBD5E1}
     .portal-main{flex:1;padding:2.5rem 1rem 5rem}
     .portal-inner{max-width:42rem;margin:0 auto}
+    .portal-inner.full-width{max-width:none;padding:0}
     .wizard-progress{margin-bottom:2.5rem}
     .progress-track{height:3px;background:rgba(255,255,255,0.08);border-radius:9999px;overflow:hidden;margin-bottom:1rem}
     .progress-fill{height:100%;background:linear-gradient(90deg,var(--emerald),#34D399);border-radius:9999px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1)}
@@ -218,6 +219,123 @@
     .pop-in{animation:popIn 0.3s ease forwards}
     ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#1E293B;border-radius:3px}
     @media(prefers-reduced-motion:reduce){*,::before,::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+
+    /* ── Dashboard layout ──────────────────────────────────────── */
+    .db-wrap{padding:0 1.5rem 5rem}
+    .db-header{background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.06);border-radius:1rem;padding:1.5rem 1.75rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem}
+    .video-wrap{background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.06);border-radius:1rem;overflow:hidden;margin-bottom:1.5rem}
+    .video-label{padding:1rem 1.5rem 0.75rem;font-size:0.72rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#64748B;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .video-placeholder{background:#0A1020;aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem}
+
+    /* ── Tabs ──────────────────────────────────────────────────── */
+    .db-tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem;background:rgba(15,23,42,0.5);border-radius:0.75rem;padding:0.35rem}
+    .db-tab{flex:1;background:none;border:none;color:#64748B;font-weight:600;font-size:0.88rem;padding:0.65rem 1rem;border-radius:0.5rem;cursor:pointer;transition:background 0.15s,color 0.15s;font-family:inherit}
+    .db-tab.active{background:rgba(30,41,59,0.8);color:#F8FAFC}
+    .db-panel{display:none}.db-panel.active{display:block}
+
+    /* ── Cards ─────────────────────────────────────────────────── */
+    .db-card{background:rgba(30,41,59,0.55);border:1px solid rgba(255,255,255,0.06);border-radius:1rem;margin-bottom:1.25rem;overflow:hidden}
+    .db-card-hdr{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between}
+    .db-card-title{font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#475569}
+    .db-card-body{padding:1.5rem}
+
+    /* ── KPI grid ──────────────────────────────────────────────── */
+    .kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:0.75rem}
+    @media(max-width:900px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:600px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+    .kpi{background:rgba(15,23,42,0.5);border:1px solid rgba(255,255,255,0.05);border-radius:0.75rem;padding:1rem}
+    .kpi-label{font-size:0.62rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#475569;margin-bottom:0.5rem}
+    .kpi-val{font-size:1.35rem;font-weight:700;color:#F8FAFC;font-variant-numeric:tabular-nums}
+
+    /* ── Debt table ────────────────────────────────────────────── */
+    .debt-tbl{width:100%;border-collapse:collapse;font-size:0.85rem}
+    .debt-tbl th{text-align:left;font-size:0.65rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#475569;padding:0 0.75rem 0.6rem;border-bottom:1px solid rgba(255,255,255,0.06)}
+    .debt-tbl td{padding:0.6rem 0.75rem;color:#CBD5E1;border-bottom:1px solid rgba(255,255,255,0.04);font-variant-numeric:tabular-nums}
+    .debt-tbl tr:last-child td{border-bottom:none}
+    .debt-tbl .high-rate{color:var(--gold)}
+    .high-flag{display:inline-block;font-size:0.6rem;font-weight:700;color:#F87171;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);border-radius:3px;padding:0.1rem 0.35rem;margin-left:0.35rem}
+    .high-alert{background:rgba(248,113,113,0.05);border:1px solid rgba(248,113,113,0.2);border-left:3px solid #F87171;border-radius:0.5rem;padding:1rem 1.25rem;font-size:0.82rem;color:#CBD5E1;line-height:1.7;margin-top:1rem}
+
+    /* ── Savings section ───────────────────────────────────────── */
+    .savings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
+    @media(max-width:700px){.savings-grid{grid-template-columns:1fr 1fr}}
+    .savings-item{background:rgba(15,23,42,0.5);border:1px solid rgba(255,255,255,0.06);border-radius:0.75rem;padding:1rem}
+    .savings-label{font-size:0.62rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#475569;margin-bottom:0.4rem}
+    .savings-val{font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums}
+    .savings-note{font-size:0.78rem;color:#475569;margin-top:0.25rem}
+
+    /* ── Summary bar ───────────────────────────────────────────── */
+    .summary-bar{background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.06);border-radius:1rem;padding:1.25rem 1.5rem;display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:1.25rem}
+    @media(max-width:800px){.summary-bar{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:500px){.summary-bar{grid-template-columns:repeat(2,1fr)}}
+    .sum-item{}
+    .sum-label{font-size:0.62rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#475569;margin-bottom:0.3rem}
+    .sum-val{font-size:1.15rem;font-weight:700;font-variant-numeric:tabular-nums}
+
+    /* ── Found money sim ───────────────────────────────────────── */
+    .sim-section{margin-bottom:1.5rem}
+    .sim-subsection-label{font-size:0.65rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#475569;margin:1.25rem 0 0.75rem}
+    .sim-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:0.75rem 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .sim-row:last-child{border-bottom:none}
+    .sim-name{font-size:0.88rem;font-weight:500;color:#CBD5E1;flex:1;min-width:0}
+    .sim-cost{font-size:0.85rem;color:#94A3B8;white-space:nowrap}
+    .sim-cut-badge{font-size:0.62rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;background:rgba(248,113,113,0.12);color:#F87171;border:1px solid rgba(248,113,113,0.25);border-radius:9999px;padding:0.15rem 0.5rem;white-space:nowrap}
+    .sim-keep-badge{font-size:0.62rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;background:rgba(100,116,139,0.15);color:#64748B;border:1px solid rgba(100,116,139,0.2);border-radius:9999px;padding:0.15rem 0.5rem;white-space:nowrap}
+    .sim-slider-wrap{padding:0.75rem 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .sim-slider-wrap:last-child{border-bottom:none}
+    .sim-slider-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.5rem}
+    .sim-slider-name{font-size:0.88rem;font-weight:500;color:#CBD5E1}
+    .sim-slider-val{font-size:1rem;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums}
+    .sim-slider-track{position:relative;margin-bottom:0.35rem}
+    input[type=range].cs-slider{width:100%;height:4px;border-radius:2px;appearance:none;-webkit-appearance:none;background:rgba(255,255,255,0.1);outline:none;cursor:pointer}
+    input[type=range].cs-slider::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);border:2px solid #0F172A;cursor:pointer;box-shadow:0 0 0 2px rgba(245,158,11,0.3)}
+    input[type=range].cs-slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--gold);border:2px solid #0F172A;cursor:pointer}
+    .sim-marker{position:absolute;top:-6px;width:2px;height:16px;background:var(--emerald);border-radius:1px;pointer-events:none}
+    .sim-marker::after{content:'rec';position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:0.5rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--emerald);white-space:nowrap}
+    .sim-range-labels{display:flex;justify-content:space-between;font-size:0.65rem;color:#334155}
+    .sim-found-total{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:0.75rem;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;margin-top:1rem}
+    .sim-found-label{font-size:0.78rem;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:0.06em}
+    .sim-found-val{font-size:1.75rem;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums}
+
+    /* ── Chart ─────────────────────────────────────────────────── */
+    .chart-wrap{position:relative;height:280px;margin-bottom:0.5rem}
+
+    /* ── Phase cards ───────────────────────────────────────────── */
+    .phase-card{border-radius:0.75rem;padding:1.25rem;margin-bottom:0.875rem;border-left:4px solid var(--emerald)}
+    .phase-card.ef-phase{border-left-color:var(--indigo);background:rgba(99,102,241,0.05)}
+    .phase-card.debt-phase{background:rgba(16,185,129,0.04)}
+    .phase-title{font-size:0.78rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.5rem}
+    .phase-title.ef{color:var(--indigo-light)}
+    .phase-title.debt{color:var(--emerald)}
+    .phase-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;margin-top:0.75rem}
+    @media(max-width:600px){.phase-grid{grid-template-columns:1fr 1fr}}
+    .phase-item-label{font-size:0.62rem;color:#64748B;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.2rem}
+    .phase-item-val{font-size:0.95rem;font-weight:600;color:#F8FAFC;font-variant-numeric:tabular-nums}
+
+    /* ── Checklist ─────────────────────────────────────────────── */
+    .cl-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#475569;margin:1.25rem 0 0.5rem}
+    .cl-item{display:flex;align-items:flex-start;gap:0.75rem;padding:0.6rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.875rem;color:#CBD5E1;line-height:1.5}
+    .cl-item:last-child{border-bottom:none}
+    .cl-check{width:1.1rem;height:1.1rem;accent-color:var(--emerald);cursor:pointer;flex-shrink:0;margin-top:0.15rem}
+
+    /* ── Tracker ───────────────────────────────────────────────── */
+    .tracker-debt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;margin-bottom:1.25rem}
+    @media(max-width:500px){.tracker-debt-grid{grid-template-columns:1fr}}
+    .tracker-debt-item{background:rgba(15,23,42,0.5);border:1px solid rgba(255,255,255,0.06);border-radius:0.65rem;padding:0.875rem}
+    .tracker-debt-name{font-size:0.78rem;font-weight:600;color:#94A3B8;margin-bottom:0.4rem}
+    .tracker-debt-input{width:100%;background:rgba(15,23,42,0.6);border:1px solid #334155;border-radius:0.4rem;color:#F8FAFC;padding:0.5rem 0.75rem;font-size:1rem;font-weight:600;font-family:inherit;transition:border-color 0.15s}
+    .tracker-debt-input:focus{outline:none;border-color:var(--emerald);box-shadow:0 0 0 2px rgba(16,185,129,0.15)}
+    .tracker-total-bar{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:0.75rem;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+    .btn-log{background:linear-gradient(135deg,var(--indigo),#4F46E5);color:#fff;border:none;font-weight:600;border-radius:0.625rem;padding:0.75rem 1.5rem;cursor:pointer;font-size:0.9rem;display:inline-flex;align-items:center;gap:0.5rem;transition:transform 0.15s,box-shadow 0.15s}
+    .btn-log:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,0.35)}
+    .btn-log:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .tracker-history{margin-top:1.5rem}
+    .tracker-history-hdr{display:grid;grid-template-columns:2fr 2fr 1.5fr 1.5fr 1fr;gap:0.5rem;padding:0 0.75rem 0.5rem;font-size:0.62rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#475569;border-bottom:1px solid rgba(255,255,255,0.06)}
+    .tracker-history-row{display:grid;grid-template-columns:2fr 2fr 1.5fr 1.5fr 1fr;gap:0.5rem;padding:0.6rem 0.75rem;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.85rem;align-items:center}
+    .tracker-history-row:last-child{border-bottom:none}
+    .tracker-on-track{color:var(--emerald);font-weight:600;font-size:0.78rem}
+    .tracker-review{color:var(--gold);font-weight:600;font-size:0.78rem}
+    .tracker-empty{text-align:center;padding:2.5rem 1rem;color:#334155;font-size:0.85rem}
   </style>
 </head>
 <body>
@@ -487,42 +605,158 @@
 
       <!-- STATE 2: DASHBOARD -->
       <div id="dashboard-state" style="display:none;">
-        <div class="dashboard-header">
-          <div>
-            <div style="font-size:0.78rem;color:#64748B;margin-bottom:0.25rem;">Welcome back</div>
-            <div class="font-display fw-bold text-white" style="font-size:1.3rem;" id="dashboard-name">Your Blueprint is Ready</div>
+        <div class="db-wrap">
+
+          <!-- Header -->
+          <div class="db-header">
+            <div>
+              <div style="font-size:0.78rem;color:#64748B;margin-bottom:0.25rem;">Welcome back</div>
+              <div class="font-display fw-bold text-white" style="font-size:1.3rem;" id="dashboard-name">Your Blueprint is Ready</div>
+            </div>
+            <div class="status-badge"><span class="status-dot"></span>Audit Complete</div>
           </div>
-          <div class="status-badge"><span class="status-dot"></span>Audit Complete</div>
-        </div>
-        <div class="video-section">
-          <div class="video-label">Your walkthrough video</div>
-          <div id="video-container" class="video-placeholder" aria-label="Video walkthrough">
-            <div class="video-play-ring"><svg width="20" height="20" fill="var(--indigo-light)" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
-            <div style="font-size:0.8rem;color:#475569;">Video walkthrough will appear here</div>
+
+          <!-- Video -->
+          <div class="video-wrap">
+            <div class="video-label">Your walkthrough video</div>
+            <div id="video-container" class="video-placeholder" aria-label="Video walkthrough">
+              <div class="video-play-ring"><svg width="20" height="20" fill="var(--indigo-light)" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></div>
+              <div style="font-size:0.8rem;color:#475569;">Video walkthrough will appear here</div>
+            </div>
           </div>
-        </div>
-        <div id="dashboard-section" style="display:none;margin-bottom:1.5rem;">
-          <div class="section-label">Your Blueprint</div>
-          <div style="background:rgba(30,41,59,0.5);border:1px solid rgba(255,255,255,0.06);border-radius:1rem;padding:1.5rem 1.75rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
-            <div style="display:flex;align-items:center;gap:0.875rem;">
-              <div style="width:2.75rem;height:2.75rem;border-radius:0.65rem;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--emerald)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6h6v6m-9 4h12a2 2 0 002-2V5a2 2 0 00-2-2H9.828a2 2 0 00-1.414.586L4.586 7.414A2 2 0 004 8.828V19a2 2 0 002 2z"/></svg>
-              </div>
-              <div>
-                <div style="font-size:0.92rem;font-weight:600;color:#F8FAFC;">Your interactive digital workbook</div>
-                <div style="font-size:0.78rem;color:#64748B;" id="dashboard-file-name">Your blueprint, ready to download</div>
+
+          <!-- Tabs -->
+          <div class="db-tabs" role="tablist">
+            <button class="db-tab active" role="tab" aria-selected="true"  id="tab-blueprint" onclick="switchTab('blueprint')">📊 Blueprint</button>
+            <button class="db-tab"        role="tab" aria-selected="false" id="tab-tracker"   onclick="switchTab('tracker')">📈 Tracker</button>
+          </div>
+
+          <!-- ══════════════ BLUEPRINT PANEL ══════════════ -->
+          <div class="db-panel active" id="panel-blueprint">
+
+            <!-- 1. Macro Reality -->
+            <div class="db-card">
+              <div class="db-card-hdr"><span class="db-card-title">1 · The Macro Reality</span></div>
+              <div class="db-card-body">
+                <div class="kpi-grid" id="kpi-grid"></div>
               </div>
             </div>
-            <a id="dashboard-download" href="#" download style="background:var(--emerald);color:#022c22;padding:0.65rem 1.25rem;border-radius:0.5rem;text-decoration:none;font-size:0.85rem;font-weight:600;display:inline-flex;align-items:center;gap:0.5rem;white-space:nowrap;">
-              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              Download Workbook
-            </a>
+
+            <!-- 2. Debt Inventory -->
+            <div class="db-card">
+              <div class="db-card-hdr"><span class="db-card-title">2 · Your Debt Inventory</span></div>
+              <div class="db-card-body" style="padding:0 0 0.75rem;">
+                <div style="overflow-x:auto;padding:0 1.5rem 0.75rem;">
+                  <table class="debt-tbl" id="debt-table"><thead><tr>
+                    <th>Debt</th><th>Balance</th><th>APR</th><th>Minimum</th>
+                    <th>Payoff (Plan)</th><th>Payoff (Status Quo)</th><th>Int Paid (Plan)</th>
+                  </tr></thead><tbody id="debt-tbody"></tbody></table>
+                </div>
+                <div id="high-rate-alert" class="high-alert" style="display:none;margin:0 1.5rem 1rem;">
+                  <strong style="color:#F87171;">⚠ High-Interest Debt Alert</strong> — Balances above 15% APR are your most expensive money.
+                  Two levers worth investigating on your own: (1) Call the issuer and ask for a lower rate.
+                  (2) Look into 0% intro balance transfer offers — fees and payoff windows apply; verify terms yourself.
+                  This is financial education, not a product recommendation.
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Found Money Simulator -->
+            <div class="db-card">
+              <div class="db-card-hdr">
+                <span class="db-card-title">3 · Found Money Simulator</span>
+                <span style="font-size:0.72rem;color:#475569;">Adjust the sliders — the plan updates live</span>
+              </div>
+              <div class="db-card-body">
+                <div class="sim-subsection-label">Subscriptions</div>
+                <div id="sim-subs"></div>
+
+                <div class="sim-subsection-label">Spending Categories</div>
+                <div id="sim-leaks"></div>
+
+                <div class="sim-found-total">
+                  <span class="sim-found-label">Total Found Money / Month</span>
+                  <span class="sim-found-val" id="sim-total-found">$0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. What Your Plan Saves You -->
+            <div class="db-card">
+              <div class="db-card-hdr"><span class="db-card-title">4 · What Your Plan Saves You</span></div>
+              <div class="db-card-body">
+                <div class="savings-grid" id="savings-grid"></div>
+                <p style="font-size:0.82rem;color:#475569;line-height:1.7;margin:0;" id="avalanche-note"></p>
+              </div>
+            </div>
+
+            <!-- 5. Summary Bar -->
+            <div class="summary-bar" id="summary-bar"></div>
+
+            <!-- 6. Phased Attack Schedule -->
+            <div class="db-card">
+              <div class="db-card-hdr"><span class="db-card-title">6 · Your Phased Attack Schedule</span></div>
+              <div class="db-card-body">
+                <div class="chart-wrap"><canvas id="payoff-chart"></canvas></div>
+                <p style="font-size:0.72rem;color:#475569;text-align:center;margin:0.5rem 0 1.5rem;">
+                  Green = Your Plan &nbsp;·&nbsp; Grey = Status Quo (minimum payments only)
+                </p>
+                <div id="phase-cards"></div>
+              </div>
+            </div>
+
+            <!-- 7. Implementation Checklist -->
+            <div class="db-card">
+              <div class="db-card-hdr"><span class="db-card-title">7 · Implementation Checklist — Do These This Week</span></div>
+              <div class="db-card-body" id="checklist-body"></div>
+            </div>
+
           </div>
-        </div>
-        <div class="section-label">Settings</div>
-        <div class="settings-section">
-          <a href="#" id="open-pw-modal" class="settings-row" aria-label="Update your password"><div><div class="settings-row-label">Update Password</div><div class="settings-row-sub">Change your account password</div></div><svg class="settings-row-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
-          <a href="#" id="open-delete-modal" class="settings-row danger" aria-label="Request data deletion"><div><div class="settings-row-label">Request Data Deletion</div><div class="settings-row-sub" style="color:#475569;">GDPR / Privacy · Permanently remove your files and account</div></div><svg class="settings-row-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+          <!-- /blueprint panel -->
+
+          <!-- ══════════════ TRACKER PANEL ══════════════ -->
+          <div class="db-panel" id="panel-tracker">
+
+            <div class="db-card">
+              <div class="db-card-hdr">
+                <span class="db-card-title">Current Balances</span>
+                <span style="font-size:0.72rem;color:#475569;">Update each debt, then tap Log This Month</span>
+              </div>
+              <div class="db-card-body">
+                <div class="tracker-debt-grid" id="tracker-debt-inputs"></div>
+                <div class="tracker-total-bar">
+                  <div>
+                    <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#475569;margin-bottom:0.2rem;">Total Current Debt</div>
+                    <div style="font-size:1.5rem;font-weight:700;color:var(--emerald);" id="tracker-total">$0</div>
+                  </div>
+                  <button class="btn-log" id="btn-log-month" onclick="logThisMonth()">
+                    <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    Log This Month
+                  </button>
+                </div>
+                <p id="tracker-log-msg" style="font-size:0.78rem;color:var(--emerald);display:none;margin:0.5rem 0 0;"></p>
+              </div>
+            </div>
+
+            <div class="db-card">
+              <div class="db-card-hdr"><span class="db-card-title">Monthly Progress History</span></div>
+              <div class="db-card-body" style="padding:0.75rem 0 0;">
+                <div id="tracker-history-wrap"></div>
+              </div>
+            </div>
+
+          </div>
+          <!-- /tracker panel -->
+
+        </div><!-- /db-wrap -->
+
+        <!-- Settings (unchanged) -->
+        <div style="max-width:42rem;margin:0 auto;padding:0 1rem;">
+          <div class="section-label">Settings</div>
+          <div class="settings-section">
+            <a href="#" id="open-pw-modal" class="settings-row" aria-label="Update your password"><div><div class="settings-row-label">Update Password</div><div class="settings-row-sub">Change your account password</div></div><svg class="settings-row-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+            <a href="#" id="open-delete-modal" class="settings-row danger" aria-label="Request data deletion"><div><div class="settings-row-label">Request Data Deletion</div><div class="settings-row-sub" style="color:#475569;">GDPR / Privacy · Permanently remove your files and account</div></div><svg class="settings-row-arrow" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+          </div>
         </div>
       </div>
       <!-- /dashboard-state -->
@@ -584,6 +818,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
 <script type="module">
   import { initializeApp }                              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -845,50 +1080,520 @@
     }
   });
 
+  // ── Math engine (inline) ────────────────────────────────────
+  const MAX_PLAN = 120, MAX_SQ = 180;
+
+  function runMath(cd) {
+    const debts = (cd.debts || []).filter(d => d.balance > 0);
+    const leaks = cd.leaks || [], subs = cd.subs || [];
+    const efTarget = cd.efTarget || null, efSaved = cd.efSaved || 0;
+    const auditDate = cd.auditDate ? new Date(cd.auditDate) : new Date();
+
+    const leakSavings = leaks.reduce((s,l) => s+(l.target>0&&l.actual>l.target?l.actual-l.target:0),0);
+    const subSavings  = subs.reduce((s,sub) => s+(sub.cut==='Yes'?(sub.cost||0):0),0);
+    const foundMoney  = leakSavings + subSavings;
+    const efGap       = efTarget ? Math.max(0,efTarget-efSaved) : 0;
+    const efAlloc     = efTarget ? Math.min(foundMoney,efGap) : 0;
+
+    const plan = amortize(debts,foundMoney,efTarget,efSaved,efAlloc,MAX_PLAN,true);
+    const sq   = amortize(debts,0,null,0,0,MAX_SQ,false);
+    const sbD  = [...debts].sort((a,b)=>a.balance-b.balance);
+    const sb   = amortize(sbD,foundMoney,efTarget,efSaved,efAlloc,MAX_PLAN,true);
+
+    const payoffPlan = findPayoff(plan.months,MAX_PLAN);
+    const payoffSQ   = findPayoff(sq.months,MAX_SQ);
+    const efMonth    = efTarget ? plan.months.findIndex(m=>m.efBal>=efTarget) : 0;
+
+    const perDebt = debts.map((debt,i) => {
+      const planMonth  = findDebtPayoff(plan.months,i,MAX_PLAN);
+      const sqMonth    = findDebtPayoff(sq.months,i,MAX_SQ);
+      const intPaid    = plan.months.reduce((s,m)=>s+(m.interest[i]||0),0);
+      const startMonth = i===0 ? Math.max(0,efMonth) : findDebtPayoff(plan.months,i-1,MAX_PLAN);
+      return {
+        name:debt.name, balance:debt.balance, rate:debt.rate, min:debt.min,
+        planMonth, sqMonth, intPaid:Math.round(intPaid), startMonth,
+        totalPmt: Math.round(debt.min+foundMoney+debts.slice(0,i).reduce((s,d)=>s+d.min,0)),
+        payoffDate:addMonths(auditDate,planMonth),
+        sqPayoffDate:addMonths(auditDate,sqMonth),
+        startDate:addMonths(auditDate,startMonth+1),
+      };
+    });
+
+    return {
+      income:cd.income||0, fixedObs:cd.fixedObs||0, baseDebtPmt:cd.baseDebtPmt||0,
+      groceries:cd.groceries||0, debts, leaks, subs, efTarget, efSaved, auditDate,
+      foundMoney:Math.round(foundMoney), leakSavings:Math.round(leakSavings),
+      subSavings:Math.round(subSavings), efAllocMonthly:Math.round(efAlloc),
+      extraToDebt:Math.round(Math.max(0,foundMoney-efAlloc)), efGap:Math.round(efGap), efMonth,
+      intPlan:Math.round(plan.totalInterest), intSQ:Math.round(sq.totalInterest),
+      intSaved:Math.round(sq.totalInterest-plan.totalInterest),
+      intSnowball:Math.round(sb.totalInterest), sbDiff:Math.round(sb.totalInterest-plan.totalInterest),
+      payoffPlan, payoffSQ, monthsSaved:payoffSQ-payoffPlan,
+      debtFreeDate:addMonths(auditDate,payoffPlan), debtFreeDateSQ:addMonths(auditDate,payoffSQ), perDebt,
+      chartPlan:plan.months.map((m,i)=>({month:i,balance:Math.max(0,m.totalDebt)})),
+      chartSQ:sq.months.map((m,i)=>({month:i,balance:Math.max(0,m.totalDebt)})),
+    };
+  }
+
+  function amortize(debts,foundMoney,efTarget,efSaved,efAlloc,maxMonths,applyEF) {
+    const n=debts.length; let efBal=efSaved, bals=debts.map(d=>d.balance), totalInterest=0;
+    const months=[{efBal,bals:[...bals],totalDebt:bals.reduce((s,b)=>s+b,0),extra:0,interest:debts.map(()=>0),monthInterest:0}];
+    for(let m=1;m<=maxMonths;m++){
+      let extra=0;
+      if(applyEF&&efTarget){efBal=Math.min(efTarget,efBal+efAlloc);extra=efBal>=efTarget?foundMoney:0;}
+      else extra=foundMoney;
+      const interest=debts.map((d,i)=>Math.max(0,bals[i])*(d.rate/100/12));
+      const newBals=new Array(n).fill(0);
+      for(let i=0;i<n;i++){
+        if(bals[i]<=0){newBals[i]=0;continue;}
+        const isTarget=newBals.slice(0,i).every(b=>b<=0);
+        newBals[i]=Math.max(0,bals[i]+interest[i]-debts[i].min-(isTarget?extra:0));
+      }
+      totalInterest+=interest.reduce((s,v)=>s+v,0); bals=newBals;
+      months.push({efBal,bals:[...bals],totalDebt:bals.reduce((s,b)=>s+b,0),extra,interest,monthInterest:interest.reduce((s,v)=>s+v,0)});
+      if(bals.every(b=>b<=0))break;
+    }
+    return{months,totalInterest};
+  }
+
+  function findPayoff(months,fb){for(let i=1;i<months.length;i++){if(months[i].totalDebt<=0)return i-1;}return fb;}
+  function findDebtPayoff(months,idx,fb){for(let i=1;i<months.length;i++){if((months[i].bals[idx]||0)<=0)return i-1;}return fb;}
+  function addMonths(date,n){const d=new Date(date);d.setMonth(d.getMonth()+n);return d;}
+  function fmtMo(d){return d.toLocaleDateString('en-US',{month:'short',year:'numeric'});}
+  function fmtUSD(n){return'$'+Math.round(n).toLocaleString('en-US');}
+
+  // ── Dashboard state globals ──────────────────────────────────
+  let _uid=null, _mathResult=null, _clientData=null, _payoffChart=null;
+
+  // ── Tab switching ────────────────────────────────────────────
+  function switchTab(tab) {
+    document.querySelectorAll('.db-tab').forEach(t=>t.classList.toggle('active',t.id==='tab-'+tab));
+    document.querySelectorAll('.db-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
+  }
+  window.switchTab = switchTab;
+
   // ── STATE 2: Dashboard ───────────────────────────────────────
   async function showDashboard(uid, data) {
+    _uid = uid;
     document.getElementById('wizard-state').style.display    = 'none';
     document.getElementById('dashboard-state').style.display = '';
+    document.getElementById('portal-inner').classList.add('full-width');
 
-    if (data.displayName) {
+    if (data.displayName)
       document.getElementById('dashboard-name').textContent = data.displayName + '\u2019s Blueprint is Ready';
-    }
 
-    // Video embed — supports Loom, YouTube, and Vimeo
+    // Video
     if (data.loomUrl) {
       const url = data.loomUrl;
-      let embedSrc = null;
-
       const loom    = url.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/);
       const youtube = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
       const vimeo   = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-
+      let embedSrc  = null;
       if (loom)    embedSrc = `https://www.loom.com/embed/${loom[1]}`;
       if (youtube) embedSrc = `https://www.youtube.com/embed/${youtube[1]}`;
       if (vimeo)   embedSrc = `https://player.vimeo.com/video/${vimeo[1]}`;
-
-      if (embedSrc) {
+      if (embedSrc)
         document.getElementById('video-container').innerHTML =
-          `<iframe src="${embedSrc}" frameborder="0" allowfullscreen allow="autoplay; fullscreen; picture-in-picture" style="width:100%;aspect-ratio:16/9;"></iframe>`;
-      }
+          `<iframe src="${embedSrc}" frameborder="0" allowfullscreen allow="autoplay;fullscreen;picture-in-picture" style="width:100%;aspect-ratio:16/9;"></iframe>`;
     }
 
-    // Client workbook — direct Storage download, no Worker proxy needed for a binary file
-    if (data.dashboardPath) {
-      try {
-        const workbookUrl = await getDownloadURL(ref(storage, data.dashboardPath));
-
-        const downloadLink = document.getElementById('dashboard-download');
-        downloadLink.href = workbookUrl;
-
-        const fileName = data.dashboardPath.split('/').pop();
-        document.getElementById('dashboard-file-name').textContent = fileName || 'Your blueprint, ready to download';
-
-        document.getElementById('dashboard-section').style.display = '';
-      } catch (e) {
-        console.warn('Workbook not yet available:', e);
-      }
+    // If clientData exists, run math and render
+    if (data.clientData) {
+      _clientData = data.clientData;
+      _mathResult = runMath(_clientData);
+      renderBlueprint(_mathResult);
+      await loadTrackerHistory(uid);
     }
+  }
+
+  // ── Render blueprint ─────────────────────────────────────────
+  function renderBlueprint(r) {
+    renderKPIs(r);
+    renderDebtTable(r);
+    renderFoundMoney(r);
+    renderSavings(r);
+    renderSummaryBar(r);
+    renderPhases(r);
+    renderChecklist(r);
+    renderChart(r);
+    renderTrackerInputs(r);
+  }
+
+  // ── 1. KPI Grid ──────────────────────────────────────────────
+  function renderKPIs(r) {
+    const totalLeaks = r.leaks.reduce((s,l)=>s+(l.actual||0),0)
+                     + r.subs.reduce((s,sub)=>s+(sub.cost||0),0);
+    const kpis = [
+      {label:'Monthly Income',   val:fmtUSD(r.income),      color:'var(--emerald)'},
+      {label:'Fixed Obligations',val:fmtUSD(r.fixedObs),    color:'#F8FAFC'},
+      {label:'Groceries (est.)', val:fmtUSD(r.groceries),   color:'#F8FAFC'},
+      {label:'Debt Payments',    val:fmtUSD(r.baseDebtPmt), color:'var(--indigo-light)'},
+      {label:'Total Leaks',      val:fmtUSD(totalLeaks),    color:'#F87171'},
+      {label:'Found Money',      val:fmtUSD(r.foundMoney),  color:'var(--gold)'},
+    ];
+    document.getElementById('kpi-grid').innerHTML = kpis.map(k=>
+      `<div class="kpi"><div class="kpi-label">${k.label}</div><div class="kpi-val" style="color:${k.color}">${k.val}</div></div>`
+    ).join('');
+  }
+
+  // ── 2. Debt Table ────────────────────────────────────────────
+  function renderDebtTable(r) {
+    let hasHigh = false;
+    const rows = r.perDebt.map(d => {
+      const high = d.rate >= 15;
+      if (high) hasHigh = true;
+      return `<tr>
+        <td>${d.name}${high?'<span class="high-flag">HIGH</span>':''}</td>
+        <td>${fmtUSD(d.balance)}</td>
+        <td class="${high?'high-rate':''}">${d.rate.toFixed(2)}%</td>
+        <td>${fmtUSD(d.min)}/mo</td>
+        <td style="color:var(--emerald);font-weight:600;">${fmtMo(d.payoffDate)}</td>
+        <td style="color:#64748B;">${fmtMo(d.sqPayoffDate)}</td>
+        <td style="color:var(--gold);">${fmtUSD(d.intPaid)}</td>
+      </tr>`;
+    });
+    // Totals
+    const totBal = r.debts.reduce((s,d)=>s+d.balance,0);
+    const totMin = r.debts.reduce((s,d)=>s+d.min,0);
+    const totInt = r.perDebt.reduce((s,d)=>s+d.intPaid,0);
+    rows.push(`<tr style="border-top:1px solid rgba(255,255,255,0.08);font-weight:600;color:#F8FAFC;">
+      <td>Total</td><td>${fmtUSD(totBal)}</td><td></td><td>${fmtUSD(totMin)}/mo</td>
+      <td></td><td></td><td style="color:var(--gold);">${fmtUSD(totInt)}</td></tr>`);
+    document.getElementById('debt-tbody').innerHTML = rows.join('');
+    document.getElementById('high-rate-alert').style.display = hasHigh ? '' : 'none';
+  }
+
+  // ── 3. Found Money Simulator ─────────────────────────────────
+  function renderFoundMoney(r) {
+    // Subscriptions — static rows (no slider, just show cut/keep)
+    const subHtml = r.subs.map(s =>
+      `<div class="sim-row">
+        <span class="sim-name">${s.name}</span>
+        <span class="sim-cost">${fmtUSD(s.cost)}/mo</span>
+        <span class="${s.cut==='Yes'?'sim-cut-badge':'sim-keep-badge'}">${s.cut==='Yes'?'Cut':'Keep'}</span>
+      </div>`
+    ).join('') || '<p style="color:#334155;font-size:0.85rem;margin:0;">No subscriptions entered.</p>';
+    document.getElementById('sim-subs').innerHTML = subHtml;
+
+    // Spending leaks — sliders with recommendation markers
+    const leakHtml = r.leaks.map((l, i) => {
+      const rec = l.target || 0;
+      const markerPct = l.actual > 0 ? (rec / l.actual) * 100 : 0;
+      return `<div class="sim-slider-wrap">
+        <div class="sim-slider-meta">
+          <span class="sim-slider-name">${l.category}</span>
+          <span class="sim-slider-val" id="sim-val-${i}">${fmtUSD(rec)}/mo</span>
+        </div>
+        <div class="sim-slider-track">
+          <input type="range" class="cs-slider" id="sim-slide-${i}"
+            min="0" max="${l.actual}" value="${rec}" step="1"
+            data-actual="${l.actual}" data-rec="${rec}" data-idx="${i}"
+            oninput="onSlider(${i})"/>
+          <div class="sim-marker" id="sim-marker-${i}" style="left:calc(${markerPct}% - 1px)"></div>
+        </div>
+        <div class="sim-range-labels">
+          <span>$0</span>
+          <span style="color:var(--emerald);font-size:0.6rem;">▲ rec: ${fmtUSD(rec)}</span>
+          <span>${fmtUSD(l.actual)}</span>
+        </div>
+      </div>`;
+    }).join('') || '<p style="color:#334155;font-size:0.85rem;margin:0;">No spending categories entered.</p>';
+    document.getElementById('sim-leaks').innerHTML = leakHtml;
+
+    updateFoundTotal(r);
+  }
+
+  function onSlider(i) {
+    const slide = document.getElementById(`sim-slide-${i}`);
+    document.getElementById(`sim-val-${i}`).textContent = fmtUSD(parseInt(slide.value)) + '/mo';
+    updateFoundTotal(_mathResult);
+  }
+  window.onSlider = onSlider;
+
+  function getSliderFoundMoney(r) {
+    const subSavings = r.subs.reduce((s,sub)=>s+(sub.cut==='Yes'?(sub.cost||0):0),0);
+    let leakSavings  = 0;
+    r.leaks.forEach((l, i) => {
+      const slide = document.getElementById(`sim-slide-${i}`);
+      const budget = slide ? parseInt(slide.value) : l.target;
+      leakSavings += Math.max(0, l.actual - budget);
+    });
+    return subSavings + leakSavings;
+  }
+
+  function updateFoundTotal(r) {
+    const total = getSliderFoundMoney(r);
+    document.getElementById('sim-total-found').textContent = fmtUSD(total) + '/mo';
+  }
+
+  // ── 4. Savings ───────────────────────────────────────────────
+  function renderSavings(r) {
+    const items = [
+      {label:'Interest paid (plan)',      val:fmtUSD(r.intPlan),     color:'#F8FAFC'},
+      {label:'Interest doing nothing',    val:fmtUSD(r.intSQ),       color:'#F87171'},
+      {label:'Interest saved',            val:fmtUSD(r.intSaved),    color:'var(--gold)'},
+      {label:'Months debt-free sooner',   val:r.monthsSaved+' months',color:'var(--emerald)'},
+      {label:'Avalanche vs. snowball',    val:r.sbDiff===0?'Same method order':'$'+Math.abs(r.sbDiff).toLocaleString()+' saved', color:'var(--gold)'},
+    ];
+    document.getElementById('savings-grid').innerHTML = items.map(it=>
+      `<div class="savings-item">
+        <div class="savings-label">${it.label}</div>
+        <div class="savings-val" style="color:${it.color}">${it.val}</div>
+      </div>`
+    ).join('');
+    document.getElementById('avalanche-note').textContent =
+      'Why avalanche? It targets the highest interest rate first — the mathematically cheapest path to zero. '
+      + (r.sbDiff===0
+        ? 'For your debt profile, the avalanche and snowball methods attack debts in the same order, so the savings are identical.'
+        : 'The snowball method (lowest balance first) costs more in interest.');
+  }
+
+  // ── 5. Summary Bar ───────────────────────────────────────────
+  function renderSummaryBar(r) {
+    const items = [
+      {label:'Found / Month',    val:fmtUSD(r.foundMoney),          color:'var(--gold)'},
+      {label:'Debt-Free (Plan)', val:fmtMo(r.debtFreeDate),         color:'var(--emerald)'},
+      {label:'Debt-Free (SQ)',   val:fmtMo(r.debtFreeDateSQ),       color:'#64748B'},
+      {label:'Interest Saved',   val:fmtUSD(r.intSaved),            color:'var(--emerald)'},
+      {label:'Months Saved',     val:r.monthsSaved.toString(),       color:'var(--emerald)'},
+    ];
+    document.getElementById('summary-bar').innerHTML = items.map(it=>
+      `<div class="sum-item"><div class="sum-label">${it.label}</div><div class="sum-val" style="color:${it.color}">${it.val}</div></div>`
+    ).join('');
+  }
+
+  // ── 6. Phases + Chart ────────────────────────────────────────
+  function renderPhases(r) {
+    let html = '';
+
+    // Phase 1: EF
+    if (r.efTarget) {
+      const efEnd = addMonths(r.auditDate, r.efMonth + 1);
+      html += `<div class="phase-card ef-phase">
+        <div class="phase-title ef">Phase 1 · Build Emergency Fund</div>
+        <div style="font-size:0.85rem;color:#CBD5E1;">
+          Target: ${fmtUSD(r.efTarget)} &nbsp;·&nbsp;
+          Monthly contribution: ${fmtUSD(r.efAllocMonthly)} &nbsp;·&nbsp;
+          Funded by: ${fmtMo(efEnd)}
+        </div>
+      </div>`;
+    }
+
+    // Phase 2: Avalanche debt cards
+    r.perDebt.forEach((d, i) => {
+      html += `<div class="phase-card debt-phase">
+        <div class="phase-title debt">Phase ${r.efTarget?i+2:i+1} · ${d.name}</div>
+        <div class="phase-grid">
+          <div><div class="phase-item-label">Balance</div><div class="phase-item-val">${fmtUSD(d.balance)}</div></div>
+          <div><div class="phase-item-label">Rate</div><div class="phase-item-val">${d.rate.toFixed(2)}%</div></div>
+          <div><div class="phase-item-label">Starts</div><div class="phase-item-val">${fmtMo(d.startDate)}</div></div>
+          <div><div class="phase-item-label">Paid Off</div><div class="phase-item-val" style="color:var(--emerald);">${fmtMo(d.payoffDate)}</div></div>
+          <div><div class="phase-item-label">Total Payment</div><div class="phase-item-val">${fmtUSD(d.totalPmt)}/mo</div></div>
+          <div><div class="phase-item-label">Interest Paid</div><div class="phase-item-val" style="color:var(--gold);">${fmtUSD(d.intPaid)}</div></div>
+        </div>
+      </div>`;
+    });
+    document.getElementById('phase-cards').innerHTML = html;
+  }
+
+  function renderChart(r) {
+    const ctx = document.getElementById('payoff-chart').getContext('2d');
+    if (_payoffChart) _payoffChart.destroy();
+    _payoffChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: r.chartPlan.map(p => p.month),
+        datasets: [
+          {
+            label: 'Your Plan',
+            data: r.chartPlan.map(p => p.balance),
+            borderColor: '#10B981', backgroundColor: 'rgba(16,185,129,0.08)',
+            borderWidth: 2.5, pointRadius: 0, tension: 0.3, fill: true,
+          },
+          {
+            label: 'Status Quo',
+            data: r.chartSQ.map(p => p.balance),
+            borderColor: '#475569', backgroundColor: 'transparent',
+            borderWidth: 1.5, pointRadius: 0, tension: 0.3, borderDash: [4,3],
+          },
+        ],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { labels: { color: '#94A3B8', font: { size: 12 } } },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${ctx.dataset.label}: $${Math.round(ctx.raw).toLocaleString()}`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            ticks: { color: '#475569', maxTicksLimit: 12 },
+            grid:  { color: 'rgba(255,255,255,0.04)' },
+            title: { display: true, text: 'Month', color: '#475569', font: { size: 11 } },
+          },
+          y: {
+            ticks: { color: '#475569', callback: v => '$' + (v/1000).toFixed(0) + 'k' },
+            grid:  { color: 'rgba(255,255,255,0.04)' },
+            title: { display: true, text: 'Total Debt Balance', color: '#475569', font: { size: 11 } },
+          },
+        },
+      },
+    });
+  }
+
+  // ── 7. Checklist ─────────────────────────────────────────────
+  function renderChecklist(r) {
+    const hasHigh = r.debts.some(d => d.rate >= 15);
+    const sections = [
+      { label: 'Spending Cuts', items: [
+        "Review your subscriptions. Cancel every item marked 'Cut' in the Found Money Simulator.",
+        "Set your grocery budget to the coach's target and stick to it this month.",
+        "Delete food delivery apps for 30 days and redirect that spend.",
+        "Set a rule: no online shopping after 9 PM.",
+      ]},
+      { label: 'Debt', items: [
+        ...(hasHigh ? ["Call every card issuer with an APR above 15%. Ask directly: 'Can you lower my interest rate?'"] : []),
+        ...(hasHigh ? ["Research 0% balance transfer offers for your highest-rate cards. Compare fees vs. interest savings."] : []),
+        "Set up autopay for every minimum payment so you never miss one.",
+        "Do not open any new credit accounts during the paydown period.",
+      ]},
+      { label: 'Emergency Fund', items: r.efTarget ? [
+        "Open a dedicated savings account labeled 'Emergency Fund' — separate from your checking.",
+        `Set up a recurring transfer of ${fmtUSD(r.efAllocMonthly)}/mo on every payday.`,
+        "Do not touch this account unless it is a genuine emergency.",
+      ] : [] },
+      { label: 'Mindset', items: [
+        "Track your total debt balance in the Tracker tab. Watch it drop month by month.",
+        "Your credit score will feel slow to improve — that is normal. It is not your benchmark.",
+        "Every debt that hits $0 frees up its minimum payment. That money rolls to the next debt.",
+      ]},
+    ];
+
+    document.getElementById('checklist-body').innerHTML = sections
+      .filter(s => s.items.length)
+      .map(s =>
+        `<div class="cl-section-label">${s.label}</div>` +
+        s.items.map(item =>
+          `<div class="cl-item"><input type="checkbox" class="cl-check"/><span>${item}</span></div>`
+        ).join('')
+      ).join('');
+  }
+
+  // ── Tracker ──────────────────────────────────────────────────
+  function renderTrackerInputs(r) {
+    const html = r.debts.map((d, i) =>
+      `<div class="tracker-debt-item">
+        <div class="tracker-debt-name">${d.name} <span style="color:#475569;font-weight:400;">(${d.rate.toFixed(2)}%)</span></div>
+        <input type="number" class="tracker-debt-input" id="tr-bal-${i}"
+          placeholder="${Math.round(d.balance)}" min="0" step="1"
+          oninput="updateTrackerTotal()" aria-label="${d.name} current balance"/>
+      </div>`
+    ).join('');
+    document.getElementById('tracker-debt-inputs').innerHTML = html;
+    updateTrackerTotal();
+  }
+
+  function updateTrackerTotal() {
+    if (!_mathResult) return;
+    let total = 0;
+    _mathResult.debts.forEach((_, i) => {
+      const v = parseFloat(document.getElementById(`tr-bal-${i}`)?.value) || 0;
+      total += v;
+    });
+    document.getElementById('tracker-total').textContent = fmtUSD(total);
+  }
+  window.updateTrackerTotal = updateTrackerTotal;
+
+  async function logThisMonth() {
+    if (!_uid || !_mathResult) return;
+    const btn = document.getElementById('btn-log-month');
+    const msg = document.getElementById('tracker-log-msg');
+    btn.disabled = true;
+    msg.style.display = 'none';
+
+    const balances = {};
+    let total = 0;
+    _mathResult.debts.forEach((d, i) => {
+      const v = parseFloat(document.getElementById(`tr-bal-${i}`)?.value) || 0;
+      balances[d.name] = v;
+      total += v;
+    });
+
+    const entry = {
+      date:     new Date().toISOString(),
+      month:    new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+      balances,
+      total,
+      loggedAt: new Date(),
+    };
+
+    try {
+      const { collection: col, addDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+      await addDoc(col(db, 'users', _uid, 'trackerEntries'), entry);
+      msg.textContent = `\u2713 ${entry.month} logged successfully.`;
+      msg.style.display = '';
+      await loadTrackerHistory(_uid);
+    } catch (e) {
+      console.error('Log error:', e);
+      msg.textContent = 'Save failed. Please try again.';
+      msg.style.color = '#F87171';
+      msg.style.display = '';
+    } finally {
+      btn.disabled = false;
+    }
+  }
+  window.logThisMonth = logThisMonth;
+
+  async function loadTrackerHistory(uid) {
+    try {
+      const { collection: col, getDocs: gd, orderBy: ob, query: q } =
+        await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+      const snap = await gd(q(col(db, 'users', uid, 'trackerEntries'), ob('loggedAt', 'asc')));
+      const entries = snap.docs.map(d => d.data());
+      renderTrackerHistory(entries);
+    } catch (e) {
+      console.warn('Tracker history load error:', e);
+    }
+  }
+
+  function renderTrackerHistory(entries) {
+    const wrap = document.getElementById('tracker-history-wrap');
+    if (!entries.length) {
+      wrap.innerHTML = '<div class="tracker-empty">No entries yet. Log your first month above.</div>';
+      return;
+    }
+    const openingTotal = _mathResult ? _mathResult.debts.reduce((s,d)=>s+d.balance,0) : 0;
+    const hdr = `<div class="tracker-history-hdr">
+      <span>Month</span><span>Total Debt</span><span>Paid Down</span><span>% Remaining</span><span>vs Plan</span>
+    </div>`;
+
+    const rows = entries.map((e, i) => {
+      const paidDown = i === 0 ? openingTotal - e.total : (entries[i-1].total - e.total);
+      const pctRemaining = openingTotal > 0 ? Math.round((e.total / openingTotal) * 100) : 0;
+
+      // Compare against plan expected total for this month number
+      let onTrackHtml = '—';
+      if (_mathResult && i < _mathResult.chartPlan.length) {
+        const planTotal = _mathResult.chartPlan[i+1]?.balance ?? 0;
+        onTrackHtml = e.total <= planTotal + 50
+          ? '<span class="tracker-on-track">✓ On Track</span>'
+          : '<span class="tracker-review">↑ Review</span>';
+      }
+
+      return `<div class="tracker-history-row">
+        <span style="color:#CBD5E1;">${e.month}</span>
+        <span style="font-weight:600;">${fmtUSD(e.total)}</span>
+        <span style="color:var(--emerald);">${fmtUSD(paidDown)}</span>
+        <span style="color:#94A3B8;">${pctRemaining}%</span>
+        <span>${onTrackHtml}</span>
+      </div>`;
+    }).join('');
+
+    wrap.innerHTML = hdr + rows;
   }
 
   // ── STATE 1: Wizard ──────────────────────────────────────────
