@@ -1093,11 +1093,13 @@
         <button class="ab-remove-btn" onclick="this.closest('.ab-debt-row').remove()" aria-label="Remove debt">${REMOVE_SVG}</button>`;
       container.appendChild(row);
     }
+    window.abAddDebt = abAddDebt;
 
     function abCheckRate(input) {
       const val = parseFloat(input.value) || 0;
       input.classList.toggle('flag-high', val >= 15);
     }
+    window.abCheckRate = abCheckRate;
 
     function abAddLeak(id, data = {}) {
       const container = document.getElementById('ab-leaks-' + id);
@@ -1109,6 +1111,7 @@
         <input type="number" class="ab-field" placeholder="300" min="0" step="1" value="${data.target||''}"/>`;
       container.appendChild(row);
     }
+    window.abAddLeak = abAddLeak;
 
     function abAddSub(id, data = {}) {
       const container = document.getElementById('ab-subs-' + id);
@@ -1124,6 +1127,7 @@
         <button class="ab-remove-btn" onclick="this.closest('.ab-sub-row').remove()" aria-label="Remove subscription">${REMOVE_SVG}</button>`;
       container.appendChild(row);
     }
+    window.abAddSub = abAddSub;
 
     function abCollect(id) {
       // Collect all form values into a clientData object
@@ -1250,6 +1254,7 @@
         btn.textContent = 'Publish to Client Portal';
       }
     }
+    window.publishAudit = publishAudit;
   </script>
 </body>
 </html>
