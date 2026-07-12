@@ -862,6 +862,7 @@
 
   // ── Cloudflare Worker URL ────────────────────────────────────
   const WORKER_URL = 'https://summer-mode-328d.elijah-029.workers.dev';
+  const PREVIEW_MODE = new URLSearchParams(location.search).get('preview') === '1';
 
   // ── Email helper — fire-and-forget, never blocks UI ─────────
   async function sendEmail(to, subject, html) {
@@ -877,30 +878,48 @@
   }
 
   // ── Auth gate ────────────────────────────────────────────────
-  onAuthStateChanged(auth, async user => {
-    if (!user) {
-      window.location.href = '../?signin=true';
-      return;
-    }
+  if (PREVIEW_MODE) {
+    // Embedded inside the Admin Builder — no real login. Wait for clientData via postMessage.
+    window.addEventListener('message', e => {
+      if (!e.data || e.data.type !== 'cleanSlatePreviewData') return;
+      document.getElementById('portal-loading').style.display = 'none';
+      document.getElementById('portal-nav').style.display     = '';
+      document.getElementById('portal-main').style.display    = '';
+      showDashboard('preview', e.data.payload);
+    });
+    // Report our rendered height to the parent so the iframe can size itself
+    const reportHeight = () => {
+      window.parent.postMessage({ type: 'cleanSlatePreviewHeight', height: document.body.scrollHeight }, '*');
+    };
+    new ResizeObserver(reportHeight).observe(document.body);
+    window.parent.postMessage({ type: 'cleanSlatePreviewReady' }, '*');
+  } else {
+    onAuthStateChanged(auth, async user => {
+      if (!user) {
+        window.location.href = '../?signin=true';
+        return;
+      }
 
-    // Fetch user doc from Firestore
-    const snap = await getDoc(doc(db, 'users', user.uid));
-    const data = snap.exists() ? snap.data() : {};
+      // Fetch user doc from Firestore
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      const data = snap.exists() ? snap.data() : {};
 
-    // Hide loading, show UI
-    document.getElementById('portal-loading').style.display = 'none';
-    document.getElementById('portal-nav').style.display     = '';
-    document.getElementById('portal-main').style.display    = '';
+      // Hide loading, show UI
+      document.getElementById('portal-loading').style.display = 'none';
+      document.getElementById('portal-nav').style.display     = '';
+      document.getElementById('portal-main').style.display    = '';
 
-    if (data.auditStatus === 'completed') {
-      showDashboard(user.uid, data);
-    } else {
-      showWizard();
-    }
-  });
+      if (data.auditStatus === 'completed') {
+        showDashboard(user.uid, data);
+      } else {
+        showWizard();
+      }
+    });
+  }
 
   // ── Logout ───────────────────────────────────────────────────
   document.getElementById('logout-btn').addEventListener('click', async () => {
+    if (PREVIEW_MODE) { alert('Not available in preview mode.'); return; }
     await signOut(auth);
     window.location.href = '../';
   });
@@ -929,6 +948,7 @@
 
   document.getElementById('open-pw-modal').addEventListener('click', e => {
     e.preventDefault();
+    if (PREVIEW_MODE) { alert('Not available in preview mode.'); return; }
     openPwModal();
   });
 
@@ -1028,6 +1048,7 @@
 
   document.getElementById('open-delete-modal').addEventListener('click', e => {
     e.preventDefault();
+    if (PREVIEW_MODE) { alert('Not available in preview mode.'); return; }
     openDeleteModal();
   });
 
@@ -1227,7 +1248,11 @@
       _clientData = data.clientData;
       _mathResult = runMath(_clientData);
       renderBlueprint(_mathResult);
-      await loadTrackerHistory(uid);
+      if (PREVIEW_MODE) {
+        renderTrackerHistory([]);
+      } else {
+        await loadTrackerHistory(uid);
+      }
     }
   }
 
@@ -1575,6 +1600,14 @@
     const msg = document.getElementById('tracker-log-msg');
     btn.disabled = true;
     msg.style.display = 'none';
+
+    if (PREVIEW_MODE) {
+      msg.textContent = 'Tracker logging is disabled in preview mode.';
+      msg.style.color = '#F59E0B';
+      msg.style.display = '';
+      btn.disabled = false;
+      return;
+    }
 
     const balances = {};
     let total = 0;
