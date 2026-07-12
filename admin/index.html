@@ -164,6 +164,10 @@
     .adp-leak-range{display:flex;justify-content:space-between;font-size:0.6rem;color:#475569}
     .adp-found-total{display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;font-weight:600;color:#F8FAFC;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.18);border-radius:0.5rem;padding:0.6rem 0.85rem;margin-top:0.75rem}
     .adp-empty-sub{font-size:0.78rem;color:#334155;margin:0.25rem 0;}
+    .adp-fm-hero{text-align:center;background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(245,158,11,0.02));border:1px solid rgba(245,158,11,0.25);border-radius:0.75rem;padding:1.1rem 1rem;margin-bottom:1rem}
+    .adp-fm-hero-label{font-size:0.62rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#94A3B8;margin-bottom:0.25rem}
+    .adp-fm-hero-val{font-size:1.9rem;font-weight:800;color:var(--gold);font-variant-numeric:tabular-nums;line-height:1.1}
+    .adp-fm-hero-sub{font-size:0.7rem;color:#94A3B8;margin-top:0.25rem}
     .adp-kpi-label{font-size:0.6rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#475569;margin-bottom:0.35rem}
     .adp-kpi-val{font-size:1.2rem;font-weight:700;font-variant-numeric:tabular-nums}
     .adp-tbl{width:100%;border-collapse:collapse;font-size:0.8rem}
@@ -994,7 +998,6 @@
         {label:'Groceries (est.)',val:adpFmt(r.groceries),color:'#F8FAFC'},
         {label:'Debt Payments',val:adpFmt(r.baseDebtPmt),color:'var(--indigo-light)'},
         {label:'Discretionary Spending',val:adpFmt(r.totalLeaks),color:'#F87171'},
-        {label:'Found Money',val:adpFmt(r.foundMoney),color:'var(--gold)'},
         {label:'Available to Deploy',val:(r.availableToDeploy<0?'-':'')+adpFmt(Math.abs(r.availableToDeploy)),color:r.availableToDeploy<0?'#F87171':'var(--emerald)'},
       ];
       let scoreHtml = '';
@@ -1016,6 +1019,12 @@
         <div class="adp-section-label">Macro Reality</div>
         <div class="adp-kpi-grid">${kpis.map(k=>`<div class="adp-kpi"><div class="adp-kpi-label">${k.label}</div><div class="adp-kpi-val" style="color:${k.color}">${k.val}</div></div>`).join('')}</div>
         ${scoreHtml}
+      </div>`;
+
+      const heroHtml = `<div class="adp-fm-hero">
+        <div class="adp-fm-hero-label">We Found You</div>
+        <div class="adp-fm-hero-val">${adpFmt(r.foundMoney)}/mo</div>
+        <div class="adp-fm-hero-sub">in recoverable spending &mdash; redirected straight at debt</div>
       </div>`;
 
       // Debt table
@@ -1105,7 +1114,7 @@
       });
       phasesHtml += '</div>';
 
-      el.innerHTML = kpiHtml + debtHtml + foundMoneyHtml + savingsHtml + chartHtml + phasesHtml;
+      el.innerHTML = heroHtml + kpiHtml + debtHtml + foundMoneyHtml + savingsHtml + chartHtml + phasesHtml;
 
       // Render chart
       if (_adpCharts[id]) _adpCharts[id].destroy();
