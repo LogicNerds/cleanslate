@@ -606,22 +606,22 @@
 
             <div class="ab-section-label">Found Money</div>
 
-            <div class="ab-subsection-label">Spending Leaks</div>
-            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0.5rem;margin-bottom:0.3rem;">
-              <span class="ab-col-hdr">Category</span><span class="ab-col-hdr">Actual / mo</span><span class="ab-col-hdr">Your Target</span>
-            </div>
-            <div id="ab-leaks-${client.id}"></div>
-            <button class="ab-add-btn" onclick="abAddLeak('${client.id}')">
-              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Add category
-            </button>
-
-            <div class="ab-subsection-label" style="margin-top:1rem;">Subscriptions to Cut</div>
+            <div class="ab-subsection-label">Subscriptions to Cut</div>
             <div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:0.5rem;margin-bottom:0.3rem;">
               <span class="ab-col-hdr">Subscription</span><span class="ab-col-hdr">Cost / mo</span><span class="ab-col-hdr">Cut? (Yes/No)</span><span></span>
             </div>
             <div id="ab-subs-${client.id}"></div>
             <button class="ab-add-btn" onclick="abAddSub('${client.id}')">
               <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Add subscription
+            </button>
+
+            <div class="ab-subsection-label" style="margin-top:1rem;">Spending Leaks</div>
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0.5rem;margin-bottom:0.3rem;">
+              <span class="ab-col-hdr">Category</span><span class="ab-col-hdr">Actual / mo</span><span class="ab-col-hdr">Your Target</span>
+            </div>
+            <div id="ab-leaks-${client.id}"></div>
+            <button class="ab-add-btn" onclick="abAddLeak('${client.id}')">
+              <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>Add category
             </button>
 
             <div class="ab-divider"></div>
