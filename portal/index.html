@@ -1399,10 +1399,12 @@
   function renderChart(r) {
     const ctx = document.getElementById('payoff-chart').getContext('2d');
     if (_payoffChart) _payoffChart.destroy();
+    const maxLen = Math.max(r.chartPlan.length, r.chartSQ.length);
+    const labels = Array.from({length: maxLen}, (_, i) => i);
     _payoffChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: r.chartPlan.map(p => p.month),
+        labels: labels,
         datasets: [
           {
             label: 'Your Plan',
