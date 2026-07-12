@@ -1038,10 +1038,12 @@
       if (_adpCharts[id]) _adpCharts[id].destroy();
       const ctx = document.getElementById('adp-chart-'+id)?.getContext('2d');
       if (ctx) {
+        const maxLen = Math.max(r.chartPlan.length, r.chartSQ.length);
+        const labels = Array.from({length: maxLen}, (_, i) => i);
         _adpCharts[id] = new Chart(ctx, {
           type:'line',
           data:{
-            labels: r.chartPlan.map(p=>p.month),
+            labels: labels,
             datasets:[
               {label:'Your Plan',data:r.chartPlan.map(p=>p.balance),borderColor:'#10B981',backgroundColor:'rgba(16,185,129,0.08)',borderWidth:2,pointRadius:0,tension:0.3,fill:true},
               {label:'Status Quo',data:r.chartSQ.map(p=>p.balance),borderColor:'#475569',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:0.3,borderDash:[4,3]},
