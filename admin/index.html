@@ -140,6 +140,11 @@
     .adp-section-label{font-size:0.65rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem;padding-bottom:0.4rem;border-bottom:1px solid rgba(245,158,11,0.2)}
     .adp-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:0.5rem}
     .adp-kpi{background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.05);border-radius:0.625rem;padding:0.875rem}
+    .adp-score-callout{display:flex;align-items:center;gap:1rem;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:0.625rem;padding:0.85rem 1.1rem;margin-top:0.25rem}
+    .adp-score-badge{flex-shrink:0;width:3.5rem;height:3.5rem;border-radius:50%;border:2.5px solid currentColor;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.05}
+    .adp-score-pct{font-size:0.9rem;font-weight:800;}
+    .adp-score-label{font-size:0.48rem;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:#94A3B8;}
+    .adp-score-sentence{font-size:0.76rem;line-height:1.55;color:#CBD5E1;margin:0;}
     .adp-kpi-label{font-size:0.6rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#475569;margin-bottom:0.35rem}
     .adp-kpi-val{font-size:1.2rem;font-weight:700;font-variant-numeric:tabular-nums}
     .adp-tbl{width:100%;border-collapse:collapse;font-size:0.8rem}
@@ -892,6 +897,10 @@
       const foundMoney=leakSavings+subSavings;
       const efGap=efTarget?Math.max(0,efTarget-efSaved):0;
       const efAlloc=efTarget?Math.min(foundMoney,efGap):0;
+      const totalLeaks=leaks.reduce((s,l)=>s+(l.actual||0),0)+subs.reduce((s,sub)=>s+(sub.cost||0),0);
+      const discretionary=(cd.income||0)-(cd.fixedObs||0)-(cd.groceries||0);
+      const efficiencyScore=discretionary>0?Math.round(((cd.baseDebtPmt||0)/discretionary)*100):null;
+      const availableToDeploy=discretionary-(cd.baseDebtPmt||0)-totalLeaks;
       function amort(debts,fm,eft,efs,efa,max,applyEF){
         const n=debts.length;let efBal=efs,bals=debts.map(d=>d.balance),totInt=0;
         const months=[{efBal,bals:[...bals],totalDebt:bals.reduce((s,b)=>s+b,0),extra:0,interest:debts.map(()=>0)}];
@@ -931,6 +940,8 @@
         income:cd.income||0,fixedObs:cd.fixedObs||0,baseDebtPmt:cd.baseDebtPmt||0,
         groceries:cd.groceries||0,debts,leaks,subs,efTarget,efSaved,auditDate,
         foundMoney:Math.round(foundMoney),efAllocMonthly:Math.round(efAlloc),efMonth,
+        totalLeaks:Math.round(totalLeaks),discretionary:Math.round(discretionary),
+        efficiencyScore,availableToDeploy:Math.round(availableToDeploy),
         intPlan:Math.round(plan.totalInterest),intSQ:Math.round(sq.totalInterest),
         intSaved:Math.round(sq.totalInterest-plan.totalInterest),
         sbDiff:0,payoffPlan,payoffSQ,monthsSaved:payoffSQ-payoffPlan,
@@ -958,18 +969,34 @@
       const el = document.getElementById('adp-body-'+id);
 
       // KPIs
-      const totalLeaks = r.leaks.reduce((s,l)=>s+(l.actual||0),0)+r.subs.reduce((s,s2)=>s+(s2.cost||0),0);
       const kpis = [
         {label:'Monthly Income',val:adpFmt(r.income),color:'var(--emerald)'},
         {label:'Fixed Obligations',val:adpFmt(r.fixedObs),color:'#F8FAFC'},
         {label:'Groceries (est.)',val:adpFmt(r.groceries),color:'#F8FAFC'},
         {label:'Debt Payments',val:adpFmt(r.baseDebtPmt),color:'var(--indigo-light)'},
-        {label:'Total Leaks',val:adpFmt(totalLeaks),color:'#F87171'},
+        {label:'Total Leaks',val:adpFmt(r.totalLeaks),color:'#F87171'},
         {label:'Found Money',val:adpFmt(r.foundMoney),color:'var(--gold)'},
+        {label:'Available to Deploy',val:(r.availableToDeploy<0?'-':'')+adpFmt(Math.abs(r.availableToDeploy)),color:r.availableToDeploy<0?'#F87171':'var(--emerald)'},
       ];
+      let scoreHtml = '';
+      if (r.efficiencyScore != null) {
+        const score = Math.max(0, Math.min(100, r.efficiencyScore));
+        const remainder = 100 - score;
+        const sentence = r.availableToDeploy < 0
+          ? `Of every discretionary dollar after rent, utilities, insurance, and groceries&mdash;<strong>${score}%</strong> is going toward debt. The remaining ${remainder}% is exiting through friction, leaving this client mathematically negative every month.`
+          : `Of every discretionary dollar after rent, utilities, insurance, and groceries&mdash;<strong>${score}%</strong> is going toward debt. That leaves ${adpFmt(r.availableToDeploy)}/mo to deploy toward extra payoff or savings.`;
+        scoreHtml = `<div class="adp-score-callout">
+          <div class="adp-score-badge" style="color:${score>=80?'var(--gold)':'var(--emerald)'}">
+            <span class="adp-score-pct">${score}%</span>
+            <span class="adp-score-label">Efficiency<br>Score</span>
+          </div>
+          <p class="adp-score-sentence">${sentence}</p>
+        </div>`;
+      }
       const kpiHtml = `<div class="adp-section">
         <div class="adp-section-label">Macro Reality</div>
         <div class="adp-kpi-grid">${kpis.map(k=>`<div class="adp-kpi"><div class="adp-kpi-label">${k.label}</div><div class="adp-kpi-val" style="color:${k.color}">${k.val}</div></div>`).join('')}</div>
+        ${scoreHtml}
       </div>`;
 
       // Debt table
