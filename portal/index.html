@@ -240,12 +240,17 @@
     .db-card-body{padding:1.5rem}
 
     /* ── KPI grid ──────────────────────────────────────────────── */
-    .kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:0.75rem}
+    .kpi-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0.75rem}
     @media(max-width:900px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
     @media(max-width:600px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
     .kpi{background:rgba(15,23,42,0.5);border:1px solid rgba(255,255,255,0.05);border-radius:0.75rem;padding:1rem}
     .kpi-label{font-size:0.62rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#475569;margin-bottom:0.5rem}
     .kpi-val{font-size:1.35rem;font-weight:700;color:#F8FAFC;font-variant-numeric:tabular-nums}
+    .score-callout{display:flex;align-items:center;gap:1.25rem;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:0.75rem;padding:1.1rem 1.35rem;margin-top:1rem}
+    .score-badge{flex-shrink:0;width:4.5rem;height:4.5rem;border-radius:50%;border:3px solid currentColor;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.1}
+    .score-badge-pct{font-size:1.15rem;font-weight:800;}
+    .score-badge-label{font-size:0.55rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#94A3B8;}
+    .score-sentence{font-size:0.85rem;line-height:1.6;color:#CBD5E1;margin:0;}
 
     /* ── Debt table ────────────────────────────────────────────── */
     .debt-tbl{width:100%;border-collapse:collapse;font-size:0.85rem}
@@ -639,6 +644,7 @@
               <div class="db-card-hdr"><span class="db-card-title">1 · The Macro Reality</span></div>
               <div class="db-card-body">
                 <div class="kpi-grid" id="kpi-grid"></div>
+                <div class="score-callout" id="efficiency-score" style="display:none;"></div>
               </div>
             </div>
 
@@ -1095,6 +1101,12 @@
     const efGap       = efTarget ? Math.max(0,efTarget-efSaved) : 0;
     const efAlloc     = efTarget ? Math.min(foundMoney,efGap) : 0;
 
+    // Efficiency Score — how much of the client's discretionary cash is going toward debt vs. friction
+    const totalLeaks       = leaks.reduce((s,l)=>s+(l.actual||0),0) + subs.reduce((s,sub)=>s+(sub.cost||0),0);
+    const discretionary    = (cd.income||0) - (cd.fixedObs||0) - (cd.groceries||0);
+    const efficiencyScore  = discretionary > 0 ? Math.round(((cd.baseDebtPmt||0) / discretionary) * 100) : null;
+    const availableToDeploy = discretionary - (cd.baseDebtPmt||0) - totalLeaks;
+
     const plan = amortize(debts,foundMoney,efTarget,efSaved,efAlloc,MAX_PLAN,true);
     const sq   = amortize(debts,0,null,0,0,MAX_SQ,false);
     const sbD  = [...debts].sort((a,b)=>a.balance-b.balance);
@@ -1125,6 +1137,8 @@
       foundMoney:Math.round(foundMoney), leakSavings:Math.round(leakSavings),
       subSavings:Math.round(subSavings), efAllocMonthly:Math.round(efAlloc),
       extraToDebt:Math.round(Math.max(0,foundMoney-efAlloc)), efGap:Math.round(efGap), efMonth,
+      totalLeaks:Math.round(totalLeaks), discretionary:Math.round(discretionary),
+      efficiencyScore, availableToDeploy:Math.round(availableToDeploy),
       intPlan:Math.round(plan.totalInterest), intSQ:Math.round(sq.totalInterest),
       intSaved:Math.round(sq.totalInterest-plan.totalInterest),
       intSnowball:Math.round(sb.totalInterest), sbDiff:Math.round(sb.totalInterest-plan.totalInterest),
@@ -1221,19 +1235,39 @@
 
   // ── 1. KPI Grid ──────────────────────────────────────────────
   function renderKPIs(r) {
-    const totalLeaks = r.leaks.reduce((s,l)=>s+(l.actual||0),0)
-                     + r.subs.reduce((s,sub)=>s+(sub.cost||0),0);
     const kpis = [
-      {label:'Monthly Income',   val:fmtUSD(r.income),      color:'var(--emerald)'},
-      {label:'Fixed Obligations',val:fmtUSD(r.fixedObs),    color:'#F8FAFC'},
-      {label:'Groceries (est.)', val:fmtUSD(r.groceries),   color:'#F8FAFC'},
-      {label:'Debt Payments',    val:fmtUSD(r.baseDebtPmt), color:'var(--indigo-light)'},
-      {label:'Total Leaks',      val:fmtUSD(totalLeaks),    color:'#F87171'},
-      {label:'Found Money',      val:fmtUSD(r.foundMoney),  color:'var(--gold)'},
+      {label:'Monthly Income',    val:fmtUSD(r.income),           color:'var(--emerald)'},
+      {label:'Fixed Obligations', val:fmtUSD(r.fixedObs),         color:'#F8FAFC'},
+      {label:'Groceries (est.)',  val:fmtUSD(r.groceries),        color:'#F8FAFC'},
+      {label:'Debt Payments',     val:fmtUSD(r.baseDebtPmt),      color:'var(--indigo-light)'},
+      {label:'Total Leaks',       val:fmtUSD(r.totalLeaks),       color:'#F87171'},
+      {label:'Found Money',       val:fmtUSD(r.foundMoney),       color:'var(--gold)'},
+      {label:'Available to Deploy', val:(r.availableToDeploy<0?'-':'')+fmtUSD(Math.abs(r.availableToDeploy)), color:r.availableToDeploy<0?'#F87171':'var(--emerald)'},
     ];
     document.getElementById('kpi-grid').innerHTML = kpis.map(k=>
       `<div class="kpi"><div class="kpi-label">${k.label}</div><div class="kpi-val" style="color:${k.color}">${k.val}</div></div>`
     ).join('');
+
+    // Efficiency Score callout
+    const scoreEl = document.getElementById('efficiency-score');
+    if (scoreEl) {
+      if (r.efficiencyScore == null) {
+        scoreEl.style.display = 'none';
+      } else {
+        const score = Math.max(0, Math.min(100, r.efficiencyScore));
+        const remainder = 100 - score;
+        const sentence = r.availableToDeploy < 0
+          ? `Of every discretionary dollar you have after rent, utilities, insurance, and groceries&mdash;<strong>${score}%</strong> is going toward debt. The remaining ${remainder}% is exiting through friction, leaving you mathematically negative every month.`
+          : `Of every discretionary dollar you have after rent, utilities, insurance, and groceries&mdash;<strong>${score}%</strong> is going toward debt. That leaves you ${fmtUSD(r.availableToDeploy)}/mo to deploy toward extra payoff or savings.`;
+        scoreEl.style.display = '';
+        scoreEl.innerHTML = `
+          <div class="score-badge" style="color:${score>=80?'var(--gold)':'var(--emerald)'}">
+            <span class="score-badge-pct">${score}%</span>
+            <span class="score-badge-label">Efficiency<br>Score</span>
+          </div>
+          <p class="score-sentence">${sentence}</p>`;
+      }
+    }
   }
 
   // ── 2. Debt Table ────────────────────────────────────────────
