@@ -1427,7 +1427,16 @@
           legend: { labels: { color: '#94A3B8', font: { size: 12 } } },
           tooltip: {
             callbacks: {
-              label: ctx => ` ${ctx.dataset.label}: $${Math.round(ctx.raw).toLocaleString()}`,
+              title: items => {
+                const idx = items[0].dataIndex;
+                return `Month ${idx} \u00b7 ${fmtMo(addMonths(r.auditDate, idx))}`;
+              },
+              label: ctx => {
+                const val = Math.round(ctx.raw);
+                return val <= 0
+                  ? ` ${ctx.dataset.label}: Paid off! \ud83c\udf89`
+                  : ` ${ctx.dataset.label}: $${val.toLocaleString()}`;
+              },
             },
           },
         },
