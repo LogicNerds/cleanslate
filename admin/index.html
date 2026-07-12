@@ -114,7 +114,14 @@
     .ab-field.flag-high{border-color:rgba(248,113,113,0.4);color:var(--red)}
     .ab-debt-row{display:grid;grid-template-columns:2fr 1.2fr 1fr 1fr auto;gap:0.5rem;align-items:center;margin-bottom:0.4rem}
     .ab-sub-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:0.5rem;align-items:center;margin-bottom:0.4rem}
-    .ab-leak-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:0.5rem;align-items:center;margin-bottom:0.4rem}
+    .ab-leak-row{background:rgba(15,23,42,0.35);border:1px solid rgba(255,255,255,0.04);border-radius:0.5rem;padding:0.6rem 0.7rem;margin-bottom:0.5rem}
+    .ab-leak-row-top{display:grid;grid-template-columns:2fr 1fr auto;gap:0.5rem;align-items:center;margin-bottom:0.5rem}
+    .ab-leak-slider-row{display:flex;align-items:center;gap:0.6rem}
+    .ab-leak-slider-tag{font-size:0.68rem;color:#64748B;flex-shrink:0;white-space:nowrap;}
+    .ab-leak-slider-val{font-size:0.82rem;font-weight:700;color:var(--gold);flex-shrink:0;min-width:3.5rem;text-align:right;font-variant-numeric:tabular-nums;}
+    .ab-slider{flex:1;height:4px;border-radius:2px;appearance:none;-webkit-appearance:none;background:rgba(255,255,255,0.1);outline:none;cursor:pointer;}
+    .ab-slider::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--gold);border:2px solid #0F172A;cursor:pointer;box-shadow:0 0 0 2px rgba(245,158,11,0.25);}
+    .ab-slider::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--gold);border:2px solid #0F172A;cursor:pointer;}
     .ab-col-hdr{font-size:0.6rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#334155;padding-bottom:0.25rem}
     .ab-remove-btn{background:none;border:none;color:#334155;cursor:pointer;padding:0.3rem;border-radius:4px;line-height:1;transition:color 0.15s;flex-shrink:0}
     .ab-remove-btn:hover{color:var(--red)}
@@ -145,6 +152,18 @@
     .adp-score-pct{font-size:0.9rem;font-weight:800;}
     .adp-score-label{font-size:0.48rem;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:#94A3B8;}
     .adp-score-sentence{font-size:0.76rem;line-height:1.55;color:#CBD5E1;margin:0;}
+    .adp-subsection-label{font-size:0.62rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#475569;margin:0.75rem 0 0.5rem}
+    .adp-sub-row{display:grid;grid-template-columns:2fr 1fr auto;gap:0.5rem;align-items:center;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:0.8rem;color:#CBD5E1}
+    .adp-cut-badge{font-size:0.62rem;font-weight:700;color:var(--emerald);background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:3px;padding:0.15rem 0.5rem;text-align:center;white-space:nowrap}
+    .adp-keep-badge{font-size:0.62rem;font-weight:700;color:#64748B;background:rgba(100,116,139,0.1);border:1px solid rgba(100,116,139,0.25);border-radius:3px;padding:0.15rem 0.5rem;text-align:center;white-space:nowrap}
+    .adp-leak-row{margin-bottom:0.75rem}
+    .adp-leak-meta{display:flex;justify-content:space-between;font-size:0.8rem;color:#CBD5E1;margin-bottom:0.3rem}
+    .adp-leak-track{position:relative;height:4px;border-radius:2px;background:rgba(255,255,255,0.08);margin-bottom:0.25rem}
+    .adp-leak-fill{position:absolute;left:0;top:0;height:100%;border-radius:2px;background:rgba(245,158,11,0.35)}
+    .adp-leak-marker{position:absolute;top:50%;width:10px;height:10px;border-radius:50%;background:var(--gold);border:2px solid #0F172A;transform:translate(-50%,-50%)}
+    .adp-leak-range{display:flex;justify-content:space-between;font-size:0.6rem;color:#475569}
+    .adp-found-total{display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;font-weight:600;color:#F8FAFC;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.18);border-radius:0.5rem;padding:0.6rem 0.85rem;margin-top:0.75rem}
+    .adp-empty-sub{font-size:0.78rem;color:#334155;margin:0.25rem 0;}
     .adp-kpi-label{font-size:0.6rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:#475569;margin-bottom:0.35rem}
     .adp-kpi-val{font-size:1.2rem;font-weight:700;font-variant-numeric:tabular-nums}
     .adp-tbl{width:100%;border-collapse:collapse;font-size:0.8rem}
@@ -616,8 +635,8 @@
             </button>
 
             <div class="ab-subsection-label" style="margin-top:1rem;">Spending Leaks</div>
-            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0.5rem;margin-bottom:0.3rem;">
-              <span class="ab-col-hdr">Category</span><span class="ab-col-hdr">Actual / mo</span><span class="ab-col-hdr">Your Target</span>
+            <div style="display:grid;grid-template-columns:2fr 1fr auto;gap:0.5rem;margin-bottom:0.3rem;">
+              <span class="ab-col-hdr">Category</span><span class="ab-col-hdr">Actual / mo</span><span></span>
             </div>
             <div id="ab-leaks-${client.id}"></div>
             <button class="ab-add-btn" onclick="abAddLeak('${client.id}')">
@@ -1016,6 +1035,32 @@
         </table></div>
       </div>`;
 
+      // Found Money
+      const subRows = r.subs.map(s=>`<div class="adp-sub-row">
+        <span>${s.name}</span>
+        <span>${adpFmt(s.cost)}/mo</span>
+        <span class="${s.cut==='Yes'?'adp-cut-badge':'adp-keep-badge'}">${s.cut==='Yes'?'Cut':'Keep'}</span>
+      </div>`).join('') || '<p class="adp-empty-sub">No subscriptions entered.</p>';
+
+      const leakRows = r.leaks.map(l=>{
+        const rec = l.target||0;
+        const pct = l.actual>0 ? Math.min(100,(rec/l.actual)*100) : 0;
+        return `<div class="adp-leak-row">
+          <div class="adp-leak-meta"><span>${l.category}</span><span style="color:var(--gold)">${adpFmt(rec)}/mo</span></div>
+          <div class="adp-leak-track"><div class="adp-leak-fill" style="width:${pct}%"></div><div class="adp-leak-marker" style="left:${pct}%"></div></div>
+          <div class="adp-leak-range"><span>$0</span><span>${adpFmt(l.actual)}</span></div>
+        </div>`;
+      }).join('') || '<p class="adp-empty-sub">No spending categories entered.</p>';
+
+      const foundMoneyHtml = `<div class="adp-section">
+        <div class="adp-section-label">Found Money Simulator</div>
+        <div class="adp-subsection-label" style="margin-top:0;">Subscriptions</div>
+        ${subRows}
+        <div class="adp-subsection-label">Spending Leaks</div>
+        ${leakRows}
+        <div class="adp-found-total"><span>Total Found Money / Month</span><span style="color:var(--gold)">${adpFmt(r.foundMoney)}/mo</span></div>
+      </div>`;
+
       // Savings
       const savingsHtml = `<div class="adp-section">
         <div class="adp-section-label">What Your Plan Saves</div>
@@ -1060,7 +1105,7 @@
       });
       phasesHtml += '</div>';
 
-      el.innerHTML = kpiHtml + debtHtml + savingsHtml + chartHtml + phasesHtml;
+      el.innerHTML = kpiHtml + debtHtml + foundMoneyHtml + savingsHtml + chartHtml + phasesHtml;
 
       // Render chart
       if (_adpCharts[id]) _adpCharts[id].destroy();
@@ -1151,13 +1196,37 @@
       const container = document.getElementById('ab-leaks-' + id);
       const row = document.createElement('div');
       row.className = 'ab-leak-row';
+      const actual = data.actual || 0;
+      const target = data.target != null ? data.target : actual;
       row.innerHTML = `
-        <input type="text"   class="ab-field" placeholder="e.g. Groceries"   value="${escHtml(data.category||'')}"/>
-        <input type="number" class="ab-field" placeholder="480" min="0" step="1" value="${data.actual||''}"/>
-        <input type="number" class="ab-field" placeholder="300" min="0" step="1" value="${data.target||''}"/>`;
+        <div class="ab-leak-row-top">
+          <input type="text"   class="ab-field" placeholder="e.g. Groceries" value="${escHtml(data.category||'')}"/>
+          <input type="number" class="ab-field ab-leak-actual" placeholder="480" min="0" step="1" value="${data.actual||''}" oninput="abLeakSyncMax(this)"/>
+          <button class="ab-remove-btn" onclick="this.closest('.ab-leak-row').remove()" aria-label="Remove category">${REMOVE_SVG}</button>
+        </div>
+        <div class="ab-leak-slider-row">
+          <span class="ab-leak-slider-tag">Your Target</span>
+          <input type="range" class="ab-slider ab-leak-target" min="0" max="${actual}" step="1" value="${target}" oninput="abLeakSliderInput(this)"/>
+          <span class="ab-leak-slider-val">$${Math.round(target).toLocaleString()}</span>
+        </div>`;
       container.appendChild(row);
     }
     window.abAddLeak = abAddLeak;
+
+    function abLeakSyncMax(actualInput) {
+      const row    = actualInput.closest('.ab-leak-row');
+      const actual = parseFloat(actualInput.value) || 0;
+      const slider = row.querySelector('.ab-leak-target');
+      slider.max = actual;
+      if (parseFloat(slider.value) > actual) slider.value = actual;
+      row.querySelector('.ab-leak-slider-val').textContent = '$' + Math.round(slider.value).toLocaleString();
+    }
+    window.abLeakSyncMax = abLeakSyncMax;
+
+    function abLeakSliderInput(slider) {
+      slider.closest('.ab-leak-row').querySelector('.ab-leak-slider-val').textContent = '$' + Math.round(slider.value).toLocaleString();
+    }
+    window.abLeakSliderInput = abLeakSliderInput;
 
     function abAddSub(id, data = {}) {
       const container = document.getElementById('ab-subs-' + id);
