@@ -27,7 +27,7 @@
     .price-anchor{font-family:'Playfair Display',Georgia,serif;font-weight:900;font-size:clamp(6rem,15vw,10rem);line-height:1;background:linear-gradient(135deg,#F59E0B 0%,#FCD34D 60%,#F59E0B 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.02em}
     .price-ring{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
     .price-ring-circle{width:16rem;height:16rem;border-radius:50%;border:1px dashed rgba(245,158,11,0.2)}
-    .btn-primary-cl{background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));color:#fff;border:none;font-weight:600;border-radius:0.75rem;transition:transform 0.15s,box-shadow 0.15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;cursor:pointer}
+    .btn-primary-cl{background:linear-gradient(135deg,var(--emerald),var(--emerald-dark));color:#fff;border:none;font-weight:600;border-radius:0.75rem;transition:transform 0.15s,box-shadow 0.15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;cursor:pointer;text-align:center}
     .btn-primary-cl:hover{color:#fff;transform:translateY(-1px);box-shadow:0 8px 25px rgba(16,185,129,0.35)}
     .btn-primary-cl:active{transform:translateY(0)}
     .trust-strip{border-top:1px solid rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(30,41,59,0.4);padding:2rem 0}
@@ -140,10 +140,21 @@
               <span>We deliver a <strong class="text-white">complete blueprint</strong>. We'll show you the interest you'll save, the debt costing you the most, where to redirect your spending, and a week-one checklist so you know exactly where to start.</span>
             </li>
           </ul>
-          <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3 pt-1">
-            <a href="#auth-section" class="btn-primary-cl px-4 py-3" style="font-size:1rem;" aria-label="Get started">
-              Get Started Now
+          <div class="d-flex flex-column flex-sm-row align-items-sm-start gap-3 pt-1">
+            <a href="#auth-section" class="btn-primary-cl px-4 py-3" style="font-size:1rem;" aria-label="Get the full audit">
+              Get the Full Audit
             </a>
+            <div>
+              <a
+                href="downloads/Cash-Flow-Assessment-Worksheet.xlsx"
+                download
+                class="btn-primary-cl px-4 py-3"
+                style="font-size:1rem;background:linear-gradient(135deg,var(--indigo),#4F46E5);"
+                aria-label="Start with the free assessment">
+                Start with the Free Assessment
+              </a>
+              <p style="color:#64748B;font-size:0.75rem;" class="mt-2 mb-0 text-center">No account required</p>
+            </div>
           </div>
         </div>
         <div class="col-lg-6">
@@ -256,8 +267,8 @@
           <div class="feature-icon icon-indigo mx-auto mb-3">
             <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--indigo-light)" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           </div>
-          <h3 id="schedule-heading" class="text-white fw-semibold mb-2" style="font-size:1.05rem;">Have questions before you start?</h3>
-          <p style="color:#94A3B8;font-size:0.875rem;line-height:1.65;max-width:26rem;" class="mx-auto mb-4">Book a 15 minute no-pressure intro call for free. We'll answer any questions you have about our process and how it works, and make sure it's the right fit for you.</p>
+          <h3 id="schedule-heading" class="text-white fw-semibold mb-2" style="font-size:1.05rem;">Not ready for a full audit?</h3>
+          <p style="color:#94A3B8;font-size:0.875rem;line-height:1.65;max-width:26rem;" class="mx-auto mb-4">No need to setup an account yet! <a href="downloads/Cash-Flow-Assessment-Worksheet.xlsx" download class="link-indigo">Download our free Cash Flow Assessment Worksheet</a> and see where your cash is actually going. Then book a free 15-minute call to talk to a Personal Cash Flow Analyst and see how we can help.</p>
           <a
             href="https://calendar.google.com/appointments/schedules/AcZssZ2dsrbs0c1Mbw8l3xmDS_RvwdrAQ4Gho689KWvmtGP_2sxmE2gmIMBDAyWfAmFYdH2QVH3kTvky"
             target="_blank"
